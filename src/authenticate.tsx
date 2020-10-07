@@ -18,7 +18,8 @@ function redirectToSpotify() {
 
     const authEndpoint = 'https://accounts.spotify.com/authorize';
     const clientId = process.env.REACT_APP_CLIENT_ID;
-    const redirectURI = `${window.location.protocol}//${window.location.host}`;
+    const redirectURI = `${window.location.protocol}//${window.location.host}/`;
+    console.log(redirectURI)
     //let sess_id = /SESS\w*ID=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;
     //const state = hash(sess_id)
     let query = `client_id=${clientId}&redirect_uri=${redirectURI}&response_type=token&`
