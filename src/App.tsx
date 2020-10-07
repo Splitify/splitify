@@ -13,11 +13,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function App() {
+export default function App(props: {access_token: string}) {
   //The width of the grids have to be dynamic, not a fixed width
   const classes = useStyles();
   return (
     <div className={classes.root}>
+      <h3> Access Token = {props.access_token} </h3>
       <Grid style={{padding:"10%"}} container spacing={5}>
         <Grid item xs={4}>
           <Playlist />

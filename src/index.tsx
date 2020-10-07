@@ -5,11 +5,11 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import authenticate from "./authenticate"
 
-authenticate();
+const access_token = authenticate();
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App access_token={access_token}/>
   </React.StrictMode>,
   document.getElementById('root')
 );

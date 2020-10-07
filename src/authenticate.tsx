@@ -1,8 +1,3 @@
-import { Session } from "inspector";
-import React, { Component } from "react";
-import App from "./App";
-import logo from "./logo.svg"
-
 export default function() {
 
     let token  = window.location.hash.substr(1);
@@ -10,7 +5,7 @@ export default function() {
         const o = Object.fromEntries(new URLSearchParams(token));
         return o.access_token;
     } else {
-        redirectToSpotify();
+        return redirectToSpotify();
     }
 }
 
@@ -24,4 +19,5 @@ function redirectToSpotify() {
     //const state = hash(sess_id)
     let query = `client_id=${clientId}&redirect_uri=${redirectURI}&response_type=token&`
     window.location.href = `${authEndpoint}?${query}`;
+    return window.location.hash.substr(1);
 }
