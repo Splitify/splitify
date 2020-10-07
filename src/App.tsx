@@ -1,26 +1,35 @@
 import React from 'react';
-import logo from './logo.svg';
+import Playlist from './Components/Playlist'
 import './App.css';
+import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 
-function App() {
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  playlist: {
+    //Add styling for playlists here
+  },
+}));
+
+export default function App() {
+  //The width of the grids have to be dynamic, not a fixed width
+  const classes = useStyles();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={classes.root}>
+      <Grid style={{padding:"10%"}} container spacing={5}>
+        <Grid item xs={4}>
+          <Playlist />
+        </Grid>
+        <Grid item xs={4}>
+          <Playlist />
+        </Grid>
+        <Grid item xs={4}>
+          <Playlist />
+        </Grid>
+      </Grid>
     </div>
+    
   );
 }
-
-export default App;
