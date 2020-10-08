@@ -20,6 +20,10 @@ function createData(name: string, genre: string) {
   return { name, genre };
 }
 
+const message = () => {
+  console.log("Hello World!") 
+ }
+
 const songs = [
   createData('Song A', 'pop'),
   createData('Song B', 'rap'),
@@ -54,7 +58,10 @@ export default function Playlist(props: PlaylistProps) {
           {songs.map((song) => (
             <TableRow key={song.name}>
               <TableCell component="th" scope="row">
-                <Track/>
+                <Track 
+                songname = {song.name}
+                genre = {song.genre}      
+                />
               </TableCell>
             </TableRow>
           ))}
