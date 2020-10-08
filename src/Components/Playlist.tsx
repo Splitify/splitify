@@ -20,9 +20,6 @@ function createData(name: string, genre: string) {
   return { name, genre };
 }
 
-const message = () => {
-  console.log("Hello World!") 
- }
 
 const songs = [
   createData('Song A', 'pop'),
