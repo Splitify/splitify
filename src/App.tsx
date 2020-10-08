@@ -22,7 +22,14 @@ export default function App() {
   const [playlists, setPlaylists] = useState([0]); // TODO: replace this with some 
 
   const deletePlaylist = (id: Number) => {
+    console.log("Deleting playlist ", id);
     setPlaylists(playlists.filter(k => k !== id));
+  }
+
+  const addPlaylist = () => {
+    const id = Math.max(...playlists) + 1;
+    console.log("Adding playlist ", id);
+    setPlaylists([...playlists, id]); 
   }
 
   return (
@@ -34,7 +41,7 @@ export default function App() {
         </Grid>
       ))}
         <Grid item xs={2}>
-          <Button variant="contained" color="primary" onClick={() => setPlaylists([...playlists, playlists.length])}>
+          <Button variant="contained" color="primary" onClick={() => addPlaylist()}>
             Add
           </Button>
         </Grid>
