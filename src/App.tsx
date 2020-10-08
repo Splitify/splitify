@@ -19,18 +19,22 @@ export default function App() {
   //The width of the grids have to be dynamic, not a fixed width
   const classes = useStyles();
 
-  const [playlists, setPlaylists] = useState([0]);
+  const [playlists, setPlaylists] = useState([0]); // TODO: replace this with some 
+
+  const deletePlaylist = (id: Number) => {
+    setPlaylists(playlists.filter(k => k !== id));
+  }
 
   return (
     <div className={classes.root}>
       <Grid style={{padding:"10%"}} container spacing={5}>
       {playlists.map(p => (
         <Grid item xs={4}>
-          <Playlist/>
+          <Playlist id={p} delete={() => deletePlaylist(p)}/>
         </Grid>
       ))}
         <Grid item xs={2}>
-          <Button variant="contained" color="primary">
+          <Button variant="contained" color="primary" onClick={() => setPlaylists([...playlists, playlists.length])}>
             Add
           </Button>
         </Grid>

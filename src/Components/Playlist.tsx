@@ -28,8 +28,13 @@ const songs = [
   createData('Song E', 'rock'),
 ];
 
+interface PlaylistProps {
+  id: Number;
+  delete: () => void;
+}
 
-export default function Playlist() {
+
+export default function Playlist(props: PlaylistProps) {
   const classes = useStyles();
 
   return (
@@ -39,7 +44,7 @@ export default function Playlist() {
           <TableRow>
             <TableCell>Name</TableCell>
             <TableCell>
-              <Button variant="contained" color="secondary">
+              <Button variant="contained" color="secondary" onClick={props.delete}>
                 Delete
               </Button>
             </TableCell>
