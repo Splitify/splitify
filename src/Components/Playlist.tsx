@@ -7,6 +7,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 import Track from './Track';
 
 const useStyles = makeStyles({
@@ -27,6 +28,7 @@ const songs = [
   createData('Song E', 'rock'),
 ];
 
+
 export default function Playlist() {
   const classes = useStyles();
 
@@ -36,6 +38,11 @@ export default function Playlist() {
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
+            <TableCell>
+              <Button variant="contained" color="secondary">
+                Delete
+              </Button>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
