@@ -27,7 +27,8 @@ export default function App() {
   }
 
   const addPlaylist = () => {
-    const id = Math.max(...playlists) + 1;
+    var id = Math.max(...playlists) + 1;
+    if (!isFinite(id)) id = 0;
     console.log("Adding playlist ", id);
     setPlaylists([...playlists, id]); 
   }
