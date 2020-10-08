@@ -19,6 +19,10 @@ function createData(name: string, genre: string) {
   return { name, genre };
 }
 
+const message = () => {
+  console.log("Hello World!") 
+ }
+
 const songs = [
   createData('Song A', 'pop'),
   createData('Song B', 'rap'),
@@ -27,7 +31,11 @@ const songs = [
   createData('Song E', 'rock'),
 ];
 
-export default function Playlist() {
+interface ComponentProps {
+  name: string;
+}
+
+export default function Playlist(props: ComponentProps):JSX.Element {
   const classes = useStyles();
 
   return (
@@ -35,14 +43,19 @@ export default function Playlist() {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
+            <TableCell>Name
+            <button onClick={message}> Delete </button>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {songs.map((song) => (
             <TableRow key={song.name}>
               <TableCell component="th" scope="row">
-                <Track/>
+                <Track 
+                songname = {song.name}
+                genre = {song.genre}      
+                />
               </TableCell>
             </TableRow>
           ))}

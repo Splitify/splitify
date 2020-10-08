@@ -20,13 +20,13 @@ export default function App() {
     <div className={classes.root}>
       <Grid style={{padding:"10%"}} container spacing={5}>
         <Grid item xs={4}>
-          <Playlist />
+          <Playlist name = "subplaylist"/>
         </Grid>
         <Grid item xs={4}>
-          <Playlist />
+          <Playlist name = "subplaylist"/>
         </Grid>
         <Grid item xs={4}>
-          <Playlist />
+          <Playlist name = "subplaylist"/>
         </Grid>
       </Grid>
     </div>
