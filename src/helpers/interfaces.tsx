@@ -12,9 +12,9 @@ export interface ExternalUrlObj {
 }
   
 export interface ImageObj {
-    height: Number | null;
+    height?: Number | null;
     url: string;
-    width: Number | null;
+    width?: Number | null;
 }
   
 export interface RestrictionObj {
@@ -29,7 +29,7 @@ export interface AlbumObj {
     album_group?: string;
     album_type: string;
     artists: ArtistObj;
-    available_markets: string[];
+    available_markets: Array<string>;
     external_urls: ExternalUrlObj;
     href: string;
     id: string;
@@ -37,7 +37,7 @@ export interface AlbumObj {
     name: string;
     release_date: string;
     release_date_precision: string;
-    restrictions: RestrictionObj;
+    restrictions?: RestrictionObj;
     type: string;
     uri: string;
 }
@@ -48,7 +48,7 @@ export interface FollowerObj {
 }
 
 export interface  UserObj {
-    display_name: string | null;
+    display_name?: string | null;
     external_urls: ExternalUrlObj;
     followers?: FollowerObj;
     href: string;
@@ -58,10 +58,27 @@ export interface  UserObj {
     uri: string;
 }
 
+export interface PlaylistTrackObj {
+    added_at: string
+    added_by: UserObj	
+    is_local: boolean
+    track: TrackObj
+}
+
+export interface PagingObj {
+    href: string	
+    items: Array<PlaylistTrackObj | PlaylistObj>
+    limit: Number
+    next: string
+    offset:	Number
+    previous: string
+    total: Number
+}
+
 export interface TrackObj {
     album: AlbumObj;
     artists: Array<ArtistObj>;
-    available_markets: [string];
+    available_markets: Array<string>;
     disc_number : Number;
     duration_ms: Number;
     explicit: boolean;
@@ -70,7 +87,7 @@ export interface TrackObj {
     href: string;
     id: string;
     is_local: boolean;
-    is_playable: boolean;
+    is_playable?: boolean;
     name: string;
     popularity: Number;
     preview_url: string;
@@ -88,9 +105,9 @@ export interface TrackObj {
     images: Array<ImageObj>
     name: string;
     owner: UserObj;
-    public: boolean | null;
+    public?: boolean | null;
     snapshot_id: string;
-    tracks: Array<TrackObj>
+    tracks: PagingObj
     type: string;
     uri: string;
 }

@@ -36,17 +36,17 @@ export default function App() {
     setPlaylists([...playlists, id]); 
   }
 
-  const playlistData = Object.assign(new PlaylistObj, JSON.parse('{"a":1}'))
+  const playlistData: PlaylistObj = data;
 
   return (
     <div className={classes.root}>
       <Grid style={{padding:"10%"}} container spacing={5}>
       <Grid item xs={4}>
-        <MasterPlaylist playlist={data}/>
+        <MasterPlaylist playlist={playlistData}/>
       </Grid>
       {playlists.map(p => (
         <Grid item xs={4}>
-          <Playlist playlist={data} id={p} delete={() => deletePlaylist(p)}/>
+          <Playlist playlist={playlistData} id={p} delete={() => deletePlaylist(p)}/>
         </Grid>
       ))}
         <Grid item xs={2}>

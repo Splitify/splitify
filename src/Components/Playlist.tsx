@@ -41,7 +41,7 @@ export default function Playlist(props: ComponentProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.playlist.tracks.map((track: TrackObj) => (
+          {props.playlist.tracks.items.map((track: TrackObj) => (
             <TableRow key={track.id}>
               <TableCell component="th" scope="row">
                 <Track track={track}/>
