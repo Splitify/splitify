@@ -7,7 +7,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import Track from './Track';
 import { PlaylistObj, TrackObj } from '../helpers/interfaces';
 
@@ -17,14 +16,12 @@ const useStyles = makeStyles({
   },
 });
 
+
 interface ComponentProps {
-  playlist: PlaylistObj;
-  id: Number;
-  delete: () => void;
-}
+    playlist: PlaylistObj;
+  }
 
-
-export default function Playlist(props: ComponentProps) {
+export default function MasterPlaylist(props: ComponentProps) {
   const classes = useStyles();
 
   return (
@@ -32,17 +29,14 @@ export default function Playlist(props: ComponentProps) {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
+            <TableCell>Master Playlist</TableCell>
             <TableCell>
-              <Button variant="contained" color="secondary" onClick={props.delete}>
-                Delete
-              </Button>
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.playlist.tracks.map((track: TrackObj) => (
-            <TableRow key={track.id}>
+          {props.playlist.tracks.map((track) => (
+            <TableRow key={track.name}>
               <TableCell component="th" scope="row">
                 <Track track={track}/>
               </TableCell>

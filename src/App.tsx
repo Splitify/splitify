@@ -1,10 +1,13 @@
 import React from 'react';
 import Playlist from './Components/Playlist'
+import MasterPlaylist from './Components/MasterPlaylist'
 import './App.css';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import { useState } from 'react';
 import Button from '@material-ui/core/Button';
+import data from './stubs/playlistStub.json';
+import { PlaylistObj } from './helpers/interfaces';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,12 +36,17 @@ export default function App() {
     setPlaylists([...playlists, id]); 
   }
 
+  const playlistData = Object.assign(new PlaylistObj, JSON.parse('{"a":1}'))
+
   return (
     <div className={classes.root}>
       <Grid style={{padding:"10%"}} container spacing={5}>
+      <Grid item xs={4}>
+        <MasterPlaylist playlist={data}/>
+      </Grid>
       {playlists.map(p => (
         <Grid item xs={4}>
-          <Playlist id={p} delete={() => deletePlaylist(p)}/>
+          <Playlist playlist={data} id={p} delete={() => deletePlaylist(p)}/>
         </Grid>
       ))}
         <Grid item xs={2}>
