@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -8,8 +9,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+
 import Track from './Track';
-import { PlaylistObj, PlaylistTrackObj} from '../helpers/interfaces';
+import { Playlist as PlaylistObj, Track as TrackObj } from "../types"
 
 const useStyles = makeStyles({
   table: {
@@ -17,14 +19,12 @@ const useStyles = makeStyles({
   },
 });
 
-interface ComponentProps {
+export default function Playlist(props: {
   playlist: PlaylistObj;
   id: Number;
   delete: () => void;
-}
 
-
-export default function Playlist(props: ComponentProps) {
+}) {
   const classes = useStyles();
 
   return (
@@ -41,10 +41,12 @@ export default function Playlist(props: ComponentProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.playlist.tracks.items.map((trackobj: PlaylistTrackObj) => (
-            <TableRow key={trackobj.track.name}>
+          {/* //FIXME: Simplify / expand */}
+          {props.playlist.tracks.map((track: TrackObj) => (
+            <TableRow key={track.id}> 
+            {/* UUID for each track item */}
               <TableCell component="th" scope="row">
-                <Track track={trackobj.track}/>
+                <Track track={track} />
               </TableCell>
             </TableRow>
           ))}
