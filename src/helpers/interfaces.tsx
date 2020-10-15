@@ -58,11 +58,15 @@ export interface  UserObj {
     uri: string;
 }
 
+export interface UrlThumbnail{
+    url: string | null
+}
 export interface PlaylistTrackObj {
     added_at: string
     added_by: UserObj	
     is_local: boolean
     track: TrackObj
+    video_thumbnail: UrlThumbnail
 }
 
 export interface PagingObj {
