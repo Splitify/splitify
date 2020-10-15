@@ -3,13 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import authenticate from "./authenticate"
-
-const access_token = authenticate();
 
 ReactDOM.render(
   <React.StrictMode>
-    <App access_token={access_token}/>
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );
