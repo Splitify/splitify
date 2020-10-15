@@ -1,4 +1,10 @@
-import { User, Playlist } from '../types'
+import { User, Playlist, Track } from '../types'
+
+// export function parseTrackJSON ({}: any): Track {
+//   return {
+
+//   }
+// }
 
 export function parseUserJSON ({ id, display_name }: any): User {
   return {
