@@ -1,12 +1,6 @@
 import { User, Playlist } from '../types'
 
-export function parseUserJSON ({
-  id,
-  display_name
-}: {
-  id: string
-  display_name: string
-}): User {
+export function parseUserJSON ({ id, display_name }: any): User {
   return {
     id,
     display_name

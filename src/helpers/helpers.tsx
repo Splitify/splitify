@@ -17,15 +17,11 @@ export async function fetchTest () {
 export async function getPlaylist (
   api: SpotifyAPI.SpotifyWebApiJs
 ): Promise<Playlist> {
-  //   return await api
-  //     .getPlaylist('4vHIKV7j4QcZwgzGQcZg1x')
-  //     .then(parsePlaylistJSON)
-
-  return await fetch('TESTING/playlistStub.json')
-    .then(r => r.json())
-    .then(parsePlaylistJSON)
+  return await api.getPlaylist('4vHIKV7j4QcZwgzGQcZg1x').then(parsePlaylistJSON)
 }
 
-export async function getUserProfile (api: any): Promise<User> {
+export async function getUserProfile (
+  api: SpotifyAPI.SpotifyWebApiJs
+): Promise<User> {
   return await api.getMe().then(parseUserJSON)
 }
