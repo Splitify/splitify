@@ -5,6 +5,9 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { logout } from '../../Login'
+import data from '../../stubs/playlistStub.json';
+import MasterPlaylist from "../MasterPlaylist";
+import { PlaylistObj } from "../../helpers/interfaces";
 // import PersistLogin from '../PersistAuth';
 
 export const useStyles = makeStyles((theme) => ({
@@ -39,25 +42,34 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     setPlaylists([...playlists, id]); 
     }
 
+    const playlistData: PlaylistObj = data;
+
     return (
-        <div className={classes.root}>
+    <div className={classes.root}>
         <Button variant="contained" color="primary" onClick={() => logout()}>
             Logout
         </Button>
         <Grid style={{padding:"10%"}} container spacing={5}>
-            {playlists.map(p => (
-            <Grid item xs={4}>
-                <Playlist id={p} delete={() => deletePlaylist(p)}/>
-            </Grid>
-            ))}
-            <Grid item xs={2}>
-            <Button variant="contained" color="primary" onClick={() => addPlaylist()}>
-                Add
-            </Button>
-            </Grid>
+        <Grid item xs={4}>
+        <MasterPlaylist playlist={playlistData}/>
         </Grid>
-        </div>
-    )
+        {playlists.map(p => (
+        <Grid item xs={4}>
+            <Playlist playlist={playlistData} id={p} delete={() => deletePlaylist(p)}/>
+        </Grid>
+        ))}
+        <Grid item xs={2}>
+            <Button variant="contained" color="primary" onClick={() => addPlaylist()}>
+            Add
+            </Button>
+        </Grid>
+        </Grid>
+    </div>
+    );
 }
 
 export default withRouter(Dashboard)
+
+
+
+
