@@ -1,5 +1,5 @@
 export function getPlaylist() {
-    
+import { User } from '../types'
 export async function getUserProfile (api: any) {
   // Get current user data
   api
@@ -7,6 +7,12 @@ export async function getUserProfile (api: any) {
     .then(
       ({
         display_name,
+export function parseUserJSON (json: any): User {
+  return {
+    id: json.id,
+    display_name: json.display_name
+  }
+}
         id,
         images
       }: {

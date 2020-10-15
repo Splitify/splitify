@@ -1,4 +1,5 @@
 export interface User {
-    id: string;
-    display_name: string;
+  id: string
+  display_name: string
+  image?: URL
 }
