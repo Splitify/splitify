@@ -1,8 +1,7 @@
-import React from 'react';
-import './App.css';
 import { BrowserRouter } from "react-router-dom";
-import Routes from "./Components/Routes/Routes";
-import './App.css';
+import Routes from "./components/Routes/Routes";
+import React from 'react'
+
 
 
 export default function App() {

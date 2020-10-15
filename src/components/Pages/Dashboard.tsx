@@ -5,9 +5,8 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { logout } from '../../Login'
-import data from '../../stubs/playlistStub.json';
 import MasterPlaylist from "../MasterPlaylist";
-import { PlaylistObj } from "../../helpers/interfaces";
+import { Playlist as PlaylistObj } from "../../types";
 // import PersistLogin from '../PersistAuth';
 
 export const useStyles = makeStyles((theme) => ({
@@ -31,18 +30,27 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     const [playlists, setPlaylists] = useState([0]); // TODO: replace this with some 
 
     const deletePlaylist = (id: Number) => {
-    console.log("Deleting playlist ", id);
-    setPlaylists(playlists.filter(k => k !== id));
+        console.log("Deleting playlist ", id);
+        setPlaylists(playlists.filter(k => k !== id));
     }
 
     const addPlaylist = () => {
-    var id = Math.max(...playlists) + 1;
-    if (!isFinite(id)) id = 0;
-    console.log("Adding playlist ", id);
-    setPlaylists([...playlists, id]); 
+        var id = Math.max(...playlists) + 1;
+        if (!isFinite(id)) id = 0;
+        console.log("Adding playlist ", id);
+        setPlaylists([...playlists, id]); 
     }
 
-    const playlistData: PlaylistObj = data;
+    const playlistData: PlaylistObj = {
+        id: 'testid',
+        name: 'testname',
+        description: 'test',
+        image: '',
+        owner: { id: 'b0ss', display_name: 'Owner' },
+        snapshot_id: '',
+        tracks: [],
+        uri: ''
+    }
 
     return (
     <div className={classes.root}>
