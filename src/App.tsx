@@ -1,12 +1,13 @@
-import React from 'react';
-import Playlist from './Components/Playlist'
-import MasterPlaylist from './Components/MasterPlaylist'
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import { useState } from 'react';
-import Button from '@material-ui/core/Button';
-import data from './stubs/playlistStub.json';
-import { PlaylistObj } from './helpers/interfaces';
+import React, { useState } from 'react'
+
+import Playlist from './components/Playlist'
+import MasterPlaylist from './components/MasterPlaylist'
+
+import { makeStyles } from '@material-ui/core/styles'
+import Grid from '@material-ui/core/Grid'
+import Button from '@material-ui/core/Button'
+
+import { Playlist as PlaylistObj } from './types'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,7 +36,16 @@ export default function App() {
     setPlaylists([...playlists, id]); 
   }
 
-  const playlistData: PlaylistObj = data;
+  const playlistData: PlaylistObj = {
+    id: 'testid',
+    name: 'testname',
+    description: 'test',
+    image: '',
+    owner: { id: 'b0ss', display_name: 'Owner' },
+    snapshot_id: '',
+    tracks: [],
+    uri: ''
+  }
 
   return (
     <div className={classes.root}>

@@ -6,7 +6,7 @@ export interface Playlist {
   id: string
   name: string
   description: string
-  image: URL
+  image: string | URL
   owner: User
   snapshot_id: string
   tracks: Array<Track>
