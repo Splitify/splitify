@@ -28,7 +28,7 @@ export interface ExternalIdsObj {
 export interface AlbumObj {
     album_group?: string;
     album_type: string;
-    artists: ArtistObj;
+    artists: Array<ArtistObj>;
     available_markets: Array<string>;
     external_urls: ExternalUrlObj;
     href: string;
@@ -67,11 +67,11 @@ export interface PlaylistTrackObj {
 
 export interface PagingObj {
     href: string	
-    items: Array<PlaylistTrackObj | PlaylistObj>
+    items: Array<PlaylistTrackObj>
     limit: Number
-    next: string
+    next: string | null
     offset:	Number
-    previous: string
+    previous: string | null
     total: Number
 }
 
@@ -90,7 +90,7 @@ export interface TrackObj {
     is_playable?: boolean;
     name: string;
     popularity: Number;
-    preview_url: string;
+    preview_url: string | null;
     track_number: Number;
     type: string;
     uri: string;

@@ -8,7 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Track from './Track';
-import { PlaylistObj, TrackObj } from '../helpers/interfaces';
+import { PlaylistObj, PlaylistTrackObj, TrackObj } from '../helpers/interfaces';
 
 const useStyles = makeStyles({
   table: {
@@ -35,13 +35,13 @@ export default function MasterPlaylist(props: ComponentProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.playlist.tracks.map((track) => (
-            <TableRow key={track.name}>
+          {props.playlist.tracks.items.map((trackobj: PlaylistTrackObj) => (
+            <TableRow key={trackobj.track.name}>
               <TableCell component="th" scope="row">
-                <Track track={track}/>
+                <Track track={trackobj.track}/>
               </TableCell>
             </TableRow>
-          ))}
+          ))} 
         </TableBody>
       </Table>
     </TableContainer>

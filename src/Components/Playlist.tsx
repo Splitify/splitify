@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Track from './Track';
-import { PlaylistObj, TrackObj } from '../helpers/interfaces';
+import { PlaylistObj, PlaylistTrackObj} from '../helpers/interfaces';
 
 const useStyles = makeStyles({
   table: {
@@ -32,7 +32,7 @@ export default function Playlist(props: ComponentProps) {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
+            <TableCell>Sub-Playlist</TableCell>
             <TableCell>
               <Button variant="contained" color="secondary" onClick={props.delete}>
                 Delete
@@ -41,10 +41,10 @@ export default function Playlist(props: ComponentProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.playlist.tracks.items.map((track: TrackObj) => (
-            <TableRow key={track.id}>
+          {props.playlist.tracks.items.map((trackobj: PlaylistTrackObj) => (
+            <TableRow key={trackobj.track.name}>
               <TableCell component="th" scope="row">
-                <Track track={track}/>
+                <Track track={trackobj.track}/>
               </TableCell>
             </TableRow>
           ))}
