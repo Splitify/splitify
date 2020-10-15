@@ -1,28 +1,31 @@
-export function getPlaylist() {
-import { User } from '../types'
-export async function getUserProfile (api: any) {
-  // Get current user data
-  api
-    .getMe()
-    .then(
-      ({
-        display_name,
-export function parseUserJSON (json: any): User {
-  return {
-    id: json.id,
-    display_name: json.display_name
-  }
+import { Playlist, User } from '../types'
+import { parsePlaylistJSON, parseUserJSON } from './parsers'
+
+// TODO: Integrate auth branch
+
+import SpotifyAPI from 'spotify-web-api-js'
+export async function fetchTest () {
+  let api = new SpotifyAPI()
+  const token = '-'
+  api.setAccessToken(token)
+
+  console.log(await api.getUserPlaylists())
+  getUserProfile(api)
+  console.log(await getPlaylist(api))
 }
-        id,
-        images
-      }: {
-        display_name: string
-        id: string
-        images: Array<any>
-      }) => {
-        console.log(display_name)
-        console.log(id)
-        console.log(images)
-      }
-    )
+
+export async function getPlaylist (
+  api: SpotifyAPI.SpotifyWebApiJs
+): Promise<Playlist> {
+  //   return await api
+  //     .getPlaylist('4vHIKV7j4QcZwgzGQcZg1x')
+  //     .then(parsePlaylistJSON)
+
+  return await fetch('TESTING/playlistStub.json')
+    .then(r => r.json())
+    .then(parsePlaylistJSON)
+}
+
+export async function getUserProfile (api: any): Promise<User> {
+  return await api.getMe().then(parseUserJSON)
 }
