@@ -8,7 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Track from './Track';
-import { PlaylistObj, PlaylistTrackObj, TrackObj } from '../helpers/interfaces';
+import { PlaylistObj, PlaylistTrackObj} from '../helpers/interfaces';
 
 const useStyles = makeStyles({
   table: {
