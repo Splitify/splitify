@@ -1,7 +1,6 @@
 import React from 'react';
 import Playlist from './Components/Playlist'
 import MasterPlaylist from './Components/MasterPlaylist'
-import './App.css';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import { useState } from 'react';
