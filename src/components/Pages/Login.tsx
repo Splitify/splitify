@@ -10,7 +10,6 @@ interface ILoginProps extends RouteComponentProps {
 const Login : React.FC<ILoginProps> = () => {
 
     if(isAuth()){
-        console.log("IS AUTHED");
         return(
             <Redirect to={{ pathname: "/dashboard" }} />
         )

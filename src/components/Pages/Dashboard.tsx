@@ -7,7 +7,6 @@ import Button from '@material-ui/core/Button';
 import { logout } from '../../Login'
 import MasterPlaylist from "../MasterPlaylist";
 import { Playlist as PlaylistObj } from "../../types";
-// import PersistLogin from '../PersistAuth';
 
 export const useStyles = makeStyles((theme) => ({
     root: {
