@@ -9,7 +9,7 @@ interface ILoginProps extends RouteComponentProps {
 
 const Login : React.FC<ILoginProps> = () => {
 
-    if(isAuth() === false){
+    if(!isAuth()){
         return(
             <Button variant="contained" color="primary" onClick={() => login()}>
                 Connect Using Spotify

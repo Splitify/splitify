@@ -20,9 +20,7 @@ interface IDashboardProps extends RouteComponentProps{
 
 }
 
-const Dashboard: React.FC<IDashboardProps> = ({history}) => {
-
-    // PersistLogin();
+const Dashboard: React.FC<IDashboardProps> = () => {
 
     //The width of the grids have to be dynamic, not a fixed width
     const classes = useStyles();
