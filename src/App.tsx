@@ -1,10 +1,10 @@
 import React from 'react'
-import Router from './routes/Handler'
+import { Router } from './routes/'
 
-export default function App() {
+export default function App () {
   return (
-    <div className="App">
+    <div className='App'>
       <Router />
     </div>
-  );
+  )
 }
