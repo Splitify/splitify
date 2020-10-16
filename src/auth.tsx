@@ -86,7 +86,7 @@ export default new (class {
     const authEndpoint = 'https://accounts.spotify.com/authorize'
 
     let data = {
-      client_id: process.env.REACT_APP_CLIENT_ID,
+      client_id: process.env.SPOTIFY_CLIENT_ID,
       redirect_uri: `${window.location.protocol}//${window.location.host}/login`,
       response_type: 'token'
     }
