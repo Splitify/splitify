@@ -1,49 +1,17 @@
-import React, { FC } from 'react'
-import {
-  BrowserRouter,
-  Switch,
-  Redirect,
-  Route as RouteBase,
-  RouteProps
-} from 'react-router-dom'
+import React from 'react'
+import { BrowserRouter, Switch } from 'react-router-dom'
+import { Public, Private } from './util'
 
-import Dashboard from './dashboard'
-import Login from './login'
+import Dashboard from './pages/dashboard'
+import Login from './pages/login'
 
 export default function () {
   return (
     <BrowserRouter>
       <Switch>
-
+        <Public exact path='/' component={Login} />
+        <Private exact path='/dashboard' component={Dashboard} />
       </Switch>
     </BrowserRouter>
   )
 }
-
-/* Routing data */
-
-interface IRoute {
-  component: React.ComponentClass
-  routeProps?: any
-}
-
-const Public: FC<RouteProps & IRoute> = ({
-  component: Component,
-  ...routeProps
-}) => <RouteBase {...routeProps} render={props => <Component {...props} />} />
-
-const Private: FC<RouteProps & IRoute> = ({
-  component: Component,
-  ...routeProps
-}) => (
-  <RouteBase
-    {...routeProps}
-    render={props =>
-      /*isAuth()*/ true ? (
-        <Component {...props} />
-      ) : (
-        <Redirect to={{ pathname: '/' }} />
-      )
-    }
-  />
-)
