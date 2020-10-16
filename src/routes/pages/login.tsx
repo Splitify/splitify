@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
-import { isAuth, login } from "../../Login";
+import { isAuth, login } from "../Login";
 
 interface ILoginProps extends RouteComponentProps {
 
