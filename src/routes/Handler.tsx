@@ -8,8 +8,8 @@ import Login from './pages/login'
 export const Router: React.FC = () => (
   <BrowserRouter>
     <Switch>
-      <Public exact path='/' component={Login} />
-      <Private exact path='/dashboard' component={Dashboard} />
+      <Private exact path='/' component={Dashboard} />
+      <Public exact path='/login' component={Login} />
     </Switch>
   </BrowserRouter>
 )

@@ -4,7 +4,7 @@ import Playlist from '../../components/Playlist'
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import { logout } from '../../Login'
+import Auth from '../../auth'
 import MasterPlaylist from "../../components/MasterPlaylist";
 import { Playlist as PlaylistObj } from "../../types";
 
@@ -53,7 +53,9 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
     return (
     <div className={classes.root}>
-        <Button variant="contained" color="primary" onClick={() => logout()}>
+        <Button variant="contained" color="primary" onClick={async () => Auth.logout().then(() => {
+                window.location.href = window.location.origin + "/";
+        })}>
             Logout
         </Button>
         <Grid style={{padding:"10%"}} container spacing={5}>
