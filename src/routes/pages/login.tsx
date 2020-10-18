@@ -1,7 +1,8 @@
 import React from 'react'
 import { useHistory, RouteComponentProps, withRouter } from 'react-router-dom'
-import Button from '@material-ui/core/Button'
 import Auth from '../../auth'
+import ConnectButton from '../../components/BtnConnectToSpotify'
+
 
 const Login: React.FC<RouteComponentProps> = () => {
   const history = useHistory()
@@ -25,21 +26,10 @@ const Login: React.FC<RouteComponentProps> = () => {
     }).then(() => history.push('/'))
 
     return <span>Authenticating...</span>
-
   } else {
     // Case: Login page
     console.log('Login page')
-    return (
-      <Button
-        variant='contained'
-        color='primary'
-        onClick={() => {
-          window.location.href = Auth.generateEndpoint()
-        }}
-      >
-        Connect Using Spotify
-      </Button>
-    )
+    return <ConnectButton />
   }
 }
 
