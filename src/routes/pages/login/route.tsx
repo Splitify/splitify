@@ -1,8 +1,16 @@
-import React from 'react'
-import { useHistory, RouteComponentProps, withRouter } from 'react-router-dom'
-import Auth from '../../auth'
-import ConnectButton from '../../components/BtnConnectToSpotify'
+/* 
+// Login route handler 
 
+Checks for a Spotify auth callback and performs some authentication.
+Else returns the login screen
+
+*/
+
+import React from 'react'
+
+import { useHistory, RouteComponentProps, withRouter } from 'react-router-dom'
+import Auth from '../../../auth'
+import Page from './page'
 
 const Login: React.FC<RouteComponentProps> = () => {
   const history = useHistory()
@@ -29,7 +37,7 @@ const Login: React.FC<RouteComponentProps> = () => {
   } else {
     // Case: Login page
     console.log('Login page')
-    return <ConnectButton />
+    return <Page />
   }
 }
 
