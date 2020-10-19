@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import Auth from '../../auth'
 import MasterPlaylist from "../../components/MasterPlaylist";
 import { Playlist as PlaylistObj } from "../../types";
+import { Track as TrackObj } from "../../types"
 
 export const useStyles = makeStyles((theme) => ({
     root: {
@@ -39,9 +40,73 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         console.log("Adding playlist ", id);
         setPlaylists([...playlists, id]); 
     }
-
+    
+    const tracksData: Array<TrackObj> = [
+        {
+            id: "1",
+            duration_ms: 1,
+            explicit: true,
+            is_local: true,
+            name: "track 1",
+            popularity: 1,
+            preview_url: null,
+            track_number: 1,
+            type: "",
+            uri: "",
+            features: {
+                genre: "Pop",
+                loudness: "",
+                danceability: "",
+                instrumentalness: "",
+            }
+        },{
+            id: "2",
+            duration_ms: 1,
+            explicit: true,
+            is_local: true,
+            name: "track 2",
+            popularity: 1,
+            preview_url: null,
+            track_number: 1,
+            type: "",
+            uri: "",
+            features: {
+                genre: "EDM",
+                loudness: "",
+                danceability: "",
+                instrumentalness: "",
+            }
+        },{
+            id: "3",
+            duration_ms: 1,
+            explicit: true,
+            is_local: true,
+            name: "track 3",
+            popularity: 1,
+            preview_url: null,
+            track_number: 1,
+            type: "",
+            uri: "",
+            features: {
+                genre: "Blues",
+                loudness: "",
+                danceability: "",
+                instrumentalness: "",
+            }
+        }
+    ]
     const playlistData: PlaylistObj = {
         id: 'testid',
+        name: 'testname',
+        description: 'test',
+        image: '',
+        owner: { id: 'b0ss', display_name: 'Owner' },
+        snapshot_id: '',
+        tracks: tracksData,
+        uri: ''
+    }
+    const emptyPlaylist: PlaylistObj = {
+        id: 'testid2',
         name: 'testname',
         description: 'test',
         image: '',
@@ -64,7 +129,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         </Grid>
         {playlists.map(p => (
         <Grid item xs={4}>
-            <Playlist playlist={playlistData} id={p} delete={() => deletePlaylist(p)}/>
+            <Playlist playlist={emptyPlaylist} id={p} delete={() => deletePlaylist(p)}/>
         </Grid>
         ))}
         <Grid item xs={2}>

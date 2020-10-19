@@ -16,4 +16,10 @@ export interface Track {
   track_number: Number
   type: string
   uri: string
+  features: {
+    genre: string
+    loudness: string
+    danceability: string
+    instrumentalness: string
+  }
 }
