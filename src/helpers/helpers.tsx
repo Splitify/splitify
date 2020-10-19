@@ -14,6 +14,22 @@ export async function fetchTest () {
   console.log(await getPlaylist(api))
 }
 
+export async function getPlaylists (
+  api: SpotifyAPI.SpotifyWebApiJs
+): Promise<Array<Playlist>> {
+  let resp = []
+  let offset = 0
+  let total
+  do {
+    let page = await api.getUserPlaylists(undefined, { limit: 50, offset })
+    total = page.total
+    resp.push(...page.items)
+    offset += page.items.length
+  } while (offset < total)
+
+  return resp.map(parsePlaylistJSON)
+}
+
 export async function getPlaylist (
   api: SpotifyAPI.SpotifyWebApiJs
 ): Promise<Playlist> {
