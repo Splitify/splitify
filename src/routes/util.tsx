@@ -41,7 +41,8 @@ const AuthProxy: React.FunctionComponent<{ component: React.ComponentClass }> = 
         setReady(true)
       }
     })
-  }, [null])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   let [ready, setReady] = useState(false)
 
