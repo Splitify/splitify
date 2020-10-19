@@ -6,13 +6,14 @@
 import React from 'react'
 
 import Container from '@material-ui/core/Container'
+import Textmark from "../../../images/textmark@72.png"
 import ConnectButton from '../../../components/BtnConnectToSpotify'
 
 export default function () {
   return (
     <Container maxWidth='sm'>
       <img
-        src='https://splitify.github.io/branding/textmark/textmark@72.png'
+          src={Textmark}
         width='480px'
       />
       <ConnectButton />
