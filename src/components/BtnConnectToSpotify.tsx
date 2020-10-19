@@ -1,11 +1,16 @@
 import React from 'react'
 import Button from '@material-ui/core/Button'
-import SpotifyIcon from '../icons/spotify.svg'
+import SpotifyIcon from '../images/spotify.svg'
 import Auth from '../auth'
 
 import styled from 'styled-components'
 
+function doAuth() {
+  window.location.href = Auth.generateEndpoint()
+}
+
 const Content = styled.span`
+  /* Add splitify icon */
   &:before {
     background-size: cover;
     display: inline-block;
@@ -24,9 +29,7 @@ export default function () {
       variant='contained'
       color='primary'
       style={{ backgroundColor: '#1DB954' }}
-      onClick={() => {
-        window.location.href = Auth.generateEndpoint()
-      }}
+      onClick={doAuth}
     >
       <Content>Connect Using Spotify</Content>
     </Button>
