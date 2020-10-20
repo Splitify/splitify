@@ -95,7 +95,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             }
         }
     ]
-    const playlistData: PlaylistObj = {
+    const masterPlaylistData: PlaylistObj = {
         id: 'testid',
         name: 'testname',
         description: 'test',
@@ -116,6 +116,12 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         uri: ''
     }
 
+    const allGenres: Array<string> = []
+    masterPlaylistData.tracks.map((track: TrackObj) => (
+      allGenres.push(" " + track.features.genre + " ")
+    ))
+    const [genres, setGenres] = useState(allGenres)
+
     return (
     <div className={classes.root}>
         <Button variant="contained" color="primary" onClick={async () => Auth.logout().then(() => {
@@ -125,11 +131,11 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         </Button>
         <Grid style={{padding:"10%"}} container spacing={5}>
         <Grid item xs={4}>
-        <MasterPlaylist playlist={playlistData}/>
+        <MasterPlaylist playlist={masterPlaylistData}/>
         </Grid>
         {playlists.map(p => (
         <Grid item xs={4}>
-            <Playlist playlist={emptyPlaylist} id={p} delete={() => deletePlaylist(p)}/>
+            <Playlist genres={genres} playlist={emptyPlaylist} id={p} delete={() => deletePlaylist(p)}/>
         </Grid>
         ))}
         <Grid item xs={2}>

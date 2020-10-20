@@ -17,7 +17,6 @@ const useStyles = makeStyles({
   },
 });
 
-
 export default function MasterPlaylist(props: { playlist: PlaylistObj}) {
   const classes = useStyles();
   const allGenres: Array<string> = []
