@@ -9,10 +9,6 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Track from './Track';
 import { Playlist as PlaylistObj, Track as TrackObj } from "../types"
-import { getPlaylist } from '../helpers/helpers';
-import { getStorage } from '../helpers/localStorage';
-import SpotifyAPI from 'spotify-web-api-js'
-
 
 const useStyles = makeStyles({
   table: {
@@ -20,20 +16,8 @@ const useStyles = makeStyles({
   },
 });
 
-const a = async () => {
-  const authStore = getStorage('auth');
-  const token =  await authStore.getItem('token') as string;
-  let api = new SpotifyAPI();
-  api.setAccessToken(token);
-  console.log(await getPlaylist(api));
-}
-
 
 export default function MasterPlaylist(props: { playlist: PlaylistObj}) {
-  a();
-  
-
-
   const classes = useStyles();
   const allGenres: Array<string> = []
   props.playlist.tracks.map((track: TrackObj) => (

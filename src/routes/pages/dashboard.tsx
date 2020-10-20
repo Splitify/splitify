@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import Playlist from '../../components/Playlist'
 import Grid from '@material-ui/core/Grid';
@@ -10,6 +10,9 @@ import { Playlist as PlaylistObj } from "../../types";
 import { Track as TrackObj } from "../../types"
 import { Album } from "../../types/Album";
 import { Features } from "../../types/Features";
+import { getStorage } from "../../helpers/localStorage";
+import { getPlaylist } from "../../helpers/helpers";
+import SpotifyAPI from 'spotify-web-api-js'
 
 export const useStyles = makeStyles((theme) => ({
     root: {
@@ -30,6 +33,11 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     const classes = useStyles();
 
     const [playlists, setPlaylists] = useState([0]); // TODO: replace this with some 
+    const [firstLoad, setFirstLoad] = useState(false);
+    
+    useEffect(() => {
+        setFirstLoad(true);
+      }, []);
 
     const deletePlaylist = (id: Number) => {
         console.log("Deleting playlist ", id);
@@ -42,92 +50,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         console.log("Adding playlist ", id);
         setPlaylists([...playlists, id]);
     }
-    const album: Album = {
-        id: "1",
-        name: " ",
-        label: " ",
-        artists: [],
-        genres: [],
-        image: " ",
-        release_date: new Date("2020-09-02"),
-        total_tracks: 2,
-        popularity: 1,
-        uri: "55"
-    }
-
-    const features: Features = {
-        id: "adf",
-        acousticness: 1,
-        danceability: 1,
-        duration_ms: 1,
-        energy: 1,
-        instrumentalness: 1,
-        liveness: 1,
-        loudness: 1,
-        speechiness: 1,
-        tempo: 1,
-        mode: 1,
-        time_signature: 1,
-        valence: 1,
-        key: 1,
-        uri: "a",
-    }
-
-    const tracksData: Array<TrackObj> = [
-        {
-            album,
-            artists: [],
-            id: "1",
-            duration_ms: 1,
-            explicit: true,
-            is_local: true,
-            name: "track 1",
-            popularity: 1,
-            preview_url: null,
-            track_number: 1,
-            type: "",
-            uri: "",
-            features: features
-        }, {
-            album,
-            artists: [],
-            id: "2",
-            duration_ms: 1,
-            explicit: true,
-            is_local: true,
-            name: "track 2",
-            popularity: 1,
-            preview_url: null,
-            track_number: 1,
-            type: "",
-            uri: "",
-            features: features
-        }, {
-            album,
-            artists: [],
-            id: "3",
-            duration_ms: 1,
-            explicit: true,
-            is_local: true,
-            name: "track 3",
-            popularity: 1,
-            preview_url: null,
-            track_number: 1,
-            type: "",
-            uri: "",
-            features: features
-        }
-    ]
-    const masterPlaylistData: PlaylistObj = {
-        id: 'testid',
-        name: 'testname',
-        description: 'test',
-        image: '',
-        owner: { id: 'b0ss', display_name: 'Owner' },
-        snapshot_id: '',
-        tracks: tracksData,
-        uri: ''
-    }
+    
     const emptyPlaylist: PlaylistObj = {
         id: 'testid2',
         name: 'testname',
@@ -139,11 +62,25 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         uri: ''
     }
 
+    const [masterPlaylistData, setMasterPlaylist] = useState(emptyPlaylist);
+
     const allGenres: Array<string> = []
-    masterPlaylistData.tracks.map((track: TrackObj) => (
+    masterPlaylistData.tracks.map((track: TrackObj) => {
         allGenres.push(" " + track.album.genres.toString() + " ")
-    ))
-    const [genres, setGenres] = useState(allGenres)
+    })
+    const [genres, setGenres] = useState(allGenres);
+    
+    if (firstLoad) {
+        setFirstLoad(false);
+        (async () => {
+            const authStore = getStorage('auth');
+            const token = await authStore.getItem('token') as string;
+            let api = new SpotifyAPI();
+            api.setAccessToken(token);
+            setMasterPlaylist(await getPlaylist(api));
+        })();
+    }
+    
 
     return (
         <div className={classes.root}>
