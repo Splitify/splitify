@@ -25,7 +25,7 @@ const a = async () => {
   const token =  await authStore.getItem('token') as string;
   let api = new SpotifyAPI();
   api.setAccessToken(token);
-  await getPlaylist(api);
+  console.log(await getPlaylist(api));
 }
 
 
@@ -37,7 +37,7 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj}) {
   const classes = useStyles();
   const allGenres: Array<string> = []
   props.playlist.tracks.map((track: TrackObj) => (
-    allGenres.push(" " + track.features.genre + " ")
+    allGenres.push(" " + track.album.genres + " ")
   ))
   const [genres, setGenres] = useState(allGenres)
 

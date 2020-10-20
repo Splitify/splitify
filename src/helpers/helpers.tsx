@@ -1,9 +1,11 @@
 import { Playlist, User } from '../types'
-import { parsePlaylistJSON, parseUserJSON, parseAlbumJSON, parseTrackJSON } from './parsers'
+import { parsePlaylistJSON, parseUserJSON, parseAlbumJSON, parseTrackJSON, parseFeaturesJSON } from './parsers'
 
 // TODO: Integrate auth branch
 
 import SpotifyAPI from 'spotify-web-api-js'
+import { Album } from '../types/Album'
+import { Features } from '../types/Features'
 export async function fetchTest () {
   let api = new SpotifyAPI()
   const token = '-'
@@ -14,22 +16,32 @@ export async function fetchTest () {
   console.log(await getPlaylist(api))
 }
 
+async function getAlbums(api: SpotifyAPI.SpotifyWebApiJs, ids: string[], ans: Album[]): Promise<Album[]> {
+  if (!ids.length) return ans; 
+  const albums = await api.getAlbums(ids.splice(0, 20)); // There is a limit of 20 per call
+  return (await getAlbums(api, ids, ans)).concat(await Promise.all(albums.albums.map(async(a: any) => await parseAlbumJSON(a))));
+}
+
 export async function getPlaylist (
   api: SpotifyAPI.SpotifyWebApiJs
 ): Promise<Playlist> {
-  let playlist = await api.getPlaylist('4vHIKV7j4QcZwgzGQcZg1x');
+  let playlist = await api.getPlaylist('4vHIKV7j4QcZwgzGQcZg1x') as any;
+  
+  
   // TODO: handle paging
-  await playlist.tracks.items.map(async (t: any) => {
-    t.track.album = await api.getAlbum(t.track.album.id).then(parseAlbumJSON);
-    t.track.features = await (await api.getAudioFeaturesForTracks(t.track.id)).audio_features[0];
-  });
-  await playlist.tracks.items.map((t: any) => {
-    console.log(parseTrackJSON(t.track));
-    return parseTrackJSON(t.track);
-  });
-
-  await console.log("tracks", playlist);
-
+  
+  const album_ids: string[] = playlist.tracks.items.map((t: any) => t.track.album.id);
+  const track_ids: string[] = playlist.tracks.items.map((t: any) => t.track.id); 
+  const albums = await getAlbums(api, album_ids, []);
+  const features = (await api.getAudioFeaturesForTracks(track_ids)).audio_features.map(parseFeaturesJSON);
+    
+  
+  playlist.tracks = await Promise.all(playlist.tracks.items.map(async (t: any) => {
+    t.track.album = albums.find((a: Album) => a.id == t.track.album.id);
+    t.track.features = features.find((f: Features) => f.id == t.track.id);
+    return await parseTrackJSON(t.track);
+  }));
+  
   return await parsePlaylistJSON(playlist);
 }
 

@@ -1,7 +1,8 @@
 import { User, Playlist, Track } from '../types'
 import { Album } from '../types/Album'
+import { Features } from '../types/Features'
 
-export function parseTrackJSON ({
+export function parseTrackJSON({
   album,
   artists,
   duration_ms,
@@ -33,6 +34,42 @@ export function parseTrackJSON ({
   }
 }
 
+export function parseFeaturesJSON({
+  id,
+  acousticness,
+  danceability,
+  duration_ms,
+  energy,
+  instrumentalness,
+  liveness,
+  loudness,
+  speechiness,
+  tempo,
+  mode,
+  time_signature,
+  valence,
+  key,
+  uri,
+}: any): Features {
+  return {
+    id,
+    acousticness,
+    danceability,
+    duration_ms,
+    energy,
+    instrumentalness,
+    liveness,
+    loudness,
+    speechiness,
+    tempo,
+    mode,
+    time_signature,
+    valence,
+    key,
+    uri,
+  }
+}
+
 export function parseAlbumJSON({
   id,
   name,
@@ -59,7 +96,7 @@ export function parseAlbumJSON({
   }
 }
 
-export function parseUserJSON ({ id, display_name, images }: any): User {
+export function parseUserJSON({ id, display_name, images }: any): User {
   return {
     id,
     display_name,
@@ -67,7 +104,7 @@ export function parseUserJSON ({ id, display_name, images }: any): User {
   }
 }
 
-export function parsePlaylistJSON ({
+export function parsePlaylistJSON({
   id,
   name,
   description,

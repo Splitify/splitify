@@ -1,4 +1,5 @@
 import { Album } from "./Album";
+import { Features } from "./Features";
 
 export interface Track {
   id: string
@@ -18,10 +19,5 @@ export interface Track {
   track_number: Number
   type: string
   uri: string
-  features: {
-    genre: string
-    loudness: string
-    danceability: string
-    instrumentalness: string
-  }
+  features: Features
 }
