@@ -1,6 +1,5 @@
-import React, { FC } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { Route, RouteProps } from 'react-router-dom'
-import { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import Auth from '../auth'
 
@@ -32,15 +31,18 @@ const AuthProxy: React.FunctionComponent<{ component: React.ComponentClass }> = 
   const history = useHistory()
 
   // validate user
-  Auth.validate().then(isValid => {
-    if (!isValid) {
-      // If auth token is invalid, redirect to login
-      history.push('/login')
-    } else {
-      // Else show login
-      setReady(true)
-    }
-  })
+  useEffect(function () {
+    Auth.validate().then(isValid => {
+      if (!isValid) {
+        // If auth token is invalid, redirect to login
+        history.push('/login')
+      } else {
+        // Else show login
+        setReady(true)
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   let [ready, setReady] = useState(false)
 
