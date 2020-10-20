@@ -1,5 +1,6 @@
 import { User, Playlist, Track } from '../types'
 import { Album } from '../types/Album'
+import { Artist } from '../types/Artist'
 import { Features } from '../types/Features'
 
 export function parseTrackJSON({
@@ -66,6 +67,28 @@ export function parseFeaturesJSON({
     time_signature,
     valence,
     key,
+    uri,
+  }
+}
+
+export function parseArtistJSON({
+  followers,
+  genres,
+  id,
+  images,
+  name,
+  popularity,
+  type,
+  uri,
+}: any): Artist {
+  return {
+    followers,
+    genres,
+    id,
+    images,
+    name,
+    popularity,
+    type,
     uri,
   }
 }

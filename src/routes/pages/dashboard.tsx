@@ -8,8 +8,6 @@ import Auth from '../../auth'
 import MasterPlaylist from "../../components/MasterPlaylist";
 import { Playlist as PlaylistObj } from "../../types";
 import { Track as TrackObj } from "../../types"
-import { Album } from "../../types/Album";
-import { Features } from "../../types/Features";
 import { getStorage } from "../../helpers/localStorage";
 import { getPlaylist } from "../../helpers/helpers";
 import SpotifyAPI from 'spotify-web-api-js'
@@ -66,7 +64,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
     const allGenres: Array<string> = []
     masterPlaylistData.tracks.map((track: TrackObj) => {
-        allGenres.push(" " + track.album.genres.toString() + " ")
+        console.log(track.artists)
+        allGenres.push(" " + track.artists[0].genres.toString() + " ")
     })
     const [genres, setGenres] = useState(allGenres);
     
