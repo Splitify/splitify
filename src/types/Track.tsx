@@ -1,7 +1,9 @@
+import { Album } from "./Album";
+
 export interface Track {
   id: string
-  // album: AlbumObj;
-  // artists: Array<ArtistObj>;
+  album: Album;
+  artists: Array<any>;
   // available_markets: Array<string>
   // disc_number: Number
   duration_ms: Number

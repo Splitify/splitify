@@ -8,6 +8,7 @@ import Auth from '../../auth'
 import MasterPlaylist from "../../components/MasterPlaylist";
 import { Playlist as PlaylistObj } from "../../types";
 import { Track as TrackObj } from "../../types"
+import { Album } from "../../types/Album";
 
 export const useStyles = makeStyles((theme) => ({
     root: {
@@ -40,9 +41,23 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         console.log("Adding playlist ", id);
         setPlaylists([...playlists, id]); 
     }
+    const album: Album = {
+        id: "1",
+        name: " ",
+        label: " ",
+        artists: [],
+        genres: [],
+        image: " ",
+        release_date: new Date("2020-09-02"),
+        total_tracks: 2,
+        popularity: 1,
+        uri: "55"
+    }
     
     const tracksData: Array<TrackObj> = [
         {
+            album,
+            artists: [],
             id: "1",
             duration_ms: 1,
             explicit: true,
@@ -60,6 +75,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                 instrumentalness: "",
             }
         },{
+            album,
+            artists: [],
             id: "2",
             duration_ms: 1,
             explicit: true,
@@ -77,6 +94,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                 instrumentalness: "",
             }
         },{
+            album,
+            artists: [],
             id: "3",
             duration_ms: 1,
             explicit: true,

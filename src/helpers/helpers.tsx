@@ -1,5 +1,5 @@
 import { Playlist, User } from '../types'
-import { parsePlaylistJSON, parseUserJSON } from './parsers'
+import { parsePlaylistJSON, parseUserJSON, parseAlbumJSON, parseTrackJSON } from './parsers'
 
 // TODO: Integrate auth branch
 
@@ -17,7 +17,20 @@ export async function fetchTest () {
 export async function getPlaylist (
   api: SpotifyAPI.SpotifyWebApiJs
 ): Promise<Playlist> {
-  return await api.getPlaylist('4vHIKV7j4QcZwgzGQcZg1x').then(parsePlaylistJSON)
+  let playlist = await api.getPlaylist('4vHIKV7j4QcZwgzGQcZg1x');
+  // TODO: handle paging
+  await playlist.tracks.items.map(async (t: any) => {
+    t.track.album = await api.getAlbum(t.track.album.id).then(parseAlbumJSON);
+    t.track.features = await (await api.getAudioFeaturesForTracks(t.track.id)).audio_features[0];
+  });
+  await playlist.tracks.items.map((t: any) => {
+    console.log(parseTrackJSON(t.track));
+    return parseTrackJSON(t.track);
+  });
+
+  await console.log("tracks", playlist);
+
+  return await parsePlaylistJSON(playlist);
 }
 
 export async function getUserProfile (
