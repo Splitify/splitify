@@ -7,9 +7,8 @@ import Button from '@material-ui/core/Button';
 import Auth from '../../auth'
 import MasterPlaylist from "../../components/MasterPlaylist";
 import { Playlist as PlaylistObj } from "../../types";
-import { Track as TrackObj } from "../../types"
 import { getStorage } from "../../helpers/localStorage";
-import { getPlaylist } from "../../helpers/helpers";
+import { allGenresFromPlaylist, getPlaylist } from "../../helpers/helpers";
 import SpotifyAPI from 'spotify-web-api-js'
 
 export const useStyles = makeStyles((theme) => ({
@@ -62,12 +61,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
     const [masterPlaylistData, setMasterPlaylist] = useState(emptyPlaylist);
 
-    const allGenres: Array<string> = []
-    masterPlaylistData.tracks.map((track: TrackObj) => {
-        console.log(track.artists)
-        allGenres.push(" " + track.artists[0].genres.toString() + " ")
-    })
-    const [genres, setGenres] = useState(allGenres);
+    const allGenres = allGenresFromPlaylist(masterPlaylistData);
     
     if (firstLoad) {
         setFirstLoad(false);
@@ -94,7 +88,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                 </Grid>
                 {playlists.map(p => (
                     <Grid item xs={4}>
-                        <Playlist genres={genres} playlist={emptyPlaylist} id={p} delete={() => deletePlaylist(p)} />
+                        <Playlist genres={allGenres} playlist={emptyPlaylist} id={p} delete={() => deletePlaylist(p)} />
                     </Grid>
                 ))}
                 <Grid item xs={2}>
