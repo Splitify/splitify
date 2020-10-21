@@ -1,5 +1,3 @@
-import Auth from "../auth"
-
 import { parsePlaylistJSON, parseUserJSON, parseAlbumJSON, parseTrackJSON, parseFeaturesJSON, parseArtistJSON } from './parsers'
 
 import { Playlist, Track, User } from '../types'
@@ -7,7 +5,7 @@ import { Album } from '../types/Album'
 import { Features } from '../types/Features'
 import { Artist } from '../types/Artist'
 
-let { api } = Auth;
+import { api } from "../auth"
 
 // Get all playlists (performs page flattening)
 export async function getPlaylists (): Promise<Array<Playlist>> {

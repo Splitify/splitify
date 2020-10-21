@@ -4,12 +4,9 @@ import { getUserProfile } from './helpers/helpers'
 
 const authStore = getStorage('auth')
 
-export default new (class {
-  _api : SpotifyAPI.SpotifyWebApiJs
+export const api: SpotifyAPI.SpotifyWebApiJs = new SpotifyAPI()
 
-  constructor () {
-    this._api = new SpotifyAPI()
-  }
+export default new (class {
 
   // Login function, takes in access_token and expires_in (seconds)
   async login ({
@@ -50,7 +47,7 @@ export default new (class {
       }
 
       // Get user profile data from Spotify
-      this._api.setAccessToken(token)
+      api.setAccessToken(token)
       try {
         let profile = await getUserProfile()
         await authStore.setItem('profile', profile)
@@ -99,6 +96,6 @@ export default new (class {
   }
 
   get api() {
-    return this._api
+    return api
   }
 })()
