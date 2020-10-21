@@ -1,7 +1,10 @@
+import { Album } from "./Album";
+import { Features } from "./Features";
+
 export interface Track {
   id: string
-  // album: AlbumObj;
-  // artists: Array<ArtistObj>;
+  album: Album;
+  artists: Array<any>;
   // available_markets: Array<string>
   // disc_number: Number
   duration_ms: Number
@@ -16,10 +19,5 @@ export interface Track {
   track_number: Number
   type: string
   uri: string
-  features: {
-    genre: string
-    loudness: string
-    danceability: string
-    instrumentalness: string
-  }
+  features: Features
 }
