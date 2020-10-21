@@ -145,6 +145,6 @@ export function parsePlaylistJSON({
     owner: parseUserJSON(owner),
     snapshot_id,
     uri,
-    tracks // TODO: Parse tracks
+    tracks: [] // TODO: Parse tracks
   }
 }
