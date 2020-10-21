@@ -3,17 +3,23 @@ import PlaylistSelector from './PlaylistSelector'
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 import { Icon, Dialog, Box, Paper } from '@material-ui/core'
+import { Playlist } from '../../types'
 
-export default function (props: { text?: string; children?: any }) {
-  console.log(props.text)
-  let [activePlaylist, setActivePlaylist] = useState(null)
+export default function (props: {
+  text?: string
+  playlist?: Playlist
+  component: any
+}) {
+  const { component: Component } = props
+
+  let [playlist, setPlaylist] = useState(props.playlist)
   let [selectorOpen, setSelectorOpen] = useState(false)
 
   // Default state - have not selected a playlist yet
   // Loaded state - display the playlist component
 
-  return activePlaylist ? (
-    props.children || ''
+  return playlist ? (
+    <Component playlist={playlist} />
   ) : (
     <React.Fragment>
       <Box

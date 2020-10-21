@@ -6,6 +6,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Auth from '../../auth'
 import MasterPlaylist from "../../components/MasterPlaylist";
+import PlaylistWrapper from "../../components/PlaylistWrapper"
+
+
 import { Playlist as PlaylistObj } from "../../types";
 import { allGenresFromPlaylist, getPlaylist } from "../../helpers/helpers";
 
@@ -78,7 +81,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         </Button>
             <Grid style={{ padding: "10%" }} container spacing={5}>
                 <Grid item xs={4}>
-                    <MasterPlaylist playlist={masterPlaylistData} />
+                    <PlaylistWrapper component={MasterPlaylist}/>
                 </Grid>
                 {playlists.map(p => (
                     <Grid item xs={4}>
