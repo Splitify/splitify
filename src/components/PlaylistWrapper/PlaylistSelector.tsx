@@ -11,10 +11,15 @@ import {
   ListItemText,
   LinearProgress,
   Button,
+  Box,
   Card,
+  CardContent,
   CardActions,
-  CardContent
+  TextField,
+  InputAdornment
 } from '@material-ui/core'
+
+import SearchIcon from '@material-ui/icons/Search'
 
 import { Playlist } from '../../types'
 import { getPlaylists } from '../../helpers/helpers'
@@ -40,12 +45,33 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
 
   let [playlists, setPlaylists] = useState<Playlist[]>([])
   let [loading, setLoading] = useState(false)
+  let [search, setSearch] = useState('')
 
   return (
     <Card className={classes.root}>
       <CardContent className={classes.content}>
+        <Box m={1}>
+          <TextField
+            label='Search'
+            fullWidth
+            variant='outlined'
+            margin='normal'
+            onChange={evt => setSearch(evt.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <SearchIcon />
+                </InputAdornment>
+              )
+            }}
+          />
+        </Box>
         <List>
-          {playlists.length > 0 ? (
+          {playlists
+          .filter(p => p.name.toLowerCase()
+          .includes(search))
+          .length > 0 
+          ? (
             playlists.map(playlist => (
               <ListItem
                 button
