@@ -6,8 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Auth from '../../auth'
 import MasterPlaylist from "../../components/MasterPlaylist";
-import PlaylistWrapper from "../../components/PlaylistWrapper"
-
+import PlaylistWrapper from "../../components/PlaylistWrapper/"
 
 import { Playlist as PlaylistObj } from "../../types";
 import { allGenresFromPlaylist, getPlaylist } from "../../helpers/helpers";
