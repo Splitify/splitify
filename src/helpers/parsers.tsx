@@ -1,125 +1,117 @@
-import { User, Playlist, Track } from '../types'
-import { Album } from '../types/Album'
-import { Artist } from '../types/Artist'
-import { Features } from '../types/Features'
+import { Album, Artist, Features, User, Playlist, Track } from '../types'
 
-export function parseTrackJSON({
-  album,
-  artists,
-  duration_ms,
-  explicit,
-  features,
-  id,
-  is_local,
-  name,
-  popularity,
-  preview_url,
-  track_number,
-  type,
-  uri,
-}: any): Track {
+import { api } from '../auth'
+import Accumulumatorinator from './Accumulumatorinator'
+import { getPaginationRawGen } from './helpers'
+
+const FeatureAccumulator = new Accumulumatorinator<
+  SpotifyApi.AudioFeaturesResponse
+>(
+  100,
+  async ids => (await api.getAudioFeaturesForTracks(ids))['audio_features']
+)
+const AlbumAccumulator = new Accumulumatorinator<SpotifyApi.AlbumObjectFull>(
+  20,
+  async ids => (await api.getAlbums(ids))['albums']
+)
+const ArtistAccumulator = new Accumulumatorinator<SpotifyApi.ArtistObjectFull>(
+  50,
+  async ids => (await api.getArtists(ids))['artists']
+)
+
+export async function parseTrackJSON (
+  json: SpotifyApi.TrackObjectFull,
+  expand?: boolean
+): Promise<Track> {
+  let track: Track = {
+    features: undefined,
+    album: undefined,
+    artists: [],
+    duration_ms: json.duration_ms,
+    explicit: json.explicit,
+    id: json.id,
+    // is_local: json.is_local,
+    name: json.name,
+    popularity: json.popularity,
+    preview_url: json.preview_url,
+    track_number: json.track_number,
+    type: json.type,
+    uri: json.uri,
+    expand: async function () {
+      // Disabler
+      this.expand = async function () {
+        return this
+      }
+
+      this.features = parseFeaturesJSON(
+        await FeatureAccumulator.request(this.id)
+      )
+
+      this.artists = await Promise.all(
+        json.artists.map(async ({ id }) =>
+          parseArtistJSON(await ArtistAccumulator.request(id))
+        )
+      )
+
+      this.album = await parseAlbumJSON(
+        await AlbumAccumulator.request(json.album.id)
+      )
+
+      return this
+    }
+  }
+  return expand ? await track.expand() : track
+}
+
+export function parseFeaturesJSON (
+  json: SpotifyApi.AudioFeaturesResponse
+): Features {
   return {
-    album,
-    artists,
-    duration_ms,
-    explicit,
-    features,
-    id,
-    is_local,
-    name,
-    popularity,
-    preview_url,
-    track_number,
-    type,
-    uri
+    acousticness: json.acousticness,
+    danceability: json.danceability,
+    duration_ms: json.duration_ms,
+    energy: json.energy,
+    instrumentalness: json.instrumentalness,
+    liveness: json.liveness,
+    loudness: json.loudness,
+    speechiness: json.speechiness,
+    tempo: json.tempo,
+    mode: json.mode,
+    time_signature: json.time_signature,
+    valence: json.valence,
+    key: json.key
   }
 }
 
-export function parseFeaturesJSON({
-  id,
-  acousticness,
-  danceability,
-  duration_ms,
-  energy,
-  instrumentalness,
-  liveness,
-  loudness,
-  speechiness,
-  tempo,
-  mode,
-  time_signature,
-  valence,
-  key,
-  uri,
-}: any): Features {
+export function parseArtistJSON (json: SpotifyApi.ArtistObjectFull): Artist {
   return {
-    id,
-    acousticness,
-    danceability,
-    duration_ms,
-    energy,
-    instrumentalness,
-    liveness,
-    loudness,
-    speechiness,
-    tempo,
-    mode,
-    time_signature,
-    valence,
-    key,
-    uri,
+    followers: json.followers.total,
+    genres: json.genres,
+    id: json.id,
+    // images: (json.images && json.images.length) ? json.images[0].url : undefined,
+    name: json.name,
+    popularity: json.popularity,
+    type: json.type,
+    uri: json.uri
   }
 }
 
-export function parseArtistJSON({
-  followers,
-  genres,
-  id,
-  images,
-  name,
-  popularity,
-  type,
-  uri,
-}: any): Artist {
+export function parseAlbumJSON (json: SpotifyApi.AlbumObjectFull): Album {
   return {
-    followers,
-    genres,
-    id,
-    images,
-    name,
-    popularity,
-    type,
-    uri,
+    id: json.id,
+    name: json.name,
+    // label: json.label,
+    artists: json.artists,
+    genres: json.genres,
+    // image: json.image,
+    release_date: new Date(json.release_date),
+    // total_tracks: json.total_tracks,
+    popularity: json.popularity,
+    uri: json.uri
   }
 }
 
-export function parseAlbumJSON({
-  id,
-  name,
-  label,
-  artists,
-  genres,
-  image,
-  release_date,
-  total_tracks,
-  popularity,
-  uri,
-}: any): Album {
-  return {
-    id,
-    name,
-    label,
-    artists,
-    genres,
-    image,
-    release_date,
-    total_tracks,
-    popularity,
-    uri
-  }
-}
-
-export function parseUserJSON({ id, display_name, images }: any): User {
+export function parseUserJSON ({ id, display_name, images }: any): User {
   return {
     id,
     display_name,
@@ -127,24 +119,34 @@ export function parseUserJSON({ id, display_name, images }: any): User {
   }
 }
 
-export function parsePlaylistJSON({
-  id,
-  name,
-  description,
-  images,
-  owner,
-  snapshot_id,
-  uri,
-  tracks
-}: any): Playlist {
-  return {
-    id,
-    name,
-    description: description || '',
-    image: images.length ? images[0].url : '',
-    owner: parseUserJSON(owner),
-    snapshot_id,
-    uri,
-    tracks: [] // TODO: Parse tracks
+export async function parsePlaylistJSON (
+  json: SpotifyApi.PlaylistObjectFull,
+  expand?: boolean
+): Promise<Playlist> {
+  let playlist: Playlist = {
+    id: json.id,
+    name: json.name,
+    description: json.description || '',
+    image: json.images.length ? json.images[0].url : '',
+    owner: parseUserJSON(json.owner),
+    snapshot_id: json.snapshot_id,
+    uri: json.uri,
+    tracks: [],
+    expand: async function (expandTrack = false) {
+      // Disabler
+      this.expand = async function () {
+        return this
+      }
+
+      for await (let track of getPaginationRawGen(
+        api.getPlaylistTracks,
+        this.id
+      )) {
+        this.tracks.push(await parseTrackJSON(track['track'], expandTrack))
+      }
+      return this
+    }
   }
+
+  return expand ? await playlist.expand() : playlist
 }
