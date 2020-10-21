@@ -34,7 +34,7 @@ export default class Accumulumatorinator<T> {
     let currentPromise = this._promise
 
     if (length === 1) {
-      this._timeout = setTimeout(() => this.finish(), 1000)
+      this._timeout = setTimeout(() => this.finish(), 500)
     }
     if (length === this.limit || instant) {
       this.finish() // Reset accumulator and promise
