@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableContainer from '@material-ui/core/TableContainer'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
-import Paper from '@material-ui/core/Paper'
+
+import {
+  Paper,
+  Table,
+  TableContainer,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell
+} from '@material-ui/core'
+
 import { Playlist as PlaylistObj } from '../types'
 import { allGenresFromPlaylist } from '../helpers/helpers'
 
@@ -39,7 +43,7 @@ export default function MasterPlaylist (props: { playlist: PlaylistObj }) {
       })
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []) // TODO: Changing playlist? props.playlist
 
   return (
     <TableContainer
@@ -48,10 +52,10 @@ export default function MasterPlaylist (props: { playlist: PlaylistObj }) {
     >
       <Table className={classes.table} aria-label='simple table'>
         <TableHead>
-          <TableRow key="heading">
+          <TableRow key='heading'>
             <TableCell>Master Playlist: {props.playlist.name}</TableCell>
           </TableRow>
-          <TableRow key="genres">
+          <TableRow key='genres'>
             <TableCell>{allGenres.toString()}</TableCell>
           </TableRow>
         </TableHead>
