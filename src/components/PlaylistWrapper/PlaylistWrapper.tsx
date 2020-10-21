@@ -15,6 +15,10 @@ export default function (props: {
   let [playlist, setPlaylist] = useState(props.playlist)
   let [selectorOpen, setSelectorOpen] = useState(false)
 
+  function handleSelect (playlist: Playlist) {
+    setPlaylist(playlist)
+    setSelectorOpen(false)
+  }
   // Default state - have not selected a playlist yet
   // Loaded state - display the playlist component
 
@@ -33,7 +37,7 @@ export default function (props: {
       </Box>
 
       <Dialog open={selectorOpen} onClose={() => setSelectorOpen(false)}>
-        <PlaylistSelector />
+        <PlaylistSelector onSelect={handleSelect} />
       </Dialog>
     </React.Fragment>
   )
