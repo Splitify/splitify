@@ -9,17 +9,28 @@ import { api } from "../auth"
 
 // Get all playlists (performs page flattening)
 export async function getPlaylists (): Promise<Array<Playlist>> {
-  let resp = []
+  let res = [];
+  for await (let playlistJSON of getPlaylistsRawGen()) {
+    res.push(parsePlaylistJSON(playlistJSON))
+  }
+  return res
+}
+
+export async function* getPlaylistsGen () {
+  for await (let playlistJSON of getPlaylistsRawGen()) {
+    yield parsePlaylistJSON(playlistJSON)
+  }
+}
+
+async function* getPlaylistsRawGen() {
   let offset = 0
   let total
   do {
     let page = await api.getUserPlaylists(undefined, { limit: 50, offset })
     total = page.total
-    resp.push(...page.items)
+    yield *page.items
     offset += page.items.length
   } while (offset < total)
-
-  return resp.map(parsePlaylistJSON)
 }
 
 async function getAlbums(ids: string[], ans: Album[]): Promise<Album[]> {
