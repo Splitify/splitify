@@ -72,28 +72,32 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
           square={true}
           style={{ maxHeight: 500, overflow: 'auto' }}
         >
-        <List>
-          {playlists
-          .filter(p => p.name.toLowerCase()
-          .includes(search))
-          .length > 0 
-          ? (
-            playlists.map(playlist => (
-              <ListItem
-                button
-                disabled={loading}
-                key={playlist.id}
-                onClick={() => props.onSelect(playlist)}
-              >
-                <ListItemText primary={playlist.name} />
+          <List>
+            {playlists
+            .filter(p =>
+              p.name.toLowerCase()
+              .includes(search.toLowerCase())
+            )
+            .length > 0 ? (
+              playlists.map(playlist => (
+                <ListItem
+                  button
+                  disabled={loading}
+                  key={playlist.id}
+                  onClick={() => props.onSelect(playlist)}
+                >
+                  <ListItemText primary={playlist.name} />
+                </ListItem>
+              ))
+            ) : (
+              <ListItem>
+                <ListItemText
+                  primary={'No playlists exist!'}
+                  secondary={search ? 'Try a different search term' : ''}
+                />
               </ListItem>
-            ))
-          ) : (
-            <ListItem>
-              <ListItemText primary={'No playlists exist!'} />
-            </ListItem>
-          )}
-        </List>
+            )}
+          </List>
         </Paper>
       </CardContent>
       <Fade in={loading}>
