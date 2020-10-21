@@ -49,8 +49,15 @@ export async function getUserProfile(): Promise<User> {
   return await api.getMe().then(parseUserJSON)
 }
 
-export function allGenresFromPlaylist(playlist: Playlist): string[] {
-  return playlist.tracks.map((track: Track) =>
-    track.artists.map((artist: Artist) => artist.genres)
-  ).flat().flat().filter(unique).sort();
+export function allGenresFromPlaylist (playlist: Playlist): string[] {
+  return Array.from(
+    new Set(
+      playlist.tracks
+        .map((track: Track) =>
+          track.artists.map((artist: Artist) => artist.genres)
+        )
+        .flat()
+        .flat()
+    )
+  ).sort()
 }
