@@ -1,10 +1,11 @@
 import { Album } from "./Album";
 import { Features } from "./Features";
+import { Artist } from "./Artist"
 
 export interface Track {
   id: string
   album: Album;
-  artists: Array<any>;
+  artists: Array<Artist>;
   // available_markets: Array<string>
   // disc_number: Number
   duration_ms: Number

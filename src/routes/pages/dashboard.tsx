@@ -21,17 +21,29 @@ export const useStyles = makeStyles((theme) => ({
 }));
 
 interface IDashboardProps extends RouteComponentProps {
-
 }
 
 const Dashboard: React.FC<IDashboardProps> = () => {
+
+    const emptyPlaylist: PlaylistObj = {
+        id: 'testid2',
+        name: 'testname',
+        description: 'test',
+        image: '',
+        owner: { id: 'b0ss', display_name: 'Owner' },
+        snapshot_id: '',
+        tracks: [],
+        uri: ''
+    }
 
     //The width of the grids have to be dynamic, not a fixed width
     const classes = useStyles();
 
     const [playlists, setPlaylists] = useState([0]); // TODO: replace this with some 
+    const [subPlaylist, setSubPlaylist] = useState(emptyPlaylist)
     const [firstLoad, setFirstLoad] = useState(false);
-    
+    const [masterPlaylistData, setMasterPlaylist] = useState(emptyPlaylist);
+
     useEffect(() => {
         setFirstLoad(true);
       }, []);
@@ -48,18 +60,9 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         setPlaylists([...playlists, id]);
     }
     
-    const emptyPlaylist: PlaylistObj = {
-        id: 'testid2',
-        name: 'testname',
-        description: 'test',
-        image: '',
-        owner: { id: 'b0ss', display_name: 'Owner' },
-        snapshot_id: '',
-        tracks: [],
-        uri: ''
+    const split = () => {
+        setSubPlaylist(masterPlaylistData)
     }
-
-    const [masterPlaylistData, setMasterPlaylist] = useState(emptyPlaylist);
 
     const allGenres = allGenresFromPlaylist(masterPlaylistData);
     
@@ -82,13 +85,16 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             })}>
                 Logout
         </Button>
+        <Button variant="contained" color="primary" onClick={split}>
+                Split
+        </Button>
             <Grid style={{ padding: "10%" }} container spacing={5}>
                 <Grid item xs={4}>
                     <MasterPlaylist playlist={masterPlaylistData} />
                 </Grid>
                 {playlists.map(p => (
                     <Grid item xs={4}>
-                        <Playlist genres={allGenres} playlist={emptyPlaylist} id={p} delete={() => deletePlaylist(p)} />
+                        <Playlist genres={allGenres} playlist={subPlaylist} id={p} delete={() => deletePlaylist(p)} />
                     </Grid>
                 ))}
                 <Grid item xs={2}>
