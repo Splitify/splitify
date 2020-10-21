@@ -7,9 +7,7 @@ import Button from '@material-ui/core/Button';
 import Auth from '../../auth'
 import MasterPlaylist from "../../components/MasterPlaylist";
 import { Playlist as PlaylistObj } from "../../types";
-import { getStorage } from "../../helpers/localStorage";
 import { allGenresFromPlaylist, getPlaylist } from "../../helpers/helpers";
-import SpotifyAPI from 'spotify-web-api-js'
 
 export const useStyles = makeStyles((theme) => ({
     root: {
