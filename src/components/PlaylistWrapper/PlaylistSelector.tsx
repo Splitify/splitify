@@ -15,6 +15,7 @@ import {
   Card,
   CardContent,
   CardActions,
+  Paper,
   TextField,
   InputAdornment
 } from '@material-ui/core'
@@ -66,6 +67,11 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
             }}
           />
         </Box>
+        <Paper
+          elevation={0}
+          square={true}
+          style={{ maxHeight: 500, overflow: 'auto' }}
+        >
         <List>
           {playlists
           .filter(p => p.name.toLowerCase()
@@ -88,6 +94,7 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
             </ListItem>
           )}
         </List>
+        </Paper>
       </CardContent>
       <Fade in={loading}>
         <LinearProgress />
