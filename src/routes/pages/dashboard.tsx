@@ -66,11 +66,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     if (firstLoad) {
         setFirstLoad(false);
         (async () => {
-            const authStore = getStorage('auth');
-            const token = await authStore.getItem('token') as string;
-            let api = new SpotifyAPI();
-            api.setAccessToken(token);
-            setMasterPlaylist(await getPlaylist(api));
+            setMasterPlaylist(await getPlaylist());
         })();
     }
     
