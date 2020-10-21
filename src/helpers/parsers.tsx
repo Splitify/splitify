@@ -88,7 +88,7 @@ export function parseArtistJSON (json: SpotifyApi.ArtistObjectFull): Artist {
     followers: json.followers.total,
     genres: json.genres,
     id: json.id,
-    // images: (json.images && json.images.length) ? json.images[0].url : undefined,
+    image: json.images && json.images.length ? json.images[0].url : '',
     name: json.name,
     popularity: json.popularity,
     type: json.type,
@@ -96,19 +96,31 @@ export function parseArtistJSON (json: SpotifyApi.ArtistObjectFull): Artist {
   }
 }
 
-export function parseAlbumJSON (json: SpotifyApi.AlbumObjectFull): Album {
-  return {
+export async function parseAlbumJSON (
+  json: SpotifyApi.AlbumObjectFull,
+  expand?: boolean
+): Promise<Album> {
+  let album: Album = {
     id: json.id,
     name: json.name,
-    // label: json.label,
-    artists: json.artists,
+    artists: [],
     genres: json.genres,
-    // image: json.image,
+    image: json.images && json.images.length ? json.images[0].url : '',
     release_date: new Date(json.release_date),
-    // total_tracks: json.total_tracks,
+    total_tracks: json.tracks.total,
     popularity: json.popularity,
-    uri: json.uri
+    uri: json.uri,
+    expand: async function () {
+      this.artists = await Promise.all(
+        json.artists.map(async ({ id }) =>
+          parseArtistJSON(await ArtistAccumulator.request(id))
+        )
+      )
+      return this
+    }
   }
+
+  return expand ? await album.expand() : album
 }
 
 export function parseUserJSON ({ id, display_name, images }: any): User {
