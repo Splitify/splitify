@@ -40,7 +40,7 @@ export default class Accumulumatorinator<T> {
       this.finish() // Reset accumulator and promise
     }
 
-    return async () => (await currentPromise)[length - 1]
+    return currentPromise.then(arr => arr[length - 1])
   }
 
   async finish () {
