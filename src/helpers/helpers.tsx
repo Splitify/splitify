@@ -1,34 +1,49 @@
-import { parsePlaylistJSON, parseUserJSON, parseAlbumJSON, parseTrackJSON, parseFeaturesJSON, parseArtistJSON } from './parsers'
+import { parsePlaylistJSON, parseUserJSON } from './parsers'
+import { Artist, Playlist, Track, User } from '../types'
+import { api } from '../auth'
 
-import { Playlist, Track, User } from '../types'
-import { Album } from '../types/Album'
-import { Features } from '../types/Features'
-import { Artist } from '../types/Artist'
-
-import { api } from "../auth"
-
-// Get all playlists (performs page flattening)
-export async function getPlaylists (): Promise<Array<Playlist>> {
-  let res = [];
-  for await (let playlistJSON of getPlaylistsRawGen()) {
-    res.push(parsePlaylistJSON(playlistJSON))
+// Get all playlists
+export async function getPlaylists (
+  user?: string,
+  expand: boolean = false
+): Promise<Array<Playlist>> {
+  let res = []
+  for await (let playlistJSON of getPaginationRawGen(
+    api.getUserPlaylists,
+    user
+  )) {
+    res.push(await parsePlaylistJSON(playlistJSON, expand))
   }
   return res
 }
 
-export async function* getPlaylistsGen () {
-  for await (let playlistJSON of getPlaylistsRawGen()) {
-    yield parsePlaylistJSON(playlistJSON)
+export async function * getPlaylistsGen (
+  user?: string,
+  expand: boolean = false
+) {
+  for await (let playlistJSON of getPaginationRawGen(
+    api.getUserPlaylists,
+    user
+  )) {
+    yield parsePlaylistJSON(playlistJSON, expand)
   }
 }
 
-async function* getPlaylistsRawGen() {
+export async function getPaginationRaw (func: Function, ...args: any) {
+  let resp = []
+  for await (let obj of getPaginationRawGen(func, ...args)) {
+    resp.push(obj)
+  }
+  return resp
+}
+
+export async function * getPaginationRawGen (func: Function, ...args: any) {
   let offset = 0
   let total
   do {
-    let page = await api.getUserPlaylists(undefined, { limit: 50, offset })
+    let page = await func(...args, { /* limit: 50,*/ offset })
     total = page.total
-    yield *page.items
+    yield * page.items
     offset += page.items.length
   } while (offset < total)
 }
@@ -45,7 +60,7 @@ export async function getPlaylist (
   )
 }
 
-export async function getUserProfile(): Promise<User> {
+export async function getUserProfile (): Promise<User> {
   return await api.getMe().then(parseUserJSON)
 }
 
