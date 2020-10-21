@@ -49,6 +49,7 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
             playlists.map(playlist => (
               <ListItem
                 button
+                disabled={loading}
                 key={playlist.id}
                 onClick={() => props.onSelect(playlist)}
               >
