@@ -5,6 +5,11 @@ import Accumulumatorinator from './Accumulumatorinator'
 import { getPaginationRawGen } from './helpers'
 
 import Queue from 'queue'
+
+const TrackAccumulator = new Accumulumatorinator<SpotifyApi.TrackObjectFull>(
+  50,
+  async ids => (await api.getTracks(ids))['tracks']
+)
 const FeatureAccumulator = new Accumulumatorinator<
   SpotifyApi.AudioFeaturesResponse
 >(
@@ -151,13 +156,36 @@ export async function parsePlaylistJSON (
         return this
       }
 
+      const Q = Queue({ autostart: true, concurrency: 1, timeout: 10 * 1000 })
+
       for await (let track of getPaginationRawGen(
         api.getPlaylistTracks,
+        { fields: 'items.track.id,total' },
         this.id
       )) {
-        this.tracks.push(await parseTrackJSON(track['track'], expandTrack))
+        // TODO: What if the item appears twice in the playlist
+        // TODO: What if it's a local track?
+
+        let promise = TrackAccumulator.request(track['track']['id']).then(
+          async data => parseTrackJSON(await data, expandTrack)
+        )
+
+        Q.push(async cb => {
+          this.tracks.push(await promise)
+          cb && cb()
+        })
       }
-      return this
+
+      let _resolve: Function
+      let ret = new Promise<Playlist>((resolve, reject) => {
+        _resolve = resolve
+      })
+
+      Q.push(cb => {
+        _resolve(this)
+        cb && cb()
+      })
+      return ret
     }
   }
 
