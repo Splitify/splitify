@@ -28,6 +28,10 @@ export default class Accumulumatorinator<T> {
     })
   }
 
+  /**
+   * Request for an id. 
+   * Returns a promise that will be resolved when the current accumulation finishes
+   */
   request (id: string, instant?: boolean) {
     let accumulator = this._accumulator
     let length = accumulator.push(id)
@@ -43,6 +47,9 @@ export default class Accumulumatorinator<T> {
     return currentPromise.then(arr => arr[length - 1])
   }
 
+  /**
+   * Force the finalisation of the current accumulation
+   */
   async finish () {
     if (this._timeout !== undefined) {
       clearTimeout(this._timeout as number)
