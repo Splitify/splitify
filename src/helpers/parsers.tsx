@@ -1,26 +1,30 @@
 import { Album, Artist, Features, User, Playlist, Track } from '../types'
 
 import { api } from '../auth'
-import Accumulumatorinator from './Accumulumatorinator'
+import {CachingAccumulumatorinator} from './Accumulumatorinator'
 import { getPaginationRawGen } from './helpers'
 
 import Queue from 'queue'
 
-const TrackAccumulator = new Accumulumatorinator<SpotifyApi.TrackObjectFull>(
+const TrackAccumulator = new CachingAccumulumatorinator<SpotifyApi.TrackObjectFull>(
+  'tracks',
   50,
   async ids => (await api.getTracks(ids))['tracks']
 )
-const FeatureAccumulator = new Accumulumatorinator<
+const FeatureAccumulator = new CachingAccumulumatorinator<
   SpotifyApi.AudioFeaturesResponse
 >(
+  'features',
   100,
   async ids => (await api.getAudioFeaturesForTracks(ids))['audio_features']
 )
-const AlbumAccumulator = new Accumulumatorinator<SpotifyApi.AlbumObjectFull>(
+const AlbumAccumulator = new CachingAccumulumatorinator<SpotifyApi.AlbumObjectFull>(
+  'albums',
   20,
   async ids => (await api.getAlbums(ids))['albums']
 )
-const ArtistAccumulator = new Accumulumatorinator<SpotifyApi.ArtistObjectFull>(
+const ArtistAccumulator = new CachingAccumulumatorinator<SpotifyApi.ArtistObjectFull>(
+  'artists',
   50,
   async ids => (await api.getArtists(ids))['artists']
 )
