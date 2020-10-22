@@ -4,6 +4,7 @@ import { api } from '../auth'
 import Accumulumatorinator from './Accumulumatorinator'
 import { getPaginationRawGen } from './helpers'
 
+import Queue from 'queue'
 const FeatureAccumulator = new Accumulumatorinator<
   SpotifyApi.AudioFeaturesResponse
 >(
