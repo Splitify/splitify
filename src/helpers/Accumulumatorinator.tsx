@@ -1,12 +1,12 @@
 // accumulator
 export default class Accumulumatorinator<T> {
-  callback: Function
-  limit: Number
+  private readonly callback: Function
+  private readonly limit: Number
 
-  _accumulator: string[]
-  _promise: Promise<T[]>
-  _resolve: Function
-  _timeout?: number
+  private _accumulator: string[]
+  private _promise: Promise<T[]>
+  private _resolve: Function
+  private _timeout?: number
 
   constructor (limit: Number, callback: (ids: string[]) => any) {
     this.callback = callback
@@ -21,7 +21,7 @@ export default class Accumulumatorinator<T> {
     this.newPromise()
   }
 
-  newPromise () {
+  private newPromise () {
     this._accumulator = []
     this._promise = new Promise((resolve, reject) => {
       this._resolve = resolve
