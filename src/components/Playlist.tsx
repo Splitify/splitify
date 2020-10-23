@@ -20,10 +20,8 @@ const useStyles = makeStyles({
 });
 
 export default function Playlist(props: {
-  playlist: PlaylistObj;
-  genres: string[];
-  id: Number;
-  delete: () => void;
+  playlist: PlaylistObj,
+  onDelete?: (playlist: PlaylistObj) => any;
 }) {
   const classes = useStyles();
   const [selectedGenres, setFormats] = React.useState(() => []);
@@ -39,7 +37,7 @@ export default function Playlist(props: {
           <TableRow>
             <TableCell>Sub-Playlist</TableCell>
             <TableCell>
-              <Button variant="contained" color="secondary" onClick={props.delete}>
+              <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)}>
                 Delete
               </Button>
             </TableCell>
