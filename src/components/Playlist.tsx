@@ -10,11 +10,16 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Chip from '@material-ui/core/Chip';
 import Track from './Track';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '@material-ui/core/TextField';
+
 import { Playlist as PlaylistObj, Track as TrackObj } from "../types"
 
 const useStyles = makeStyles((theme) => ({
@@ -47,7 +52,6 @@ export default function Playlist(props: {
 }) {
   const classes = useStyles();
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
-  const [checked, setChecked] = useState<string[]>([])
   
   const handleDelete = (genreToDelete: any) => () => {
     setSelectedGenres((selectedGenres: string[]) => selectedGenres.filter((genre: string) => genre !== genreToDelete));
@@ -66,46 +70,19 @@ export default function Playlist(props: {
   }
   
   const handleToggle = (genre: string) => () => {
-    const currentIndex = checked.indexOf(genre);
-    const newChecked = [...checked];
-
+    const currentIndex = selectedGenres.indexOf(genre);
+    const newChecked = [...selectedGenres];
+    
     if (currentIndex === -1) {
       newChecked.push(genre);
     } else {
       newChecked.splice(currentIndex, 1);
     }
-    setChecked(newChecked);
+    setSelectedGenres(newChecked)
   };
 
-  const handleSelectGenres = () => {
-    setSelectedGenres(checked)
-    console.log(checked)
-    console.log(selectedGenres)
-  };
-
-  const customList = (genres: string[]) => (
-    <Paper className={classes.paper}>
-      <List dense component="div" role="list">
-        {genres.map((genre) => {
-          const labelId = `transfer-list-item-${genre}-label`;
-          return (
-            <ListItem key={genre} role="listitem" button onClick={handleToggle(genre)}>
-              <ListItemIcon>
-                <Checkbox
-                  checked={checked.indexOf(genre) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                  inputProps={{ 'aria-labelledby': labelId }}
-                />
-              </ListItemIcon>
-              <ListItemText id={labelId} primary={genre} />
-            </ListItem>
-          );
-        })}
-        <ListItem />
-      </List>
-    </Paper>
-  );
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+  const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
   return (
     <TableContainer component={Paper}>
@@ -122,39 +99,38 @@ export default function Playlist(props: {
         </TableHead>
         <TableBody>
           <TableRow>
-          {customList(props.genres)}
-          <Button
-            variant="outlined"
-            size="small"
-            className={classes.button}
-            onClick={handleSelectGenres}
-            aria-label="move selected right"
-          >
-          Choose Genres
-          </Button>
+            <TableCell colSpan={2}>
+                <Autocomplete
+                  multiple
+                  id="checkboxes-tags-demo"
+                  options={props.genres}
+                  disableCloseOnSelect
+                  getOptionLabel={(option) => option}
+                  onChange={(event: any, newValue: string[]) => {
+                    setSelectedGenres(newValue);
+                  }}
+                  renderOption={(option, { selected }) => (
+                    <React.Fragment>
+                      <Checkbox
+                        icon={icon}
+                        checkedIcon={checkedIcon}
+                        style={{ marginRight: 8 }}
+                        checked={selected}
+                      />
+                      {option}
+                    </React.Fragment>
+                  )}
+                  renderInput={(params) => (
+                    <TextField  style={{ width: "100%" }} {...params} variant="outlined" label="Genres" placeholder="Add Genre" />
+                  )}
+                />
+            </TableCell>
           </TableRow>
-          <TableRow>
-          <div className={classes.root}>
-            {selectedGenres.map((genre) => {
-              if (genre){
-                return (
-                  <Chip
-                    label={genre}
-                    onDelete={handleDelete(genre)}
-                  />
-                );
-              }
-              
-            })}
-          </div>
-          </TableRow>
-          {/* //FIXME: Simplify / expand */}
           {props.playlist.tracks.map((track: TrackObj) => {
             console.log(TrackCorrectGenre(track) === true)
             if (TrackCorrectGenre(track)) {
               return (<TableRow key={track.id}> 
-                {/* UUID for each track item */}
-                  <TableCell component="th" scope="row">
+                  <TableCell colSpan={2} component="th" scope="row">
                     <Track track={track} />
                   </TableCell>
                 </TableRow>)
