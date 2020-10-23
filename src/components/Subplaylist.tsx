@@ -79,7 +79,7 @@ export default function Subplaylist (props: {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>{props.playlist.tracks[0]}</TableCell>
+            {/* <TableCell>{props.playlist.tracks[0]}</TableCell> */}
             <TableCell>
               <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)}>
                 Delete
