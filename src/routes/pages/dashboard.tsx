@@ -10,8 +10,8 @@ import MasterPlaylist from "../../components/MasterPlaylist";
 import Subplaylist from '../../components/Subplaylist'
 
 import { Playlist as PlaylistObj } from "../../types";
+import AddIcon from '@material-ui/icons/Add';
 import { allGenresFromPlaylist } from "../../helpers/helpers";
-
 import { v4 as uuid } from 'uuid';
 
 export const useStyles = makeStyles((theme) => ({
@@ -34,16 +34,16 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
     const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>();
     const [genres, setGenres] = useState<string[]>([]);
-    
+
     useEffect(() => {
-            if (masterPlaylist) {
-                masterPlaylist.expand().then(p => {
-                    Promise.all(p.tracks.map(t => t.expand())).then(
-                        () => setGenres(allGenresFromPlaylist(p))
-                    )
-                })
-            }
-        }, 
+        if (masterPlaylist) {
+            masterPlaylist.expand().then(p => {
+                Promise.all(p.tracks.map(t => t.expand())).then(
+                    () => setGenres(allGenresFromPlaylist(p))
+                )
+            })
+        }
+    },
         [masterPlaylist]
     )
 
@@ -52,28 +52,28 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         setPlaylists(playlists.filter(p => p.id !== playlist.id));
     }
 
-    const createPlaylist = () : PlaylistObj => {
+    const createPlaylist = (): PlaylistObj => {
         return {
             id: 'temp:' + uuid(),
-            name: 'Playlist',
+            name: 'New Sub-Playlist',
             description: '',
             image: '',
             owner: { id: 'owner', display_name: 'Owner' },
             snapshot_id: '',
             tracks: [],
             uri: '',
-            expand: async function() {return this}
+            expand: async function () { return this }
         }
     }
 
     const addPlaylist = () => {
-        const playlist = createPlaylist()        
+        const playlist = createPlaylist()
         console.log("Adding playlist", playlist.id);
         setPlaylists([...playlists, playlist]);
     }
 
     const [playlists, setPlaylists] = useState<PlaylistObj[]>([createPlaylist()]);
-    
+
     return (
         <div className={classes.root}>
             <Button variant="contained" color="primary" onClick={async () => Auth.logout().then(() => {
@@ -85,21 +85,21 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                 <Grid item xs={4}>
                     <PlaylistWrapper component={MasterPlaylist} onSelect={p => setMasterPlaylist(p)} />
                 </Grid>
-                
-                {masterPlaylist ? 
-                <>
-                {playlists.map(p => (
-                    <Grid item xs={4} key={p.id}>
-                        <Subplaylist genres={genres} playlist={p} onDelete={() => deletePlaylist(p)} />
-                    </Grid>
-                ))}
-                <Grid item xs={2}>
-                    <Button variant="contained" color="primary" onClick={() => addPlaylist()}>
-                        Add
+
+                {masterPlaylist ?
+                    <>
+                        {playlists.map(p => (
+                            <Grid item xs={4} key={p.id}>
+                                <Subplaylist genres={genres} playlist={p} onDelete={() => deletePlaylist(p)} />
+                            </Grid>
+                        ))}
+                        <Grid item xs={2}>
+                            <Button variant="contained" color="primary" onClick={() => addPlaylist()} startIcon={<AddIcon />}>
+                                Add
                     </Button>
-                </Grid>
-                </>
-            : null
+                        </Grid>
+                    </>
+                    : null
                 }
             </Grid>
         </div>
