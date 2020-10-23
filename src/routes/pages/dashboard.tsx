@@ -39,8 +39,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     //The width of the grids have to be dynamic, not a fixed width
     const classes = useStyles();
 
-    const [playlists, setPlaylists] = useState([0]); // TODO: replace this with some 
-    const [subPlaylist, setSubPlaylist] = useState(emptyPlaylist)
+    const [playlists, setPlaylists] = useState([0]); // TODO: replace this with some
     const [firstLoad, setFirstLoad] = useState(false);
     const [masterPlaylistData, setMasterPlaylist] = useState(emptyPlaylist);
 
@@ -60,10 +59,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         setPlaylists([...playlists, id]);
     }
     
-    const split = () => {
-        setSubPlaylist(masterPlaylistData)
-    }
-
     const allGenres = allGenresFromPlaylist(masterPlaylistData);
     
     if (firstLoad) {
@@ -85,16 +80,13 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             })}>
                 Logout
         </Button>
-        <Button variant="contained" color="primary" onClick={split}>
-                Split
-        </Button>
             <Grid style={{ padding: "10%" }} container spacing={5}>
                 <Grid item xs={4}>
                     <MasterPlaylist playlist={masterPlaylistData} />
                 </Grid>
                 {playlists.map(p => (
                     <Grid item xs={4}>
-                        <Playlist genres={allGenres} playlist={subPlaylist} id={p} delete={() => deletePlaylist(p)} />
+                        <Playlist genres={allGenres} playlist={masterPlaylistData} id={p} delete={() => deletePlaylist(p)} />
                     </Grid>
                 ))}
                 <Grid item xs={2}>
