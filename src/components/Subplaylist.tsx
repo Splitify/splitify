@@ -19,8 +19,9 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Playlist(props: {
+export default function Subplaylist(props: {
   playlist: PlaylistObj,
+  genres: string[],
   onDelete?: (playlist: PlaylistObj) => any;
 }) {
   const classes = useStyles();

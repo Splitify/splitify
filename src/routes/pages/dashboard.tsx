@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react"
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import Playlist from '../../components/Playlist'
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Auth from '../../auth'
-import MasterPlaylist from "../../components/MasterPlaylist";
+
 import PlaylistWrapper from "../../components/PlaylistWrapper/"
+import MasterPlaylist from "../../components/MasterPlaylist";
+import Subplaylist from '../../components/Subplaylist'
 
 import { Playlist as PlaylistObj } from "../../types";
-import { allGenresFromPlaylist, getPlaylist } from "../../helpers/helpers";
+import { allGenresFromPlaylist } from "../../helpers/helpers";
 
 import { v4 as uuid } from 'uuid';
 
@@ -31,8 +32,21 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     //The width of the grids have to be dynamic, not a fixed width
     const classes = useStyles();
 
-    const [isMasterSelected, setIsMasterSelected] = useState(false);
+    const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>();
+    const [genres, setGenres] = useState<string[]>([]);
     
+    useEffect(() => {
+            if (masterPlaylist) {
+                masterPlaylist.expand().then(p => {
+                    Promise.all(p.tracks.map(t => t.expand())).then(
+                        () => setGenres(allGenresFromPlaylist(p))
+                    )
+                })
+            }
+        }, 
+        [masterPlaylist]
+    )
+
     const deletePlaylist = (playlist: PlaylistObj) => {
         console.log("Deleting playlist", playlist.id);
         setPlaylists(playlists.filter(p => p.id !== playlist.id));
@@ -69,14 +83,14 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         </Button>
             <Grid style={{ padding: "10%" }} container spacing={5}>
                 <Grid item xs={4}>
-                    <PlaylistWrapper component={MasterPlaylist} onSelect={p => setIsMasterSelected(true)} />
+                    <PlaylistWrapper component={MasterPlaylist} onSelect={p => setMasterPlaylist(p)} />
                 </Grid>
                 
-                {isMasterSelected ? 
+                {masterPlaylist ? 
                 <>
                 {playlists.map(p => (
                     <Grid item xs={4} key={p.id}>
-                        <Playlist playlist={p} onDelete={() => deletePlaylist(p)} />
+                        <Subplaylist genres={genres} playlist={p} onDelete={() => deletePlaylist(p)} />
                     </Grid>
                 ))}
                 <Grid item xs={2}>
