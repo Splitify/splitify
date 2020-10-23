@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -7,6 +6,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/Edit';
@@ -15,12 +16,10 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
-import Track from './Track';
 import { Playlist as PlaylistObj, Track as TrackObj } from "../types"
 import { IconButton } from '@material-ui/core';
+import Track from './Track';
 
 const useStyles = makeStyles({
   table: {
@@ -28,28 +27,28 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Playlist(props: {
-  playlist: PlaylistObj;
-  id: Number;
-  delete: () => void;
+
+export default function Subplaylist(props: {
+  playlist: PlaylistObj,
+  genres: string[],
+  onDelete?: (playlist: PlaylistObj) => any;
 }) {
   const classes = useStyles();
+  const [selectedGenres, setFormats] = React.useState(() => []);
+
+  const handleFormat = (event: object, value: any) => {
+    setFormats(value);
+  };
 
   const [editDialogOpen, setEditDialogOpen] = React.useState(false);
   const [newName, setNewName] = React.useState(props.playlist.name);
-  
+
   const editNameDialog = (
     <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
       <DialogTitle>Edit Name: {props.playlist.name}</DialogTitle>
       <DialogContent>
-        {/* <DialogContentText>
-          To subscribe to this website, please enter your email address here. We will send updates
-          occasionally.
-      </DialogContentText> */}
         <TextField
           autoFocus
-          // margin="dense"
-          id="name"
           label="New Name"
           defaultValue={props.playlist.name}
           fullWidth
@@ -84,25 +83,35 @@ export default function Playlist(props: {
                 </IconButton>
               </TableCell>
               <TableCell>
-                <Button variant="contained" color="secondary" onClick={props.delete} startIcon={<DeleteIcon />}>
-                  Delete
-              </Button>
+                <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
+                Delete
+                </Button>
               </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {/* //FIXME: Simplify / expand */}
-            {props.playlist.tracks.map((track: TrackObj) => (
-              <TableRow key={track.id}>
-                {/* UUID for each track item */}
-                <TableCell component="th" scope="row">
-                  <Track track={track} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+        <TableBody>
+          <TableRow>
+            <ToggleButtonGroup value={selectedGenres} size="small" onChange={handleFormat} aria-label="text formatting">
+              {props.genres.map((genre: string) => (
+                <ToggleButton value={genre}>
+                  {genre}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </TableRow>
+
+          {/* //FIXME: Simplify / expand */}
+          {props.playlist.tracks.map((track: TrackObj) => (
+            <TableRow key={track.id}>
+              {/* UUID for each track item */}
+              <TableCell component="th" scope="row">
+                <Track track={track} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
         </Table>
       </TableContainer>
-    </div>
+    </div >
   );
 }
