@@ -30,19 +30,17 @@ const useStyles = makeStyles({
 
 export default function Playlist(props: {
   playlist: PlaylistObj;
-  name: string;
+  id: Number;
   delete: () => void;
-  rename: (oldName: string, newName: string) => void;
-
 }) {
   const classes = useStyles();
 
   const [editDialogOpen, setEditDialogOpen] = React.useState(false);
-  const [newName, setNewName] = React.useState(props.name);
+  const [newName, setNewName] = React.useState(props.playlist.name);
   
   const editNameDialog = (
     <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
-      <DialogTitle>Edit Name: {props.name}</DialogTitle>
+      <DialogTitle>Edit Name: {props.playlist.name}</DialogTitle>
       <DialogContent>
         {/* <DialogContentText>
           To subscribe to this website, please enter your email address here. We will send updates
@@ -53,7 +51,7 @@ export default function Playlist(props: {
           // margin="dense"
           id="name"
           label="New Name"
-          defaultValue={props.name}
+          defaultValue={props.playlist.name}
           fullWidth
           onChange={(e) => setNewName(e.target.value)}
         />
@@ -64,7 +62,7 @@ export default function Playlist(props: {
       </Button>
         <Button onClick={() => {
           setEditDialogOpen(false);
-          props.rename(props.name, newName);
+          props.playlist.name = newName;
         }} color="primary">
           Ok
       </Button>
@@ -80,7 +78,7 @@ export default function Playlist(props: {
           <TableHead>
             <TableRow>
               <TableCell>
-                {props.name}
+                {props.playlist.name}
                 <IconButton onClick={() => setEditDialogOpen(true)}>
                   <EditIcon />
                 </IconButton>

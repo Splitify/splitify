@@ -27,27 +27,18 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     //The width of the grids have to be dynamic, not a fixed width
     const classes = useStyles();
 
-    const [playlistNames, setPlaylistNames] = useState(["New Sub-Playlist 1"]); // TODO: replace this with some 
+    const [playlists, setPlaylists] = useState([0]); // TODO: replace this with some 
 
-    const deletePlaylist = (name: string) => {
-        console.log("Deleting playlist ", name);
-        setPlaylistNames(playlistNames.filter(k => k !== name));
+    const deletePlaylist = (id: Number) => {
+        console.log("Deleting playlist ", id);
+        setPlaylists(playlists.filter(k => k !== id));
     }
 
     const addPlaylist = () => {
-        const baseName = "New Sub-Playlist ";
-        let num = 1;
-        while (playlistNames.includes(baseName + num)) {
-            num++;
-        }
-        console.log("Adding playlist ", baseName + num);
-        setPlaylistNames([...playlistNames, baseName + num]); 
-    }
-    
-    const editPlaylistName = (oldName: string, newName: string) => {
-        console.log("Changing", oldName, "to", newName);
-        playlistNames[playlistNames.indexOf(oldName)] = newName;
-        setPlaylistNames([...playlistNames]);
+        var id = Math.max(...playlists) + 1;
+        if (!isFinite(id)) id = 0;
+        console.log("Adding playlist ", id);
+        setPlaylists([...playlists, id]); 
     }
 
     const playlistData: PlaylistObj = {
@@ -72,9 +63,9 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         <Grid item xs={4}>
         <MasterPlaylist playlist={playlistData}/>
         </Grid>
-        {playlistNames.map(p => (
+        {playlists.map(p => (
         <Grid item xs={4}>
-            <Playlist playlist={playlistData} name={p} delete={() => deletePlaylist(p)} rename={editPlaylistName}/>
+            <Playlist playlist={playlistData} id={p} delete={() => deletePlaylist(p)}/>
         </Grid>
         ))}
         <Grid item xs={2}>
