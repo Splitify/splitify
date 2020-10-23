@@ -135,7 +135,8 @@ export function parseUserJSON ({ id, display_name, images }: any): User {
 
 export async function parsePlaylistJSON (
   json: SpotifyApi.PlaylistObjectFull,
-  expand?: boolean
+  expand?: boolean,
+  expandTrack?: boolean
 ): Promise<Playlist> {
   let playlist: Playlist = {
     id: json.id,
@@ -167,5 +168,5 @@ export async function parsePlaylistJSON (
     }
   }
 
-  return expand ? await playlist.expand() : playlist
+  return expand ? await playlist.expand(expandTrack) : playlist
 }
