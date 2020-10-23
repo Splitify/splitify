@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import Auth from '../../auth'
 import MasterPlaylist from "../../components/MasterPlaylist";
 import { Playlist as PlaylistObj } from "../../types";
+import AddIcon from '@material-ui/icons/Add';
 
 export const useStyles = makeStyles((theme) => ({
     root: {
@@ -71,7 +72,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         </Grid>
         ))}
         <Grid item xs={2}>
-            <Button variant="contained" color="primary" onClick={() => addPlaylist()}>
+            <Button variant="contained" color="primary" onClick={() => addPlaylist()} startIcon={<AddIcon />}>
             Add
             </Button>
         </Grid>

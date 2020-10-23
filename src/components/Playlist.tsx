@@ -9,9 +9,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import Track from './Track';
 import { Playlist as PlaylistObj, Track as TrackObj } from "../types"
+import { IconButton } from '@material-ui/core';
 
 const useStyles = makeStyles({
   table: {
@@ -32,9 +35,14 @@ export default function Playlist(props: {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>{props.name}</TableCell>
             <TableCell>
-              <Button variant="contained" color="secondary" onClick={props.delete}>
+              {props.name}
+              <IconButton>
+                <EditIcon />
+              </IconButton>
+            </TableCell>
+            <TableCell>
+              <Button variant="contained" color="secondary" onClick={props.delete} startIcon={<DeleteIcon />}>
                 Delete
               </Button>
             </TableCell>
