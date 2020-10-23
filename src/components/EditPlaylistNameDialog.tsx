@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-export default function FormDialog(props: { name: string, onSave: (newName: string | null) => void }) { 
+export default function FormDialog(props: { name: string, onSave: (newName?: string) => void }) { 
   const [newName, setNewName] = React.useState(props.name)
 
   return (
@@ -21,7 +21,7 @@ export default function FormDialog(props: { name: string, onSave: (newName: stri
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => props.onSave(null)} color="primary">
+        <Button onClick={() => props.onSave(undefined)} color="primary">
           Cancel
       </Button>
         <Button onClick={() => props.onSave(newName)} color="primary">
