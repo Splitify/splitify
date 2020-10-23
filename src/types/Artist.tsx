@@ -3,7 +3,7 @@ export interface Artist {
   followers: number,
   genres: string[],
   id: string,
-  images: string | URL,
+  image: string | URL,
   name: string,
   popularity: number,
   type: string,

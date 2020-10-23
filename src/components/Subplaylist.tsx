@@ -1,26 +1,22 @@
 import React , { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import Checkbox from '@material-ui/core/Checkbox';
-import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
-import Chip from '@material-ui/core/Chip';
-import Track from './Track';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import TextField from '@material-ui/core/TextField';
-
+import {
+  Button,
+  Checkbox,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TextField
+} from '@material-ui/core'
 import { Playlist as PlaylistObj, Track as TrackObj } from "../types"
+import Track from './Track';
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -47,15 +43,10 @@ const useStyles = makeStyles((theme) => ({
 export default function Playlist(props: {
   playlist: PlaylistObj;
   genres: string[];
-  id: Number;
-  delete: () => void;
+  onDelete: () => void;
 }) {
   const classes = useStyles();
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
-  
-  const handleDelete = (genreToDelete: any) => () => {
-    setSelectedGenres((selectedGenres: string[]) => selectedGenres.filter((genre: string) => genre !== genreToDelete));
-  };  
 
   const TrackCorrectGenre = (track: TrackObj): boolean => {
     var found = false;
@@ -69,18 +60,6 @@ export default function Playlist(props: {
     return found;
   }
   
-  const handleToggle = (genre: string) => () => {
-    const currentIndex = selectedGenres.indexOf(genre);
-    const newChecked = [...selectedGenres];
-    
-    if (currentIndex === -1) {
-      newChecked.push(genre);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-    setSelectedGenres(newChecked)
-  };
-
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
@@ -89,9 +68,9 @@ export default function Playlist(props: {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Sub-Playlist</TableCell>
+            <TableCell>{props.playlist.tracks[0]}</TableCell>
             <TableCell>
-              <Button variant="contained" color="secondary" onClick={props.delete}>
+              <Button variant="contained" color="secondary" onClick={props.onDelete}>
                 Delete
               </Button>
             </TableCell>
@@ -107,6 +86,7 @@ export default function Playlist(props: {
                   disableCloseOnSelect
                   getOptionLabel={(option) => option}
                   onChange={(event: any, newValue: string[]) => {
+                    console.log(newValue)
                     setSelectedGenres(newValue);
                   }}
                   renderOption={(option, { selected }) => (

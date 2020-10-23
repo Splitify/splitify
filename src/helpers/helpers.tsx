@@ -1,71 +1,78 @@
-import { Playlist, Track, User } from '../types'
-import { parsePlaylistJSON, parseUserJSON, parseAlbumJSON, parseTrackJSON, parseFeaturesJSON, parseArtistJSON } from './parsers'
+import { parsePlaylistJSON, parseUserJSON } from './parsers'
+import { Artist, Playlist, Track, User } from '../types'
+import { api } from '../auth'
 
-// TODO: Integrate auth branch
-
-import SpotifyAPI from 'spotify-web-api-js'
-import { Album } from '../types/Album'
-import { Features } from '../types/Features'
-import { Artist } from '../types/Artist'
-
-export async function fetchTest() {
-  let api = new SpotifyAPI()
-  const token = '-'
-  api.setAccessToken(token)
-
-  console.log(await api.getUserPlaylists())
-  getUserProfile(api)
-  console.log(await getPlaylist(api))
+// Get all playlists
+export async function getPlaylists (
+  user?: string,
+  expand: boolean = false
+): Promise<Array<Playlist>> {
+  let res = []
+  for await (let playlistJSON of getPaginationRawGen(
+    api.getUserPlaylists,
+    user
+  )) {
+    res.push(await parsePlaylistJSON(playlistJSON, expand))
+  }
+  return res
 }
 
-async function getAlbums(api: SpotifyAPI.SpotifyWebApiJs, ids: string[], ans: Album[]): Promise<Album[]> {
-  if (!ids.length) return ans;
-  const albums = await api.getAlbums(ids.splice(0, 20)); // There is a limit of 20 per call
-  return (await getAlbums(api, ids, ans)).concat(albums.albums.map((a: any) => parseAlbumJSON(a)));
+export async function * getPlaylistsGen (
+  user?: string,
+  expand: boolean = false
+) {
+  for await (let playlistJSON of getPaginationRawGen(
+    api.getUserPlaylists,
+    user
+  )) {
+    yield parsePlaylistJSON(playlistJSON, expand)
+  }
 }
 
-async function getArtists(api: SpotifyAPI.SpotifyWebApiJs, ids: string[], ans: Artist[]): Promise<Artist[]> {
-  if (!ids.length) return ans;
-  const artists = await api.getArtists(ids.splice(0, 50)); // There is a limit of 50 per call
-  return (await getArtists(api, ids, ans)).concat(artists.artists.map((a: any) => parseArtistJSON(a)));
+export async function getPaginationRaw (func: Function, ...args: any) {
+  let resp = []
+  for await (let obj of getPaginationRawGen(func, ...args)) {
+    resp.push(obj)
+  }
+  return resp
 }
 
-const unique = (value: any, index: any, self: string | any[]) => self.indexOf(value) === index;
+export async function * getPaginationRawGen (func: Function, ...args: any) {
+  let offset = 0
+  let total
+  do {
+    let page = await func(...args, { /* limit: 50,*/ offset })
+    total = page.total
+    yield * page.items
+    offset += page.items.length
+  } while (offset < total)
+}
 
-export async function getPlaylist(
-  api: SpotifyAPI.SpotifyWebApiJs
+export async function getPlaylist (
+  playlistId: string,
+  expand: boolean = false
 ): Promise<Playlist> {
-  let playlist = await api.getPlaylist('1qLoOFlMBRMBTeSnQ5guuc') as any;
-
-  // TODO: handle paging
-
-  const album_ids: string[] = playlist.tracks.items.map((t: any) => t.track.album.id);
-  const track_ids: string[] = playlist.tracks.items.map((t: any) => t.track.id);
-  const artist_ids: string[] = playlist.tracks.items.map((t: any) => t.track.artists.map((a: any) => a.id)).flat().filter(unique);
-  const albums = await getAlbums(api, album_ids, []);
-  const features = (await api.getAudioFeaturesForTracks(track_ids)).audio_features.map(parseFeaturesJSON);
-  const artists = await getArtists(api, artist_ids, []);
-
-
-  playlist.tracks = await Promise.all(playlist.tracks.items.map(async (t: any) => {
-    t.track.album = albums.find((a: Album) => a.id === t.track.album.id);
-    t.track.features = features.find((f: Features) => f.id === t.track.id);
-    t.track.artists = t.track.artists.map((a: any) => artists.find((b: Artist) => a.id === b.id));
-    return await parseTrackJSON(t.track);
-  }));
-
-  await console.log("Retrieved Playlist:", playlist)
-  return await parsePlaylistJSON(playlist);
+  return parsePlaylistJSON(
+    await api.getPlaylist(playlistId, {
+      fields: '(!tracks)'
+    }),
+    expand
+  )
 }
 
-export async function getUserProfile(
-  api: SpotifyAPI.SpotifyWebApiJs
-): Promise<User> {
+export async function getUserProfile (): Promise<User> {
   return await api.getMe().then(parseUserJSON)
 }
 
-export function allGenresFromPlaylist(playlist: Playlist): string[] {
-  return playlist.tracks.map((track: Track) =>
-    track.artists.map((artist: Artist) => artist.genres)
-  ).flat().flat().filter(unique).sort();
+export function allGenresFromPlaylist (playlist: Playlist): string[] {
+  return Array.from(
+    new Set(
+      playlist.tracks
+        .map((track: Track) =>
+          track.artists.map((artist: Artist) => artist.genres)
+        )
+        .flat()
+        .flat()
+    )
+  ).sort()
 }
