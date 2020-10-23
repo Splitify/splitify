@@ -27,7 +27,7 @@ export default function MasterPlaylist (props: { playlist: PlaylistObj }) {
 
   // Note: This genre list is likely to be incomplete until all Tracks have been expanded
   // Then again idk - Andrew
-  const allGenres: Array<string> = allGenresFromPlaylist(props.playlist)
+  const [genres, setGenres] = useState<string[]>([]);
 
   // Async state update
   let _tick = useState(false)[1]
@@ -40,6 +40,9 @@ export default function MasterPlaylist (props: { playlist: PlaylistObj }) {
       props.playlist.expand().then(function () {
         clearInterval(intl)
         tick()
+        Promise.all(props.playlist.tracks.map(t => t.expand())).then(
+          () => setGenres(allGenresFromPlaylist(props.playlist))
+        )
       })
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,7 +59,7 @@ export default function MasterPlaylist (props: { playlist: PlaylistObj }) {
             <TableCell>Master Playlist: {props.playlist.name}</TableCell>
           </TableRow>
           <TableRow key='genres'>
-            <TableCell>{allGenres.toString()}</TableCell>
+            <TableCell>{genres.toString()}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
