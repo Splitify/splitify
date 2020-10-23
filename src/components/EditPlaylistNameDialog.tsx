@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-export default function FormDialog(props: { name: string, closeAndSet: (newName: string) => void }) { 
+export default function FormDialog(props: { name: string, onSave: (newName: string | null) => void }) { 
   const [newName, setNewName] = React.useState(props.name)
 
   return (
@@ -21,10 +21,10 @@ export default function FormDialog(props: { name: string, closeAndSet: (newName:
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => props.closeAndSet(props.name)} color="primary">
+        <Button onClick={() => props.onSave(null)} color="primary">
           Cancel
       </Button>
-        <Button onClick={() => props.closeAndSet(newName)} color="primary">
+        <Button onClick={() => props.onSave(newName)} color="primary">
           Ok
       </Button>
       </DialogActions>

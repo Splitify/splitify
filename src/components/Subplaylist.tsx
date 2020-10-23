@@ -44,9 +44,9 @@ export default function Subplaylist(props: {
       <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
         <EditPlaylistNameDialog
           name={props.playlist.name}
-          closeAndSet={(newName: string) => {
+          onSave={(newName: string | null) => {
             setEditDialogOpen(false);
-            props.playlist.name = newName;
+            if (newName) props.playlist.name = newName;
           }} />
       </Dialog>
       <TableContainer component={Paper}>
