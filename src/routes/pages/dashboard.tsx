@@ -31,6 +31,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
     const [playlists, setPlaylists] = useState([0]); // TODO: replace this with some 
     const [firstLoad, setFirstLoad] = useState(false);
+    const [isMasterSelected, setIsMasterSelected] = useState(false);
     
     useEffect(() => {
         setFirstLoad(true);
@@ -56,19 +57,20 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         owner: { id: 'b0ss', display_name: 'Owner' },
         snapshot_id: '',
         tracks: [],
-        uri: ''
+        uri: '',
+        expand: async function() {return this}
     }
 
-    const [masterPlaylistData, setMasterPlaylist] = useState(emptyPlaylist);
+    // const [masterPlaylistData, setMasterPlaylist] = useState(emptyPlaylist);
 
-    const allGenres = allGenresFromPlaylist(masterPlaylistData);
+    // const allGenres = allGenresFromPlaylist(masterPlaylistData);
     
-    if (firstLoad) {
-        setFirstLoad(false);
-        (async () => {
-            setMasterPlaylist(await getPlaylist());
-        })();
-    }
+    // if (firstLoad) {
+    //     setFirstLoad(false);
+    //     (async () => {
+    //         setMasterPlaylist(await getPlaylist());
+    //     })();
+    // }
     
 
     return (
@@ -80,18 +82,24 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         </Button>
             <Grid style={{ padding: "10%" }} container spacing={5}>
                 <Grid item xs={4}>
-                    <PlaylistWrapper component={MasterPlaylist}/>
+                    <PlaylistWrapper component={MasterPlaylist} onSelect={p => setIsMasterSelected(true)} />
                 </Grid>
+                
+                {isMasterSelected ? 
+                <>
                 {playlists.map(p => (
                     <Grid item xs={4}>
-                        <Playlist genres={allGenres} playlist={emptyPlaylist} id={p} delete={() => deletePlaylist(p)} />
+                        <Playlist /* genres={allGenres} */ playlist={emptyPlaylist} id={p} delete={() => deletePlaylist(p)} />
                     </Grid>
                 ))}
                 <Grid item xs={2}>
                     <Button variant="contained" color="primary" onClick={() => addPlaylist()}>
                         Add
-            </Button>
+                    </Button>
                 </Grid>
+                </>
+            : null
+                }
             </Grid>
         </div>
     );

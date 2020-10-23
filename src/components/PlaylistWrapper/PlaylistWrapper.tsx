@@ -8,7 +8,8 @@ import { Playlist } from '../../types'
 export default function (props: {
   text?: string
   playlist?: Playlist
-  component: any
+  component: any,
+  onSelect?: (playlist: Playlist) => any
 }) {
   const { component: Component } = props
 
@@ -17,6 +18,7 @@ export default function (props: {
 
   function handleSelect (playlist: Playlist) {
     setPlaylist(playlist)
+    if (props.onSelect) props.onSelect(playlist)
     setSelectorOpen(false)
   }
   // Default state - have not selected a playlist yet
