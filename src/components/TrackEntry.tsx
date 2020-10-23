@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Skeleton from '@material-ui/lab/Skeleton'
 import { Track as TrackObj } from '../types'
-import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
-import TableContainer from '@material-ui/core/TableContainer'
-import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
-import Track from './Track'
+// import Track from './Track'
 
 // let id: number = 0
 
@@ -17,10 +14,11 @@ export default function (props: { track: TrackObj }) {
     ;(async () => {
       setTrack(await props.track.expand())
     })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <TableRow /* key={track?.id || id++} */ >
+    <TableRow /* key={track?.id || id++} */>
       <TableCell component='th' scope='row'>
         {track ? (
           /*<Track track={track} />*/ track.name
