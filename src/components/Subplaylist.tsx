@@ -40,10 +40,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Playlist(props: {
+export default function Subplaylist (props: {
   playlist: PlaylistObj;
   genres: string[];
-  onDelete: () => void;
+  onDelete?: (playlist: PlaylistObj) => any;
 }) {
   const classes = useStyles();
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
@@ -70,7 +70,7 @@ export default function Playlist(props: {
           <TableRow>
             <TableCell>{props.playlist.tracks[0]}</TableCell>
             <TableCell>
-              <Button variant="contained" color="secondary" onClick={props.onDelete}>
+              <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)}>
                 Delete
               </Button>
             </TableCell>
