@@ -90,7 +90,8 @@ export default new (class {
     let data = {
       client_id: process.env.REACT_APP_CLIENT_ID,
       redirect_uri: `${window.location.protocol}//${window.location.host}/login`,
-      response_type: 'token'
+      response_type: 'token',
+      scope: 'playlist-read-private playlist-read-collaborative'
     }
     return `${authEndpoint}?${new URLSearchParams(data as any).toString()}`
   }
