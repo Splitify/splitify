@@ -21,7 +21,7 @@ const useStyles = makeStyles({
 
 export default function Playlist(props: {
   playlist: PlaylistObj;
-  id: Number;
+  name: string;
   delete: () => void;
 
 }) {
@@ -32,7 +32,7 @@ export default function Playlist(props: {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Sub-Playlist</TableCell>
+            <TableCell>{props.name}</TableCell>
             <TableCell>
               <Button variant="contained" color="secondary" onClick={props.delete}>
                 Delete
