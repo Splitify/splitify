@@ -43,6 +43,12 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         console.log("Adding playlist ", baseName + num);
         setPlaylistNames([...playlistNames, baseName + num]); 
     }
+    
+    const editPlaylistName = (oldName: string, newName: string) => {
+        console.log("Changing", oldName, "to", newName);
+        playlistNames[playlistNames.indexOf(oldName)] = newName;
+        setPlaylistNames([...playlistNames]);
+    }
 
     const playlistData: PlaylistObj = {
         id: 'testid',
@@ -60,7 +66,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         <Button variant="contained" color="primary" onClick={async () => Auth.logout().then(() => {
                 window.location.href = window.location.origin + "/";
         })}>
-            Logout
+            Logouts
         </Button>
         <Grid style={{padding:"10%"}} container spacing={5}>
         <Grid item xs={4}>
@@ -68,7 +74,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         </Grid>
         {playlistNames.map(p => (
         <Grid item xs={4}>
-            <Playlist playlist={playlistData} name={p} delete={() => deletePlaylist(p)}/>
+            <Playlist playlist={playlistData} name={p} delete={() => deletePlaylist(p)} rename={editPlaylistName}/>
         </Grid>
         ))}
         <Grid item xs={2}>
