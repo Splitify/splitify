@@ -23,7 +23,7 @@ import {
 import SearchIcon from '@material-ui/icons/Search'
 
 import { Playlist } from '../../types'
-import { getPlaylists } from '../../helpers/helpers'
+import { getPlaylist, getPlaylists } from '../../helpers/helpers'
 
 const useStyles = makeStyles({
   root: {
@@ -73,18 +73,17 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
           style={{ maxHeight: 500, overflow: 'auto' }}
         >
           <List>
-            {playlists
-            .filter(p =>
-              p.name.toLowerCase()
-              .includes(search.toLowerCase())
-            )
-            .length > 0 ? (
+            {playlists.filter(p =>
+              p.name.toLowerCase().includes(search.toLowerCase())
+            ).length > 0 ? (
               playlists.map(playlist => (
                 <ListItem
                   button
                   disabled={loading}
                   key={playlist.id}
-                  onClick={() => props.onSelect(playlist)}
+                  onClick={async () =>
+                    props.onSelect(await getPlaylist(playlist.id))
+                  }
                 >
                   <ListItemText primary={playlist.name} />
                 </ListItem>

@@ -1,10 +1,11 @@
-import { Album } from "./Album";
-import { Features } from "./Features";
+import { Album } from './Album'
+import { Artist } from './Artist'
+import { Features } from './Features'
 
 export interface Track {
   id: string
-  album: Album;
-  artists: Array<any>;
+  album?: Album
+  artists: Array<Artist>
   // available_markets: Array<string>
   // disc_number: Number
   duration_ms: Number
@@ -12,12 +13,14 @@ export interface Track {
   // external_ids: ExternalIdsObj;
   // external_urls: ExternalUrlObj;
   // href: string
-  is_local: boolean
+  // is_local: boolean
   name: string
   popularity: Number
   preview_url: string | null
   track_number: Number
   type: string
   uri: string
-  features: Features
+  features?: Features
+  expand : () => Promise<this>
+
 }
