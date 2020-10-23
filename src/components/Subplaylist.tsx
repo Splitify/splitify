@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import { makeStyles } from '@material-ui/core/styles'
+import Autocomplete from '@material-ui/lab/Autocomplete'
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
+import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import {
   Button,
   Checkbox,
@@ -15,10 +15,10 @@ import {
   Paper,
   TextField
 } from '@material-ui/core'
-import { Playlist as PlaylistObj, Track as TrackObj } from "../types"
-import Track from './Track';
+import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
+import Track from './Track'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   table: {
     //Add styling for tables here
   },
@@ -27,18 +27,18 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     flexWrap: 'wrap',
     '& > *': {
-      margin: theme.spacing(0.5),
+      margin: theme.spacing(0.5)
     }
   },
   paper: {
-      width: 200,
-      height: 230,
-      overflow: 'auto',
+    width: 200,
+    height: 230,
+    overflow: 'auto'
   },
   button: {
-      margin: theme.spacing(0.5, 0),
-  },
-}));
+    margin: theme.spacing(0.5, 0)
+  }
+}))
 
 export default function Subplaylist (props: {
   source: PlaylistObj
@@ -46,7 +46,7 @@ export default function Subplaylist (props: {
   genres: string[]
   onDelete?: (playlist: PlaylistObj) => any
 }) {
-  const classes = useStyles();
+  const classes = useStyles()
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
 
   // TODO: Maybe put genres for each genre
@@ -76,12 +76,16 @@ export default function Subplaylist (props: {
 
   return (
     <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
+      <Table className={classes.table} aria-label='simple table'>
         <TableHead>
           <TableRow>
             {/* <TableCell>{props.playlist.tracks[0]}</TableCell> */}
             <TableCell>
-              <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)}>
+              <Button
+                variant='contained'
+                color='secondary'
+                onClick={() => props.onDelete && props.onDelete(props.playlist)}
+              >
                 Delete
               </Button>
             </TableCell>
@@ -90,31 +94,37 @@ export default function Subplaylist (props: {
         <TableBody>
           <TableRow>
             <TableCell colSpan={2}>
-                <Autocomplete
-                  multiple
-                  id="checkboxes-tags-demo"
-                  options={props.genres}
-                  disableCloseOnSelect
-                  getOptionLabel={(option) => option}
-                  onChange={(event: any, newValue: string[]) => {
-                    console.log(newValue)
-                    setSelectedGenres(newValue);
-                  }}
-                  renderOption={(option, { selected }) => (
-                    <React.Fragment>
-                      <Checkbox
-                        icon={icon}
-                        checkedIcon={checkedIcon}
-                        style={{ marginRight: 8 }}
-                        checked={selected}
-                      />
-                      {option}
-                    </React.Fragment>
-                  )}
-                  renderInput={(params) => (
-                    <TextField  style={{ width: "100%" }} {...params} variant="outlined" label="Genres" placeholder="Add Genre" />
-                  )}
-                />
+              <Autocomplete
+                multiple
+                id='checkboxes-tags-demo'
+                options={props.genres}
+                disableCloseOnSelect
+                getOptionLabel={option => option}
+                onChange={(event: any, newValue: string[]) => {
+                  console.log(newValue)
+                  setSelectedGenres(newValue)
+                }}
+                renderOption={(option, { selected }) => (
+                  <React.Fragment>
+                    <Checkbox
+                      icon={icon}
+                      checkedIcon={checkedIcon}
+                      style={{ marginRight: 8 }}
+                      checked={selected}
+                    />
+                    {option}
+                  </React.Fragment>
+                )}
+                renderInput={params => (
+                  <TextField
+                    style={{ width: '100%' }}
+                    {...params}
+                    variant='outlined'
+                    label='Genres'
+                    placeholder='Add Genre'
+                  />
+                )}
+              />
             </TableCell>
           </TableRow>
           {tracks.filter(TrackCorrectGenre).map(track => (
@@ -124,9 +134,8 @@ export default function Subplaylist (props: {
               </TableCell>
             </TableRow>
           ))}
-          })}
         </TableBody>
       </Table>
     </TableContainer>
-  );
+  )
 }
