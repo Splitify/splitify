@@ -37,27 +37,29 @@ export async function parseTrackJSON (
     track_number: json.track_number,
     type: json.type,
     uri: json.uri,
-    expand: async function () {
-      // Disabler
-      this.expand = async function () {
-        return this
-      }
-
-      this.features = parseFeaturesJSON(
-        await FeatureAccumulator.request(this.id)
-      )
-
-      this.artists = await Promise.all(
-        json.artists.map(async ({ id }) =>
-          parseArtistJSON(await ArtistAccumulator.request(id))
+    expand: async function () : Promise<Track> {
+      let promise = new Promise<Track>(async (resolve,reject) => {
+        this.expand = async () => promise
+  
+        this.features = parseFeaturesJSON(
+          await FeatureAccumulator.request(this.id)
         )
-      )
+  
+        this.artists = await Promise.all(
+          json.artists.map(async ({ id }) =>
+            parseArtistJSON(await ArtistAccumulator.request(id))
+          )
+        )
+  
+        this.album = await parseAlbumJSON(
+          await AlbumAccumulator.request(json.album.id)
+        )
+  
+        resolve(this)
+      })
 
-      this.album = await parseAlbumJSON(
-        await AlbumAccumulator.request(json.album.id)
-      )
+      return promise;
 
-      return this
     }
   }
   return expand ? await track.expand() : track
@@ -144,19 +146,24 @@ export async function parsePlaylistJSON (
     snapshot_id: json.snapshot_id,
     uri: json.uri,
     tracks: [],
-    expand: async function (expandTrack = false) {
-      // Disabler
-      this.expand = async function () {
-        return this
-      }
+    expand: async function (expandTrack = false) : Promise<Playlist> {
+      // Expand playlist to get tracks (Does not expand tracks)
 
-      for await (let track of getPaginationRawGen(
-        api.getPlaylistTracks,
-        this.id
-      )) {
-        this.tracks.push(await parseTrackJSON(track['track'], expandTrack))
-      }
-      return this
+      let promise = new Promise<Playlist>(async (resolve,reject) => {
+        this.expand = async () => promise
+  
+        for await (let track of getPaginationRawGen(
+          api.getPlaylistTracks,
+          this.id
+        )) {
+          // Add parsed track, optionally request track expansion
+          this.tracks.push(await parseTrackJSON(track['track'], expandTrack))
+        }
+        
+        resolve(this)
+      })
+
+      return promise;
     }
   }
 
