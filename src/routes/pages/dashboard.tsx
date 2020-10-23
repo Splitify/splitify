@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
@@ -33,17 +33,16 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>();
     const [genres, setGenres] = useState<string[]>([]);
     
-    useEffect(() => {
-            if (masterPlaylist) {
-                masterPlaylist.expand().then(p => {
-                    Promise.all(p.tracks.map(t => t.expand())).then(
-                        () => setGenres(allGenresFromPlaylist(p))
-                    )
-                })
-            }
-        }, 
-        [masterPlaylist]
-    )
+    function loadPlaylist(playlist: PlaylistObj) {
+        playlist.expand().then(p => {
+            Promise.all(p.tracks.map(t => t.expand())).then(
+                () => {
+                    setMasterPlaylist(p)
+                    setGenres(allGenresFromPlaylist(p))
+                }
+            )
+        })
+    }
 
     const deletePlaylist = (playlist: PlaylistObj) => {
         console.log("Deleting playlist", playlist.id);
@@ -82,14 +81,14 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         </Button>
             <Grid style={{ padding: "10%" }} container spacing={5}>
                 <Grid item xs={4}>
-                    <PlaylistWrapper component={MasterPlaylist} onSelect={p => setMasterPlaylist(p)} />
+                    <PlaylistWrapper component={MasterPlaylist} onSelect={p => loadPlaylist(p)} />
                 </Grid>
                 
                 {masterPlaylist ? 
                 <>
                 {playlists.map(p => (
                     <Grid item xs={4} key={p.id}>
-                        <Subplaylist genres={genres} playlist={p} onDelete={() => deletePlaylist(p)} />
+                        <Subplaylist genres={genres} source={masterPlaylist} playlist={p} onDelete={() => deletePlaylist(p)} />
                     </Grid>
                 ))}
                 <Grid item xs={2}>

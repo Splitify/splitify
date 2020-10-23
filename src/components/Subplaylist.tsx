@@ -1,4 +1,4 @@
-import React , { useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
@@ -41,27 +41,38 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Subplaylist (props: {
-  playlist: PlaylistObj;
-  genres: string[];
-  onDelete?: (playlist: PlaylistObj) => any;
+  source: PlaylistObj
+  playlist: PlaylistObj
+  genres: string[]
+  onDelete?: (playlist: PlaylistObj) => any
 }) {
   const classes = useStyles();
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
 
+  // TODO: Maybe put genres for each genre
   const TrackCorrectGenre = (track: TrackObj): boolean => {
-    var found = false;
-    track.artists.map((artist) => {
-      artist.genres.map((genre) => {
+    for (let artist of track.artists) {
+      for (let genre of artist.genres) {
         if (selectedGenres.includes(genre)) {
-          found = true
+          return true
         }
-      })
-    })
-    return found;
+      }
+    }
+    return false
   }
-  
-  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-  const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+  // TODO: setTracks will be used for deletion, reordering and moving
+  // eslint-disable-next-line
+  let [tracks, setTracks] = useState(props.source.tracks)
+
+  // Save tracks to playlist when updated
+  useEffect(() => {
+    props.playlist.tracks = tracks
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tracks])
+
+  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
+  const checkedIcon = <CheckBoxIcon fontSize='small' />
 
   return (
     <TableContainer component={Paper}>
@@ -106,15 +117,13 @@ export default function Subplaylist (props: {
                 />
             </TableCell>
           </TableRow>
-          {props.playlist.tracks.map((track: TrackObj) => {
-            console.log(TrackCorrectGenre(track) === true)
-            if (TrackCorrectGenre(track)) {
-              return (<TableRow key={track.id}> 
-                  <TableCell colSpan={2} component="th" scope="row">
-                    <Track track={track} />
-                  </TableCell>
-                </TableRow>)
-            }
+          {tracks.filter(TrackCorrectGenre).map(track => (
+            <TableRow key={track.id}>
+              <TableCell colSpan={2} component='th' scope='row'>
+                <Track track={track} />
+              </TableCell>
+            </TableRow>
+          ))}
           })}
         </TableBody>
       </Table>
