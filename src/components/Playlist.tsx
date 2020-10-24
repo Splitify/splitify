@@ -88,15 +88,12 @@ export function CheckboxesTags(props: {
 const audioFeaturesTags = [
   { title: 'Acousticness'},
   {  title: 'Danceability'},
-  {  title: 'Duration'},
   {  title: 'Energy'},
   {  title: 'Instrumentalness'},
   {  title: 'Liveness',}, 
   {  title: 'Loudness'},
   {  title: 'Speechiness'},
   {  title: 'Tempo'},
-  {  title: 'Mode'},
-  {  title: 'Time Signature'},
   {  title: 'Valence'}
 ];
 
@@ -161,7 +158,42 @@ const updateSlider = (id:String, range:Number[]) => {
     })
     return found;
   }
-  
+  const TrackInRange = (track : TrackObj) : boolean => {
+    var found = true;
+    sliders.map((slider) => {
+      if (slider.name === 'Acousticness' && track.features.acousticness < slider.min || track.features.acousticness > slider.max){
+        found=false;
+      }
+      if (slider.name === 'Danceability' && track.features.danceability < slider.min || track.features.danceability > slider.max){
+        found=false;
+      }
+      if (slider.name === 'Energy' && track.features.energy < slider.min || track.features.energy > slider.max){
+        found=false;
+      }
+      if (slider.name === 'Instrumentalness' && track.features.instrumentalness < slider.min || track.features.instrumentalness > slider.max){
+        found=false;
+      }
+      if (slider.name === 'Liveness' && track.features.liveness < slider.min || track.features.liveness > slider.max){
+        found=false;
+      }
+      if (slider.name === 'Loudness' && track.features.loudness < slider.min || track.features.loudness > slider.max){
+        found=false;
+      }
+      if (slider.name === 'Speechiness' && track.features.speechiness < slider.min || track.features.speechiness > slider.max){
+        found=false;
+      }
+      if (slider.name === 'Tempo' && track.features.tempo < slider.min || track.features.tempo > slider.max){
+        found=false;
+      }
+      if (slider.name === 'Valence' && track.features.valence < slider.min || track.features.valence > slider.max){
+        found=false;
+      }
+    })
+    
+    
+
+    return found;
+  }
   const handleToggle = (genre: string) => () => {
     const currentIndex = checked.indexOf(genre);
     const newChecked = [...checked];
@@ -257,7 +289,7 @@ const updateSlider = (id:String, range:Number[]) => {
           {/* //FIXME: Simplify / expand */}
           {props.playlist.tracks.map((track: TrackObj) => {
             console.log(TrackCorrectGenre(track) === true)
-            if (TrackCorrectGenre(track)) {
+            if (TrackCorrectGenre(track) && TrackInRange(track)) {
               return (<TableRow key={track.id}> 
                 {/* UUID for each track item */}
                   <TableCell component="th" scope="row">
