@@ -91,9 +91,7 @@ const audioFeaturesTags = [
   {  title: 'Energy'},
   {  title: 'Instrumentalness'},
   {  title: 'Liveness',}, 
-  {  title: 'Loudness'},
   {  title: 'Speechiness'},
-  {  title: 'Tempo'},
   {  title: 'Valence'}
 ];
 
@@ -161,31 +159,31 @@ const updateSlider = (id:String, range:Number[]) => {
   const TrackInRange = (track : TrackObj) : boolean => {
     var found = true;
     sliders.map((slider) => {
-      if (slider.name === 'Acousticness' && track.features.acousticness < slider.min || track.features.acousticness > slider.max){
+      if (slider.name === 'Acousticness' && track.features.acousticness < slider.min/100 || track.features.acousticness > slider.max/100){
         found=false;
       }
-      if (slider.name === 'Danceability' && track.features.danceability < slider.min || track.features.danceability > slider.max){
+      if (slider.name === 'Danceability' && track.features.danceability < slider.min/100 || track.features.danceability > slider.max/100){
         found=false;
       }
-      if (slider.name === 'Energy' && track.features.energy < slider.min || track.features.energy > slider.max){
+      if (slider.name === 'Energy' && track.features.energy < slider.min/100 || track.features.energy > slider.max/100){
         found=false;
       }
-      if (slider.name === 'Instrumentalness' && track.features.instrumentalness < slider.min || track.features.instrumentalness > slider.max){
+      if (slider.name === 'Instrumentalness' && track.features.instrumentalness < slider.min/100 || track.features.instrumentalness > slider.max/100){
         found=false;
       }
-      if (slider.name === 'Liveness' && track.features.liveness < slider.min || track.features.liveness > slider.max){
+      if (slider.name === 'Liveness' && track.features.liveness < slider.min/100 || track.features.liveness > slider.max/100){
         found=false;
       }
-      if (slider.name === 'Loudness' && track.features.loudness < slider.min || track.features.loudness > slider.max){
+      // if (slider.name === 'Loudness' && track.features.loudness < slider.min/100 || track.features.loudness > slider.max/100){
+      //   found=false;
+      // }
+      if (slider.name === 'Speechiness' && track.features.speechiness < slider.min/100 || track.features.speechiness > slider.max/100){
         found=false;
       }
-      if (slider.name === 'Speechiness' && track.features.speechiness < slider.min || track.features.speechiness > slider.max){
-        found=false;
-      }
-      if (slider.name === 'Tempo' && track.features.tempo < slider.min || track.features.tempo > slider.max){
-        found=false;
-      }
-      if (slider.name === 'Valence' && track.features.valence < slider.min || track.features.valence > slider.max){
+      // if (slider.name === 'Tempo' && track.features.tempo < slider.min/100 || track.features.tempo > slider.max/100){
+      //   found=false;
+      // }
+      if (slider.name === 'Valence' && track.features.valence < slider.min/100 || track.features.valence > slider.max/100){
         found=false;
       }
     })
