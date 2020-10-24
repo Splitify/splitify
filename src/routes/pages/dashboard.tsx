@@ -59,7 +59,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         console.log("Adding playlist ", id);
         setPlaylists([...playlists, id]);
     }
-    
+
     const split = () => {
         setSubPlaylist(masterPlaylistData)
     }

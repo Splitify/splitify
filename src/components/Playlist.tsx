@@ -15,31 +15,15 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Chip from '@material-ui/core/Chip';
 import Track from './Track';
-import Dialog from '@material-ui/core/Dialog';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
-import Slider from '@material-ui/core/Slider';
-
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { Playlist as PlaylistObj, Track as TrackObj } from "../types"
 import { isPropertySignature } from 'typescript';
+import AudioFeatureSlider from './AudioFeatureSlider'
 
-const useStylesDialogue = makeStyles((theme) => ({
-  appBar: {
-    position: 'relative',
-  },
-  title: {
-    marginLeft: theme.spacing(2),
-    flex: 1,
-  },
-}));
-const useStylesslider = makeStyles({
-  root: {
-    height: 300,
-  },
-});
+
 const useStyles = makeStyles((theme) => ({
   table: {
     //Add styling for tables here
@@ -61,188 +45,60 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(0.5, 0),
   },
 }));
-function valuetext(value:Number) {
-  return `${value}°C`;
-}
-export function FullScreenDialog(props: {
-  features: Number[][],
-  giveFeaturesToPlaylist: (features: Number[][]) => void,
-})  {
-  //states for sliders
-  const [AcousticnessVal, setAcousticnessVal] = useState(props.features[0]);
-  const [DanceabilityVal, setDanceabilityVal] = useState(props.features[1]);
-  const [EnergyVal, setEnergyVal] = useState(props.features[2]);
-  const [InstrumentalnessVal, setInstrumentalnessVal] = useState(props.features[3]);
-  const [LivenessVal, setLivenessVal] = useState(props.features[4]);
-  const [LoudnessVal, setLoudnessVal] = useState(props.features[5]);
-  const [SpeechinessVal, setSpeechinessVal] = useState(props.features[6]);
-  const [ValenceVal, setValenceVal] = useState(props.features[7]);
-  const [TempoVal, setTempoVal] = useState(props.features[8]);
-  const classes = useStylesDialogue();
-  const classes2 = useStylesslider();
-  const [open, setOpen] = React.useState(false);
 
-  function handleChange (value:any) {
-    console.log('changing a value')
-    console.log(value)
-    if (typeof(value) === 'number'){
-      return [value,value]
-    }else{
-      return value
-    }
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+
+export function CheckboxesTags(props: {
+  giveOptionToPlaylist : (option: string) => void
+}) {
+
+  const handleChange = (selected:string) => {
+    props.giveOptionToPlaylist(selected)
   }
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    //??????
-    setOpen(false);
-  };
-
-  const handleSave = (features: Number[][]) => {
-    props.giveFeaturesToPlaylist(features)
-    setOpen(false);
-  }
-
   return (
-    <div>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Audio Features
-      </Button>
-      <Dialog fullScreen open={open} onClose={handleClose} >
-        <AppBar className={classes.appBar}>
-          <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-              <CloseIcon />
-            </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              Audio Features
-            </Typography>
-            <Button autoFocus color="inherit" onClick={() => handleSave([AcousticnessVal, 
-              DanceabilityVal, 
-              EnergyVal, 
-              InstrumentalnessVal, 
-              LivenessVal,
-              LoudnessVal,
-              SpeechinessVal,
-              ValenceVal,
-              TempoVal ])}>
-              save
-            </Button>
-          </Toolbar>
-        </AppBar>
-        <div className={classes2.root}>
-      <Typography id="range-slider" gutterBottom>
-        AudioFeatures
-      </Typography>
-      <TableRow> 
-      </TableRow>
-      <Slider 
-        onChangeCommitted={(event, value) =>
-          setAcousticnessVal(handleChange(value))
-        }
-        aria-label = "acousticness"
-        orientation="vertical"
-        valueLabelDisplay="auto"
-        aria-labelledby="range-slider"
-        defaultValue = {AcousticnessVal.map((num) => Number(num))}
-        getAriaValueText={valuetext}
-      />
-      <Slider
-        onChangeCommitted={(event, value) =>
-          setDanceabilityVal(handleChange(value))
-        }
-        aria-label = "danceability"
-        orientation="vertical"
-        valueLabelDisplay="auto"
-        aria-labelledby="range-slider"
-        defaultValue = {DanceabilityVal.map((num) => Number(num))}
-        getAriaValueText={valuetext}
-      />
-      <Slider
-        onChangeCommitted={(event, value) =>
-          setEnergyVal(handleChange(value))
-        }
-        aria-label = "energy"
-        orientation="vertical"
-        valueLabelDisplay="auto"
-        aria-labelledby="range-slider"
-        defaultValue = {EnergyVal.map((num) => Number(num))}
-        getAriaValueText={valuetext}
-      />
-      <Slider
-        onChangeCommitted={(event, value) =>
-          setInstrumentalnessVal(handleChange(value))
-        }
-        aria-label = "instrumentalness"
-        orientation="vertical"
-        valueLabelDisplay="auto"
-        aria-labelledby="range-slider"
-        defaultValue = {InstrumentalnessVal.map((num) => Number(num))}
-        getAriaValueText={valuetext}
-      />
-      <Slider
-        onChangeCommitted={(event, value) =>
-          setLivenessVal(handleChange(value))
-        }
-        aria-label = "liveness"
-        orientation="vertical"
-        valueLabelDisplay="auto"
-        aria-labelledby="range-slider"
-        defaultValue = {LivenessVal.map((num) => Number(num))}
-        getAriaValueText={valuetext}
-      />
-      <Slider
-        onChangeCommitted={(event, value) =>
-          setLoudnessVal(handleChange(value))
-        }
-        aria-label = "loudness"
-        orientation="vertical"
-        valueLabelDisplay="auto"
-        aria-labelledby="range-slider"
-        defaultValue = {LoudnessVal.map((num) => Number(num))}
-        getAriaValueText={valuetext}
-      />
-      <Slider
-        onChangeCommitted={(event, value) =>
-          setSpeechinessVal(handleChange(value))
-        }
-        aria-label = "speechiness"
-        orientation="vertical"
-        valueLabelDisplay="auto"
-        aria-labelledby="range-slider"
-        defaultValue = {SpeechinessVal.map((num) => Number(num))}
-        getAriaValueText={valuetext}
-      />
-      <Slider
-        onChangeCommitted={(event, value) =>
-          setValenceVal(handleChange(value))
-        }
-        aria-label = "valence"
-        orientation="vertical"
-        valueLabelDisplay="auto"
-        aria-labelledby="range-slider"
-        defaultValue = {ValenceVal.map((num) => Number(num))}
-        getAriaValueText={valuetext}
-      />
-      <Slider
-        onChangeCommitted={(event, value) =>
-          setTempoVal(handleChange(value))
-        }
-        aria-label = "tempo"
-        orientation="vertical"
-        valueLabelDisplay="auto"
-        aria-labelledby="range-slider"
-        defaultValue = {TempoVal.map((num) => Number(num))}
-        getAriaValueText={valuetext}
-      />
-    </div>
-      </Dialog>
-    </div>
+    <Autocomplete
+      multiple
+      id="checkboxes-tags-demo"
+      options={audioFeaturesTags}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.title}
+      renderOption={(option, { selected }) => (
+        <React.Fragment>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+            onChange={() => {handleChange(option.title)}}
+          />
+          {option.title}
+        </React.Fragment>
+      )}
+      style={{ width: 500 }}
+      renderInput={(params) => (
+        <TextField {...params} variant="outlined" label="Audio Features" placeholder="Favorites" />
+      )}
+    />
   );
 }
 
+// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
+const audioFeaturesTags = [
+  { title: 'Acousticness'},
+  {  title: 'Danceability'},
+  {  title: 'Duration'},
+  {  title: 'Energy'},
+  {  title: 'Instrumentalness'},
+  {  title: 'Liveness',}, 
+  {  title: 'Loudness'},
+  {  title: 'Speechiness'},
+  {  title: 'Tempo'},
+  {  title: 'Mode'},
+  {  title: 'Time Signature'},
+  {  title: 'Valence'}
+];
 
 export default function Playlist(props: {
   playlist: PlaylistObj;
@@ -253,12 +109,21 @@ export default function Playlist(props: {
   const classes = useStyles();
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [checked, setChecked] = useState<string[]>([])
-  const [features, setFeatures] = useState<Number[][]>([[10,90],[10,90],[10,90],[10,90],[10,90],[10,90],[10,90],[10,90],[10,90]])
+  const [features, setFeatures] = useState<Number[]>([])
   
   const handleDelete = (genreToDelete: any) => () => {
     setSelectedGenres((selectedGenres: string[]) => selectedGenres.filter((genre: string) => genre !== genreToDelete));
   };  
 
+  const getFeaturesFromSlider = (incomingFeatures: Number[]) => {
+    setFeatures(incomingFeatures)
+    console.log(features)
+  }
+  
+  const getOptionFromCheckboxes = (option : string) =>
+  {
+    console.log(option)
+  }
   const TrackCorrectGenre = (track: TrackObj): boolean => {
     var found = false;
     track.artists.map((artist) => {
@@ -289,10 +154,7 @@ export default function Playlist(props: {
     console.log(selectedGenres)
   };
 
-  const getFeaturesFromDialog = (incomingFeatures: Number[][]) => {
-    setFeatures(incomingFeatures)
-    console.log(features)
-  }
+
 
   const customList = (genres: string[]) => (
     <Paper className={classes.paper}>
@@ -322,15 +184,16 @@ export default function Playlist(props: {
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
-          <FullScreenDialog features = {features} giveFeaturesToPlaylist={getFeaturesFromDialog}/>
           <TableRow>
             <TableCell>Sub-Playlist</TableCell>
+
             <TableCell>
               <Button variant="contained" color="secondary" onClick={props.delete}>
                 Delete
               </Button>
             </TableCell>
           </TableRow>
+          <TableRow> <CheckboxesTags giveOptionToPlaylist = {getOptionFromCheckboxes}/></TableRow>
         </TableHead>
         <TableBody>
           <TableRow>
