@@ -109,8 +109,23 @@ export default function Playlist(props: {
   const classes = useStyles();
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [checked, setChecked] = useState<string[]>([])
+  //sliders
+  const [sliders, setSliders] = useState<number[]>([]); // TODO: replace this with some 
   const [features, setFeatures] = useState<Number[]>([])
-  
+  const [lastOption, setLastOption] = useState<string>('')
+
+
+  const deleteSlider = (id: Number) => {
+    console.log("Deleting slider ", id);
+    setSliders(sliders.filter(k => k !== id));
+}
+
+  const addSlider = () => {
+      var id = Math.max(...sliders) + 1;
+      if (!isFinite(id)) id = 0;
+      console.log("Adding sliders ", id);
+      setSliders([...sliders, id]);
+  }
   const handleDelete = (genreToDelete: any) => () => {
     setSelectedGenres((selectedGenres: string[]) => selectedGenres.filter((genre: string) => genre !== genreToDelete));
   };  
@@ -122,7 +137,8 @@ export default function Playlist(props: {
   
   const getOptionFromCheckboxes = (option : string) =>
   {
-    console.log(option)
+    setLastOption(option)
+    addSlider();
   }
   const TrackCorrectGenre = (track: TrackObj): boolean => {
     var found = false;
@@ -184,6 +200,11 @@ export default function Playlist(props: {
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
+          {sliders.map(p => (
+
+            <AudioFeatureSlider id = {p} feature_name = {lastOption} feature_value = {[10,90]} delete = {() => deleteSlider(p)} giveFeaturesToPlaylist = {getFeaturesFromSlider}/>
+
+          ))}
           <TableRow>
             <TableCell>Sub-Playlist</TableCell>
 

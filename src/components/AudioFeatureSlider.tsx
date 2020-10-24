@@ -1,7 +1,7 @@
 import React , { useState } from 'react';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core';
+import { Button, makeStyles } from '@material-ui/core';
 
 const useStylesslider = makeStyles({
     root: {
@@ -9,8 +9,10 @@ const useStylesslider = makeStyles({
     },
   });
 export default function AudioFeatureSlider(props: {
+    id:number,
     feature_name: string,
     feature_value: Number[],
+    delete: () => void;
     giveFeaturesToPlaylist: (feature: Number[]) => void,
 }) {
     const classes = useStylesslider();
@@ -43,6 +45,9 @@ export default function AudioFeatureSlider(props: {
                     defaultValue = {SliderVal.map((num) => Number(num))}
                     getAriaValueText = {valuetext}
                 />
+                <Button variant="contained" color="secondary" onClick={props.delete}>
+                Delete
+              </Button>
             </div>
         )
     }
