@@ -17,6 +17,7 @@ import {
 } from '@material-ui/core'
 import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
 import Track from './Track'
+import MultiFilter from './MultiFilter'
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -40,7 +41,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function Subplaylist (props: {
+export default function Subplaylist(props: {
   source: PlaylistObj
   playlist: PlaylistObj
   genres: string[]
@@ -48,6 +49,8 @@ export default function Subplaylist (props: {
 }) {
   const classes = useStyles()
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+
+  const [trackFilter, setTrackFilter] = useState<(t: TrackObj) => boolean>((t: TrackObj) => true);
 
   // TODO: Maybe put genres for each genre
   const TrackCorrectGenre = (track: TrackObj): boolean => {
@@ -127,7 +130,10 @@ export default function Subplaylist (props: {
               />
             </TableCell>
           </TableRow>
-          {tracks.filter(TrackCorrectGenre).map(track => (
+          <TableRow>
+            <MultiFilter callback={(f: ((t: TrackObj) => boolean)) => setTrackFilter(f)} />
+          </TableRow>
+          {tracks.filter(TrackCorrectGenre).filter(trackFilter).map(track => (
             <TableRow key={track.id}>
               <TableCell colSpan={2} component='th' scope='row'>
                 <Track track={track} />
