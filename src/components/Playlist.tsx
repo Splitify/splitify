@@ -111,41 +111,43 @@ export default function Playlist(props: {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [checked, setChecked] = useState<string[]>([])
   //slider list
-  const [sliders, setSliders] = useState<string[]>([]); 
-  //slider feedback
-  const [features, setFeatures] = useState<Number[]>([])
-  //checkbox lastoption clicked
-  const [lastOption, setLastOption] = useState<string>('')
+  const [sliders, setSliders] = useState<{name:string, min:number, max:number}[]>([]); 
 
 
+  const addSlider = (option:string) => {
+    setSliders([...sliders, {name : option, min:10, max:90}]);
+    console.log("Adding sliders ", option);
+}
   const deleteSlider = (id: String) => {
     console.log("Deleting slider ", id);
-    setSliders(sliders.filter(k => k !== id));
+    setSliders(sliders.filter(k => k.name !== id));
 }
 
-  const addSlider = () => {
-      var id = lastOption;
-      setSliders([...sliders, id]);
-      console.log("Adding sliders ", id);
-  }
+const updateSlider = (id:String, range:Number[]) => {
+  setSliders(
+    sliders.map(
+      el => el.name===id? {...el,min : Number(range[0]), max:Number(range[1])}:el
+    )
+  )    
+  
+}
+
   const handleDelete = (genreToDelete: any) => () => {
     setSelectedGenres((selectedGenres: string[]) => selectedGenres.filter((genre: string) => genre !== genreToDelete));
   };  
 
-  const getFeaturesFromSlider = (incomingFeatures: Number[]) => {
-    setFeatures(incomingFeatures)
-    console.log(features)
+  const getFeaturesFromSlider = (name:string, incomingFeatures: Number[]) => {
+    updateSlider(name, incomingFeatures)
+    
   }
   
   const getOptionFromCheckboxes = (option : string, checked : boolean) =>
   {
-    setLastOption(option);
-    addSlider();
-    // if (checked === false){
-    //   deleteSlider(option)
-    // }else{
-    //   addSlider();
-    // }
+    if (checked === true){
+      deleteSlider(option)
+    }else{
+      addSlider(option);
+    }
     console.log(sliders)
   }
   const TrackCorrectGenre = (track: TrackObj): boolean => {
@@ -210,7 +212,7 @@ export default function Playlist(props: {
         <TableHead>
           {sliders.map(p => (
 
-            <AudioFeatureSlider feature_name = {lastOption} feature_value = {[10,90]} delete = {() => deleteSlider(p)} giveFeaturesToPlaylist = {getFeaturesFromSlider}/>
+            <AudioFeatureSlider feature_name = {p.name} feature_value = {[p.min,p.max]} delete = {() => deleteSlider(p.name)} giveFeaturesToPlaylist = {getFeaturesFromSlider}/>
 
           ))}
           <TableRow>

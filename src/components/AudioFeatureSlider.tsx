@@ -12,7 +12,7 @@ export default function AudioFeatureSlider(props: {
     feature_name: string,
     feature_value: Number[],
     delete: () => void;
-    giveFeaturesToPlaylist: (feature: Number[]) => void,
+    giveFeaturesToPlaylist: (name:string, feature: Number[]) => void,
 }) {
     const classes = useStylesslider();
     //state for slider
@@ -22,7 +22,7 @@ export default function AudioFeatureSlider(props: {
         console.log('changing a value')
         console.log(value)
         setSliderVal(value as number[]);
-        props.giveFeaturesToPlaylist(value as number[]);
+        props.giveFeaturesToPlaylist(props.feature_name,value as number[]);
     };
 
     function valuetext(value:Number) {
@@ -44,9 +44,7 @@ export default function AudioFeatureSlider(props: {
                     defaultValue = {SliderVal.map((num) => Number(num))}
                     getAriaValueText = {valuetext}
                 />
-                <Button variant="contained" color="secondary" onClick={props.delete}>
-                Delete
-              </Button>
+
             </div>
         )
     }
