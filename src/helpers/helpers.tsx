@@ -37,11 +37,15 @@ export async function getPaginationRaw (func: Function, ...args: any) {
   return resp
 }
 
-export async function * getPaginationRawGen (func: Function, ...args: any) {
+export async function * getPaginationRawGen (
+  func: Function,
+  opts?: {},
+  ...args: any
+) {
   let offset = 0
   let total
   do {
-    let page = await func(...args, { /* limit: 50,*/ offset })
+    let page = await func(...args, { ...opts, /* limit: 50,*/ offset })
     total = page.total
     yield * page.items
     offset += page.items.length

@@ -1,23 +1,27 @@
 import { Album, Artist, Features, User, Playlist, Track } from '../types'
 
 import { api } from '../auth'
-import Accumulumatorinator from './Accumulumatorinator'
+import { CachingAccumulumatorinator } from './Accumulumatorinator'
 import { getPaginationRawGen } from './helpers'
 
-const FeatureAccumulator = new Accumulumatorinator<
+import Queue from 'queue'
+
+const TrackAccumulator = new CachingAccumulumatorinator<
+  SpotifyApi.TrackObjectFull
+>('tracks', 50, async ids => (await api.getTracks(ids))['tracks'])
+const FeatureAccumulator = new CachingAccumulumatorinator<
   SpotifyApi.AudioFeaturesResponse
 >(
+  'features',
   100,
   async ids => (await api.getAudioFeaturesForTracks(ids))['audio_features']
 )
-const AlbumAccumulator = new Accumulumatorinator<SpotifyApi.AlbumObjectFull>(
-  20,
-  async ids => (await api.getAlbums(ids))['albums']
-)
-const ArtistAccumulator = new Accumulumatorinator<SpotifyApi.ArtistObjectFull>(
-  50,
-  async ids => (await api.getArtists(ids))['artists']
-)
+const AlbumAccumulator = new CachingAccumulumatorinator<
+  SpotifyApi.AlbumObjectFull
+>('albums', 20, async ids => (await api.getAlbums(ids))['albums'])
+const ArtistAccumulator = new CachingAccumulumatorinator<
+  SpotifyApi.ArtistObjectFull
+>('artists', 50, async ids => (await api.getArtists(ids))['artists'])
 
 export async function parseTrackJSON (
   json: SpotifyApi.TrackObjectFull,
@@ -37,29 +41,28 @@ export async function parseTrackJSON (
     track_number: json.track_number,
     type: json.type,
     uri: json.uri,
-    expand: async function () : Promise<Track> {
-      let promise = new Promise<Track>(async (resolve,reject) => {
+    expand: async function (): Promise<Track> {
+      let promise = new Promise<Track>(async (resolve, reject) => {
         this.expand = async () => promise
-  
+
         this.features = parseFeaturesJSON(
           await FeatureAccumulator.request(this.id)
         )
-  
+
         this.artists = await Promise.all(
           json.artists.map(async ({ id }) =>
             parseArtistJSON(await ArtistAccumulator.request(id))
           )
         )
-  
+
         this.album = await parseAlbumJSON(
           await AlbumAccumulator.request(json.album.id)
         )
-  
+
         resolve(this)
       })
 
-      return promise;
-
+      return promise
     }
   }
   return expand ? await track.expand() : track
@@ -147,24 +150,41 @@ export async function parsePlaylistJSON (
     snapshot_id: json.snapshot_id,
     uri: json.uri,
     tracks: [],
-    expand: async function (expandTrack = false) : Promise<Playlist> {
+    expand: async function (expandTrack = false): Promise<Playlist> {
       // Expand playlist to get tracks (Does not expand tracks)
 
-      let promise = new Promise<Playlist>(async (resolve,reject) => {
+      let promise = new Promise<Playlist>(async (resolve, reject) => {
         this.expand = async () => promise
-  
-        for await (let track of getPaginationRawGen(
+
+        const Q = Queue({ autostart: true, concurrency: 1, timeout: 10 * 1000 })
+
+        // TODO: What if it's a local track?
+
+        for await (let trackJSONBare of getPaginationRawGen(
           api.getPlaylistTracks,
+          { fields: 'items.track.id,total' },
           this.id
         )) {
-          // Add parsed track, optionally request track expansion
-          this.tracks.push(await parseTrackJSON(track['track'], expandTrack))
+          let track = TrackAccumulator.request(
+            trackJSONBare['track']['id']
+          ).then(async (data: SpotifyApi.TrackObjectFull) =>
+            // Add parsed track, optionally request track expansion
+            parseTrackJSON(await data, expandTrack)
+          )
+
+          Q.push(async cb => {
+            this.tracks.push(await track)
+            cb && cb()
+          })
         }
-        
-        resolve(this)
+
+        Q.push(cb => {
+          resolve(this)
+          cb && cb()
+        })
       })
 
-      return promise;
+      return promise
     }
   }
 
