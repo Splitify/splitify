@@ -9,7 +9,6 @@ const useStylesslider = makeStyles({
     },
   });
 export default function AudioFeatureSlider(props: {
-    id:number,
     feature_name: string,
     feature_value: Number[],
     delete: () => void;

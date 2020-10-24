@@ -51,11 +51,11 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 
 export function CheckboxesTags(props: {
-  giveOptionToPlaylist : (option: string) => void
+  giveOptionToPlaylist : (option: string, checked: boolean) => void
 }) {
 
-  const handleChange = (selected:string) => {
-    props.giveOptionToPlaylist(selected)
+  const handleChange = (selected:string, checked: boolean) => {
+    props.giveOptionToPlaylist(selected, checked)
   }
   return (
     <Autocomplete
@@ -71,7 +71,7 @@ export function CheckboxesTags(props: {
             checkedIcon={checkedIcon}
             style={{ marginRight: 8 }}
             checked={selected}
-            onChange={() => {handleChange(option.title)}}
+            onChange={() => {handleChange(option.title, selected)}}
           />
           {option.title}
         </React.Fragment>
@@ -107,24 +107,26 @@ export default function Playlist(props: {
   delete: () => void;
 }) {
   const classes = useStyles();
+  //genres
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [checked, setChecked] = useState<string[]>([])
-  //sliders
-  const [sliders, setSliders] = useState<number[]>([]); // TODO: replace this with some 
+  //slider list
+  const [sliders, setSliders] = useState<string[]>([]); 
+  //slider feedback
   const [features, setFeatures] = useState<Number[]>([])
+  //checkbox lastoption clicked
   const [lastOption, setLastOption] = useState<string>('')
 
 
-  const deleteSlider = (id: Number) => {
+  const deleteSlider = (id: String) => {
     console.log("Deleting slider ", id);
     setSliders(sliders.filter(k => k !== id));
 }
 
   const addSlider = () => {
-      var id = Math.max(...sliders) + 1;
-      if (!isFinite(id)) id = 0;
-      console.log("Adding sliders ", id);
+      var id = lastOption;
       setSliders([...sliders, id]);
+      console.log("Adding sliders ", id);
   }
   const handleDelete = (genreToDelete: any) => () => {
     setSelectedGenres((selectedGenres: string[]) => selectedGenres.filter((genre: string) => genre !== genreToDelete));
@@ -135,10 +137,16 @@ export default function Playlist(props: {
     console.log(features)
   }
   
-  const getOptionFromCheckboxes = (option : string) =>
+  const getOptionFromCheckboxes = (option : string, checked : boolean) =>
   {
-    setLastOption(option)
+    setLastOption(option);
     addSlider();
+    // if (checked === false){
+    //   deleteSlider(option)
+    // }else{
+    //   addSlider();
+    // }
+    console.log(sliders)
   }
   const TrackCorrectGenre = (track: TrackObj): boolean => {
     var found = false;
@@ -202,7 +210,7 @@ export default function Playlist(props: {
         <TableHead>
           {sliders.map(p => (
 
-            <AudioFeatureSlider id = {p} feature_name = {lastOption} feature_value = {[10,90]} delete = {() => deleteSlider(p)} giveFeaturesToPlaylist = {getFeaturesFromSlider}/>
+            <AudioFeatureSlider feature_name = {lastOption} feature_value = {[10,90]} delete = {() => deleteSlider(p)} giveFeaturesToPlaylist = {getFeaturesFromSlider}/>
 
           ))}
           <TableRow>
