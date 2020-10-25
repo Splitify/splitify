@@ -29,11 +29,13 @@ export default function MultiFilter(props: {
   useEffect(() => {
     const TrackMatchesFilter = (track: TrackObj): boolean => {
       if (filterValue === '') return true;
+      if (Object.values(filterCategories).filter((v) => v).length === 0) return true;
       return (filterCategories.name && track.name.toLowerCase().includes(filterValue))
         || (filterCategories.artist && track.artists.some((a: Artist) => a.name.toLowerCase().includes(filterValue)))
         || (filterCategories.album && track.album?.name.toLowerCase().includes(filterValue) === true)
         || (filterCategories.genre && track.artists.some((a: Artist) => a.genres.some((g: string) => g.includes(filterValue))));
     }
+    console.log(filterCategories, filterValue)
     props.callback({ filter: TrackMatchesFilter });
     // eslint-disable-next-line
   }, [filterValue, filterCategories]);

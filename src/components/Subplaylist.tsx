@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function Subplaylist (props: {
+export default function Subplaylist(props: {
   source: PlaylistObj
   playlist: PlaylistObj
   genres: string[]
@@ -96,22 +96,20 @@ export default function Subplaylist (props: {
       </Dialog>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  {props.playlist.name}
-                  <IconButton onClick={() => setEditDialogOpen(true)}>
-                    <EditIcon />
-                  </IconButton>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                {props.playlist.name}
+                <IconButton onClick={() => setEditDialogOpen(true)}>
+                  <EditIcon />
+                </IconButton>
               </TableCell>
               <TableCell>
-                  <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
-                    Delete
+                <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
+                  Delete
                   </Button>
               </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
             <TableRow>
               <TableCell colSpan={2}>
                 <Autocomplete
@@ -143,38 +141,27 @@ export default function Subplaylist (props: {
                       label='Genres'
                       placeholder='Add Genre'
                     />
-                    {option}
-                  </React.Fragment>
-                )}
-                renderInput={params => (
-                  <TextField
-                    style={{ width: '100%' }}
-                    {...params}
-                    variant='outlined'
-                    label='Genres'
-                    placeholder='Add Genre'
-                  />
-                )}
-              />
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>
-              <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {tracks.filter(TrackCorrectGenre).filter(trackFilter.filter).map(track => (
-            <TableRow key={track.id}>
-              <TableCell colSpan={2} component='th' scope='row'>
-                <Track track={track} />
+                  )}
+                />
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-</div>
+            <TableRow>
+              <TableCell>
+                <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {tracks.filter(TrackCorrectGenre).filter(trackFilter.filter).map(track => (
+              <TableRow key={track.id}>
+                <TableCell colSpan={2} component='th' scope='row'>
+                  <Track track={track} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   )
 }
