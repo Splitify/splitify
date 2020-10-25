@@ -23,20 +23,7 @@ export const useStyles = makeStyles(theme => ({
   }
 }))
 
-<<<<<<< HEAD
-    const addPlaylist = () => {
-        var id = Math.max(...playlists) + 1;
-        if (!isFinite(id)) id = 0;
-        console.log("Adding playlist ", id);
-        setPlaylists([...playlists, id]);
-    }
-
-    const split = () => {
-        setSubPlaylist(masterPlaylistData)
-    }
-=======
 interface IDashboardProps extends RouteComponentProps {}
->>>>>>> genre_splitting
 
 const Dashboard: React.FC<IDashboardProps> = () => {
   //The width of the grids have to be dynamic, not a fixed width
