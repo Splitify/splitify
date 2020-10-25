@@ -62,6 +62,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             snapshot_id: '',
             tracks: [],
             uri: '',
+            public: false,
+            collaborative: false,
             expand: async function () { return this }
         }
     }

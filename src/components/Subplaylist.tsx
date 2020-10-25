@@ -12,11 +12,13 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import SaveIcon from '@material-ui/icons/Save';
 import Dialog from '@material-ui/core/Dialog';
 import { Playlist as PlaylistObj, Track as TrackObj } from "../types"
 import { IconButton } from '@material-ui/core';
 import Track from './Track';
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
+import { createPlaylist, getUserProfile} from '../helpers/helpers'
 
 const useStyles = makeStyles({
   table: {
@@ -32,10 +34,18 @@ export default function Subplaylist(props: {
 }) {
   const classes = useStyles();
   const [selectedGenres, setFormats] = React.useState(() => []);
+  const [curPlaylist, setCurPlaylist] = React.useState(props.playlist);
 
   const handleFormat = (event: object, value: any) => {
     setFormats(value);
   };
+
+  async function handleSave(){
+    const user = await getUserProfile();
+    console.log("Creating playlist: ",await curPlaylist.expand());
+    const resp = await createPlaylist(user.id, props.playlist)
+    setCurPlaylist(resp);
+  }
 
   const [editDialogOpen, setEditDialogOpen] = React.useState(false);
 
@@ -62,6 +72,11 @@ export default function Subplaylist(props: {
               <TableCell>
                 <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
                   Delete
+                </Button>
+              </TableCell>
+              <TableCell>
+                <Button variant="contained" color="secondary" onClick={async () => await handleSave()} startIcon={<SaveIcon />}>
+                  Save
                 </Button>
               </TableCell>
             </TableRow>
