@@ -23,7 +23,7 @@ import {
 } from '@material-ui/core'
 import Track from './Track'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
-import { createPlaylist, getUserProfile} from '../helpers/helpers'
+import { createOrUpdatePlaylist, getUserProfile} from '../helpers/helpers'
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -54,8 +54,6 @@ export default function Subplaylist (props: {
   onDelete?: (playlist: PlaylistObj) => any
 }) {
   const classes = useStyles();
-  const [curPlaylist, setCurPlaylist] = React.useState(props.playlist);
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
 
   // TODO: Maybe put genres for each genre
   const TrackCorrectGenre = (track: TrackObj): boolean => {
@@ -69,13 +67,19 @@ export default function Subplaylist (props: {
     return false
   }
 
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  useEffect(() => {
+    setTracks(props.source.tracks.filter(TrackCorrectGenre))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedGenres])
+
   // TODO: setTracks will be used for deletion, reordering and moving
   // eslint-disable-next-line
-  let [tracks, setTracks] = useState(props.source.tracks)
-  
+  let [tracks, setTracks] = useState(Array<TrackObj>());
+
   // Save tracks to playlist when updated
   useEffect(() => {
-    props.playlist.tracks = tracks
+    props.playlist.tracks = tracks;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
 
@@ -84,9 +88,9 @@ export default function Subplaylist (props: {
 
   async function handleSave(){
     const user = await getUserProfile();
-    console.log("Creating playlist: ",await curPlaylist.expand());
-    const resp = await createPlaylist(user.id, props.playlist)
-    setCurPlaylist(resp);
+    console.log("Creating playlist tracks: ", props.playlist.tracks);
+    const resp = await createOrUpdatePlaylist(user.id, props.playlist);
+    console.log(resp);
   }
 
   const [editDialogOpen, setEditDialogOpen] = React.useState(false);

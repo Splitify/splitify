@@ -81,37 +81,44 @@ export function allGenresFromPlaylist (playlist: Playlist): string[] {
   ).sort()
 }
 
-export async function createPlaylist(
+export async function createOrUpdatePlaylist(
   userId: string,
   playlist: Playlist,
   expand: boolean = false
-): Promise<Playlist> {
-
-  console.log(playlist.id.substr(0, 4))
+): Promise<SpotifyApi.ReplacePlaylistTracksResponse> {
 
   if(playlist.id.substr(0, 4) === "temp"){
     console.log("Current playlist doesnt exist. Creating now...");
-    return parsePlaylistJSON(
+    // First create the new playlist
+    const newPaylist = await parsePlaylistJSON(
       await api.createPlaylist(userId, {
         name: playlist.name,
       }),
       expand
     )
+    // replace the current playlists id and replace the tracks
+    playlist.id = newPaylist.id;
+    const trackUris = playlist.tracks.map(track => {
+      return track.uri;
+    })
+  
+    return api.replaceTracksInPlaylist(playlist.id, trackUris)
   }else{
     console.log("Current playlist exists. Updating instead..");
+    // get current playlist info and construct payload
     const curInfo = await getPlaylist(playlist.id)
     let payload = {
       name: playlist.name,
       public: playlist.public,
       collaborative: playlist.collaborative
     }
-    const resp = await api.changePlaylistDetails(curInfo.id, payload);
-    console.log(resp);
-    return parsePlaylistJSON(
-      await api.createPlaylist(userId, {
-        name: playlist.name,
-      }),
-      expand
-    )
+    // first update the basic playlist details
+    await api.changePlaylistDetails(curInfo.id, payload);
+
+    // then replace the tracks
+    const trackUris = playlist.tracks.map(track => {
+      return track.uri;
+    })
+    return api.replaceTracksInPlaylist(playlist.id, trackUris)
   }
 } 
