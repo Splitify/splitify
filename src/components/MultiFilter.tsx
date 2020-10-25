@@ -19,6 +19,7 @@ export default function MultiFilter(props: {
     name: true,
     album: false,
     artist: false,
+    genre: false
   });
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +31,8 @@ export default function MultiFilter(props: {
       if (filterValue === '') return true;
       return (filterCategories.name && track.name.toLowerCase().includes(filterValue))
         || (filterCategories.artist && track.artists.some((a: Artist) => a.name.toLowerCase().includes(filterValue)))
-        || (filterCategories.album && track.album?.name.toLowerCase().includes(filterValue) === true);
+        || (filterCategories.album && track.album?.name.toLowerCase().includes(filterValue) === true)
+        || (filterCategories.genre && track.artists.some((a: Artist) => a.genres.some((g: string) => g.includes(filterValue))));
     }
     props.callback({ filter: TrackMatchesFilter });
     // eslint-disable-next-line
@@ -52,6 +54,7 @@ export default function MultiFilter(props: {
             control={<Checkbox color="primary" checked={v} onChange={handleFilterChange} name={k} />}
             label={k}
             labelPlacement="top"
+            style={{ marginLeft:'5px', marginRight:'5px' }}
           />
         ))}
       </FormGroup>
