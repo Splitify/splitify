@@ -40,6 +40,9 @@ export default function MultiFilter(props: {
     // eslint-disable-next-line
   }, [filterValue, filterCategories]);
 
+  const re = /, (\w+)$/;
+  const english = Object.keys(filterCategories).join(", ").replace(re, " and/or $1")
+
   const filterError = filterValue.length > 0 && Object.values(filterCategories).filter((v) => v).length === 0;
   return (
     <FormControl error={filterError} component="fieldset">
@@ -56,11 +59,14 @@ export default function MultiFilter(props: {
             control={<Checkbox color="primary" checked={v} onChange={handleFilterChange} name={k} />}
             label={k}
             labelPlacement="top"
-            style={{ marginLeft:'5px', marginRight:'5px' }}
+            style={{ marginLeft: '5px', marginRight: '5px' }}
           />
         ))}
       </FormGroup>
-      <FormHelperText>Select one of {Object.keys(filterCategories).join(" ")}</FormHelperText>
+      {filterError ? (
+        <FormHelperText>Select one of {english}</FormHelperText>
+      ) : ""}
+
     </FormControl >
 
   )
