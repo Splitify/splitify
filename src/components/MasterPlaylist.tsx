@@ -11,10 +11,11 @@ import {
   TableCell
 } from '@material-ui/core'
 
-import { Playlist as PlaylistObj } from '../types'
+import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
 import { allGenresFromPlaylist } from '../helpers/helpers'
 
 import TrackEntry from './TrackEntry'
+import MultiFilter, { TrackFilter } from './MultiFilter'
 
 const useStyles = makeStyles({
   table: {
@@ -28,6 +29,8 @@ export default function MasterPlaylist (props: { playlist: PlaylistObj }) {
   // Note: This genre list is likely to be incomplete until all Tracks have been expanded
   // Then again idk - Andrew
   const [genres, setGenres] = useState<string[]>([]);
+  const [trackFilter, setTrackFilter] = useState<TrackFilter>({ filter: (t: TrackObj) => true });
+
 
   // Async state update
   let _tick = useState(false)[1]
@@ -61,10 +64,15 @@ export default function MasterPlaylist (props: { playlist: PlaylistObj }) {
           <TableRow key='genres'>
             <TableCell>{genres.toString()}</TableCell>
           </TableRow>
+          <TableRow>
+            <TableCell>
+              <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
+            </TableCell>
+          </TableRow>
         </TableHead>
         <TableBody>
           {/* {props.playlist.tracks.length} */}
-          {props.playlist.tracks.map((track, i) => (
+          {props.playlist.tracks.filter(trackFilter.filter).map((track, i) => (
             <TrackEntry track={track} key={i} />
           ))}
         </TableBody>
