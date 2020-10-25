@@ -1,7 +1,16 @@
+/* 
+// Login route handler 
+
+Checks for a Spotify auth callback and performs some authentication.
+Else returns the login screen
+
+*/
+
 import React from 'react'
+
 import { useHistory, RouteComponentProps, withRouter } from 'react-router-dom'
-import Button from '@material-ui/core/Button'
-import Auth from '../../auth'
+import Auth from '../../../auth'
+import Page from './page'
 
 const Login: React.FC<RouteComponentProps> = () => {
   const history = useHistory()
@@ -25,21 +34,10 @@ const Login: React.FC<RouteComponentProps> = () => {
     }).then(() => history.push('/'))
 
     return <span>Authenticating...</span>
-
   } else {
     // Case: Login page
     console.log('Login page')
-    return (
-      <Button
-        variant='contained'
-        color='primary'
-        onClick={() => {
-          window.location.href = Auth.generateEndpoint()
-        }}
-      >
-        Connect Using Spotify
-      </Button>
-    )
+    return <Page />
   }
 }
 

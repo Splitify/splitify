@@ -1,6 +1,5 @@
 
 export interface Features {
-  id: string
   acousticness: Number
   danceability: Number
   duration_ms: Number
@@ -14,5 +13,4 @@ export interface Features {
   time_signature: Number
   valence: Number
   key: Number
-  uri: string
 }

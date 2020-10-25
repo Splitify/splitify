@@ -63,7 +63,7 @@ export default function Track (props: { track: TrackObj }): JSX.Element {
         onClose={handlePopoverClose}
         disableRestoreFocus
       >
-        <Typography>{props.track.artists[0].genres.toString()}</Typography>
+        {/* <Typography>{props.track.album.genres.toString()}</Typography> */}
       </Popover>
     </div>
     </React.Fragment>

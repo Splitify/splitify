@@ -4,6 +4,8 @@ import { getUserProfile } from './helpers/helpers'
 
 const authStore = getStorage('auth')
 
+export const api: SpotifyAPI.SpotifyWebApiJs = new SpotifyAPI()
+
 export default new (class {
 
   // Login function, takes in access_token and expires_in (seconds)
@@ -31,7 +33,8 @@ export default new (class {
   async validate (token?: string) {
 
     // Function: Validate access token (i.e. is the access token active)
-    async function doValidate () {
+    // Validation is performed once per page load
+    const doValidate = async () => {
       // If a token was not explicitly passed, use the stored token
       if (!token) {
         let expiry = (await authStore.getItem('expiry')) as Date
@@ -44,10 +47,9 @@ export default new (class {
       }
 
       // Get user profile data from Spotify
-      let api = new SpotifyAPI()
       api.setAccessToken(token)
       try {
-        let profile = await getUserProfile(api)
+        let profile = await getUserProfile()
         await authStore.setItem('profile', profile)
         return true
       } catch (e) {
@@ -88,8 +90,13 @@ export default new (class {
     let data = {
       client_id: process.env.REACT_APP_CLIENT_ID,
       redirect_uri: `${window.location.protocol}//${window.location.host}/login`,
-      response_type: 'token'
+      response_type: 'token',
+      scope: 'playlist-read-private playlist-read-collaborative'
     }
     return `${authEndpoint}?${new URLSearchParams(data as any).toString()}`
+  }
+
+  get api() {
+    return api
   }
 })()

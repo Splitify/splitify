@@ -11,4 +11,5 @@ export interface Playlist {
   snapshot_id: string
   tracks: Array<Track>
   uri: string
+  expand : (expandTrack?: boolean) => Promise<this>
 }
