@@ -128,7 +128,7 @@ export async function parseAlbumJSON (
   return expand ? await album.expand() : album
 }
 
-export function parseUserJSON ({ id, display_name, images }: any): User {
+export function parseUserJSON({ id, display_name, images }: any): User {
   return {
     id,
     display_name,

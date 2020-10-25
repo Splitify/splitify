@@ -1,41 +1,83 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
+import React, { useEffect, useState } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import Autocomplete from '@material-ui/lab/Autocomplete'
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
+import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import Dialog from '@material-ui/core/Dialog';
-import { Playlist as PlaylistObj, Track as TrackObj } from "../types"
 import { IconButton } from '@material-ui/core';
-import Track from './Track';
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TextField
+} from '@material-ui/core'
+import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
+import Track from './Track'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   table: {
     //Add styling for tables here
   },
-});
+  root: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    '& > *': {
+      margin: theme.spacing(0.5)
+    }
+  },
+  paper: {
+    width: 200,
+    height: 230,
+    overflow: 'auto'
+  },
+  button: {
+    margin: theme.spacing(0.5, 0)
+  }
+}))
 
-
-export default function Subplaylist(props: {
-  playlist: PlaylistObj,
-  genres: string[],
-  onDelete?: (playlist: PlaylistObj) => any;
+export default function Subplaylist (props: {
+  source: PlaylistObj
+  playlist: PlaylistObj
+  genres: string[]
+  onDelete?: (playlist: PlaylistObj) => any
 }) {
-  const classes = useStyles();
-  const [selectedGenres, setFormats] = React.useState(() => []);
+  const classes = useStyles()
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
 
-  const handleFormat = (event: object, value: any) => {
-    setFormats(value);
-  };
+  // TODO: Maybe put genres for each genre
+  const TrackCorrectGenre = (track: TrackObj): boolean => {
+    for (let artist of track.artists) {
+      for (let genre of artist.genres) {
+        if (selectedGenres.includes(genre)) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
+  // TODO: setTracks will be used for deletion, reordering and moving
+  // eslint-disable-next-line
+  let [tracks, setTracks] = useState(props.source.tracks)
+
+  // Save tracks to playlist when updated
+  useEffect(() => {
+    props.playlist.tracks = tracks
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tracks])
+
+  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
+  const checkedIcon = <CheckBoxIcon fontSize='small' />
 
   const [editDialogOpen, setEditDialogOpen] = React.useState(false);
 
@@ -51,44 +93,67 @@ export default function Subplaylist(props: {
       </Dialog>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                {props.playlist.name}
-                <IconButton onClick={() => setEditDialogOpen(true)}>
-                  <EditIcon />
-                </IconButton>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  {props.playlist.name}
+                  <IconButton onClick={() => setEditDialogOpen(true)}>
+                    <EditIcon />
+                  </IconButton>
               </TableCell>
               <TableCell>
-                <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
-                  Delete
-                </Button>
+                  <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
+                    Delete
+                  </Button>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             <TableRow>
-              <ToggleButtonGroup value={selectedGenres} size="small" onChange={handleFormat} aria-label="text formatting">
-                {props.genres.map((genre: string) => (
-                  <ToggleButton value={genre}>
-                    {genre}
-                  </ToggleButton>
-                ))}
-              </ToggleButtonGroup>
+              <TableCell colSpan={2}>
+                <Autocomplete
+                  multiple
+                  id='checkboxes-tags-demo'
+                  options={props.genres}
+                  disableCloseOnSelect
+                  getOptionLabel={option => option}
+                  onChange={(event: any, newValue: string[]) => {
+                    console.log(newValue)
+                    setSelectedGenres(newValue)
+                  }}
+                  renderOption={(option, { selected }) => (
+                    <React.Fragment>
+                      <Checkbox
+                        icon={icon}
+                        checkedIcon={checkedIcon}
+                        style={{ marginRight: 8 }}
+                        checked={selected}
+                      />
+                      {option}
+                    </React.Fragment>
+                  )}
+                  renderInput={params => (
+                    <TextField
+                      style={{ width: '100%' }}
+                      {...params}
+                      variant='outlined'
+                      label='Genres'
+                      placeholder='Add Genre'
+                    />
+                  )}
+                />
+              </TableCell>
             </TableRow>
-
-            {/* //FIXME: Simplify / expand */}
-            {props.playlist.tracks.map((track: TrackObj) => (
+            {tracks.filter(TrackCorrectGenre).map(track => (
               <TableRow key={track.id}>
-                {/* UUID for each track item */}
-                <TableCell component="th" scope="row">
+                <TableCell colSpan={2} component='th' scope='row'>
                   <Track track={track} />
                 </TableCell>
               </TableRow>
             ))}
-          </TableBody>
+            </TableBody>
         </Table>
       </TableContainer>
-    </div >
+    </div>
   );
 }
