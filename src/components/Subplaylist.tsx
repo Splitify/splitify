@@ -3,9 +3,13 @@ import { makeStyles } from '@material-ui/core/styles'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { IconButton } from '@material-ui/core';
 import {
   Button,
   Checkbox,
+  Dialog,
   Table,
   TableBody,
   TableCell,
@@ -17,6 +21,7 @@ import {
 } from '@material-ui/core'
 import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
 import Track from './Track'
+import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 import MultiFilter, { TrackFilter } from './MultiFilter'
 
 const useStyles = makeStyles(theme => ({
@@ -41,7 +46,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function Subplaylist(props: {
+export default function Subplaylist (props: {
   source: PlaylistObj
   playlist: PlaylistObj
   genres: string[]
@@ -77,41 +82,66 @@ export default function Subplaylist(props: {
   const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
   const checkedIcon = <CheckBoxIcon fontSize='small' />
 
+  const [editDialogOpen, setEditDialogOpen] = React.useState(false);
+
   return (
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label='simple table'>
-        <TableHead>
-          <TableRow>
-            {/* <TableCell>{props.playlist.tracks[0]}</TableCell> */}
-            <TableCell>
-              <Button
-                variant='contained'
-                color='secondary'
-                onClick={() => props.onDelete && props.onDelete(props.playlist)}
-              >
-                Delete
-              </Button>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={2}>
-              <Autocomplete
-                multiple
-                id='checkboxes-tags-demo'
-                options={props.genres}
-                disableCloseOnSelect
-                getOptionLabel={option => option}
-                onChange={(event: any, newValue: string[]) => {
-                  console.log(newValue)
-                  setSelectedGenres(newValue)
-                }}
-                renderOption={(option, { selected }) => (
-                  <React.Fragment>
-                    <Checkbox
-                      icon={icon}
-                      checkedIcon={checkedIcon}
-                      style={{ marginRight: 8 }}
-                      checked={selected}
+    <div>
+      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
+        <EditPlaylistNameDialog
+          name={props.playlist.name}
+          onSave={(newName?: string) => {
+            setEditDialogOpen(false);
+            if (newName) props.playlist.name = newName;
+          }} />
+      </Dialog>
+      <TableContainer component={Paper}>
+        <Table className={classes.table} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  {props.playlist.name}
+                  <IconButton onClick={() => setEditDialogOpen(true)}>
+                    <EditIcon />
+                  </IconButton>
+              </TableCell>
+              <TableCell>
+                  <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
+                    Delete
+                  </Button>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell colSpan={2}>
+                <Autocomplete
+                  multiple
+                  id='checkboxes-tags-demo'
+                  options={props.genres}
+                  disableCloseOnSelect
+                  getOptionLabel={option => option}
+                  onChange={(event: any, newValue: string[]) => {
+                    console.log(newValue)
+                    setSelectedGenres(newValue)
+                  }}
+                  renderOption={(option, { selected }) => (
+                    <React.Fragment>
+                      <Checkbox
+                        icon={icon}
+                        checkedIcon={checkedIcon}
+                        style={{ marginRight: 8 }}
+                        checked={selected}
+                      />
+                      {option}
+                    </React.Fragment>
+                  )}
+                  renderInput={params => (
+                    <TextField
+                      style={{ width: '100%' }}
+                      {...params}
+                      variant='outlined'
+                      label='Genres'
+                      placeholder='Add Genre'
                     />
                     {option}
                   </React.Fragment>
@@ -145,5 +175,6 @@ export default function Subplaylist(props: {
         </TableBody>
       </Table>
     </TableContainer>
+</div>
   )
 }

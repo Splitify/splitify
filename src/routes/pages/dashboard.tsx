@@ -4,15 +4,12 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import Auth from '../../auth'
-
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import MasterPlaylist from '../../components/MasterPlaylist'
 import Subplaylist from '../../components/Subplaylist'
-
-import { Playlist as PlaylistObj } from '../../types'
-import { allGenresFromPlaylist } from '../../helpers/helpers'
-
-import { v4 as uuid } from 'uuid'
+import { Playlist as PlaylistObj } from "../../types";
+import { allGenresFromPlaylist } from "../../helpers/helpers";
+import { v4 as uuid } from 'uuid';
 
 export const useStyles = makeStyles(theme => ({
   root: {
