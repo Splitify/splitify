@@ -90,14 +90,14 @@ export async function createOrUpdatePlaylist(
   if(playlist.id.substr(0, 4) === "temp"){
     console.log("Current playlist doesnt exist. Creating now...");
     // First create the new playlist
-    const newPaylist = await parsePlaylistJSON(
+    const newPlaylist = await parsePlaylistJSON(
       await api.createPlaylist(userId, {
         name: playlist.name,
       }),
       expand
     )
     // replace the current playlists id and replace the tracks
-    playlist.id = newPaylist.id;
+    playlist.id = newPlaylist.id;
     const trackUris = playlist.tracks.map(track => {
       return track.uri;
     })
