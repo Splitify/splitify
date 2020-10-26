@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
@@ -6,8 +7,9 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
+import { green } from '@material-ui/core/colors';
+// import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { Playlist as PlaylistObj, Track as TrackObj } from "../types"
-import { IconButton } from '@material-ui/core';
 import {
   Button,
   Checkbox,
@@ -19,11 +21,17 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TextField
+  TextField,
+  IconButton,
+  CircularProgress
 } from '@material-ui/core'
 import Track from './Track'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
-import { createOrUpdatePlaylist, getUserProfile} from '../helpers/helpers'
+import { createOrUpdatePlaylist, getUserProfile } from '../helpers/helpers';
+
+// function Alert(props: AlertProps) {
+//   return <MuiAlert elevation={6} variant="filled" {...props} />;
+// }
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -42,10 +50,41 @@ const useStyles = makeStyles(theme => ({
     height: 230,
     overflow: 'auto'
   },
+  wrapper: {
+    margin: theme.spacing(1),
+    position: 'relative',
+  },
   button: {
-    margin: theme.spacing(0.5, 0)
-  }
+    margin: theme.spacing(0.5, 0),
+    size: 'medium'
+  },
+  buttonSuccess: {
+    backgroundColor: green[500],
+    '&:hover': {
+      backgroundColor: green[700],
+    },
+  },
+  buttonProgress: {
+    color: green[500],
+    position: 'absolute',
+    top: '50%',
+    left: '40%',
+    marginTop: -12,
+    marginLeft: -8,
+  },
 }))
+
+export interface SnackbarMessage {
+  message: string;
+  key: number;
+}
+
+export interface State {
+  open: boolean;
+  snackPack: SnackbarMessage[];
+  messageInfo?: SnackbarMessage;
+}
+
 
 export default function Subplaylist (props: {
   source: PlaylistObj
@@ -53,7 +92,39 @@ export default function Subplaylist (props: {
   genres: string[]
   onDelete?: (playlist: PlaylistObj) => any
 }) {
+
   const classes = useStyles();
+
+  // SAVING ANIMATION STUFF
+  const [loading, setLoading] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+  const [buttonLabel, setButtonLabel] = useState("Save")
+
+  const buttonClassname = clsx({
+    [classes.button]: true,
+    [classes.buttonSuccess]: success,
+  });
+
+  const handleButtonClick = async () => {
+    if (!loading) {
+      // Start loading animation while saving playlist
+      setSuccess(false);
+      setLoading(true);
+      const user = await getUserProfile();
+      await createOrUpdatePlaylist(user.id, props.playlist);
+      // wait 2 seconds before telling the user the playlist has saved
+      setTimeout(() => {
+        setButtonLabel("Saved");
+        setSuccess(true);
+        setLoading(false);
+      },2000);
+      // wait 4 seconds before reverting to normal save button
+      setTimeout(() => { 
+        setButtonLabel("Save");
+        setSuccess(false);
+      },4000);
+    }
+  };
 
   // TODO: Maybe put genres for each genre
   const TrackCorrectGenre = (track: TrackObj): boolean => {
@@ -68,7 +139,9 @@ export default function Subplaylist (props: {
   }
 
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+
   useEffect(() => {
+    console.log("SELECTED GENRES: ", selectedGenres)
     setTracks(props.source.tracks.filter(TrackCorrectGenre))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedGenres])
@@ -85,13 +158,6 @@ export default function Subplaylist (props: {
 
   const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
   const checkedIcon = <CheckBoxIcon fontSize='small' />
-
-  async function handleSave(){
-    const user = await getUserProfile();
-    console.log("Creating playlist tracks: ", props.playlist.tracks);
-    const resp = await createOrUpdatePlaylist(user.id, props.playlist);
-    console.log(resp);
-  }
 
   const [editDialogOpen, setEditDialogOpen] = React.useState(false);
 
@@ -116,14 +182,21 @@ export default function Subplaylist (props: {
                   </IconButton>
               </TableCell>
               <TableCell>
-                  <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
-                    Delete
-                  </Button>
-              </TableCell>
-              <TableCell>
-                <Button variant="contained" color="secondary" onClick={async () => await handleSave()} startIcon={<SaveIcon />}>
-                  Save
+                <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
+                  Delete
                 </Button>
+              </TableCell>
+              <TableCell className={classes.wrapper}>
+                <Button 
+                  variant="contained" 
+                  color="primary" 
+                  className={buttonClassname} 
+                  disabled={loading} 
+                  onClick={handleButtonClick} 
+                  startIcon={<SaveIcon />}>
+                  {buttonLabel}
+                </Button>
+                {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
               </TableCell>
             </TableRow>
           </TableHead>
