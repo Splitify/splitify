@@ -4,8 +4,8 @@ import { Artist, Track as TrackObj } from '../types'
 import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel'
 import FormGroup from '@material-ui/core/FormGroup/FormGroup'
 import FormControl from '@material-ui/core/FormControl/FormControl'
-import Checkbox from '@material-ui/core/Checkbox/Checkbox'
-import FormHelperText from '@material-ui/core/FormHelperText/FormHelperText'
+import RadioGroup from '@material-ui/core/RadioGroup/RadioGroup'
+import Radio from '@material-ui/core/Radio/Radio'
 
 export interface TrackFilter {
   filter: (t: TrackObj) => boolean;
@@ -15,58 +15,44 @@ export default function MultiFilter(props: {
   callback: (f: TrackFilter) => void;
 }) {
   const [filterValue, setFilterValue] = useState("");
-  const [filterCategories, setFilterCategories] = useState({
-    name: true,
-    album: false,
-    artist: false,
-    genre: false
-  });
+  const [filterCategory, setFilterCategory] = useState("Name");
 
-  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterCategories({ ...filterCategories, [event.target.name]: event.target.checked });
-  };
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => setFilterCategory(event.target.value);
 
   useEffect(() => {
     const TrackMatchesFilter = (track: TrackObj): boolean => {
       if (filterValue === '') return true;
-      if (Object.values(filterCategories).filter((v) => v).length === 0) return true;
-      return (filterCategories.name && track.name.toLowerCase().includes(filterValue))
-        || (filterCategories.artist && track.artists.some((a: Artist) => a.name.toLowerCase().includes(filterValue)))
-        || (filterCategories.album && track.album?.name.toLowerCase().includes(filterValue) === true)
-        || (filterCategories.genre && track.artists.some((a: Artist) => a.genres.some((g: string) => g.includes(filterValue))));
+      return (filterCategory === "Name" && track.name.toLowerCase().includes(filterValue))
+        || (filterCategory === "Artist" && track.artists.some((a: Artist) => a.name.toLowerCase().includes(filterValue)))
+        || (filterCategory === "Album" && track.album?.name.toLowerCase().includes(filterValue) === true)
+        || (filterCategory === "Genre" && track.artists.some((a: Artist) => a.genres.some((g: string) => g.includes(filterValue))));
     }
-    console.log(filterCategories, filterValue)
+    console.log(filterCategory, filterValue)
     props.callback({ filter: TrackMatchesFilter });
     // eslint-disable-next-line
-  }, [filterValue, filterCategories]);
+  }, [filterValue, filterCategory]);
 
-  const re = /, (\w+)$/;
-  const english = Object.keys(filterCategories).join(", ").replace(re, " and/or $1")
-
-  const filterError = filterValue.length > 0 && Object.values(filterCategories).filter((v) => v).length === 0;
   return (
-    <FormControl error={filterError} component="fieldset">
+    <FormControl component="fieldset">
       <FormGroup aria-label="filter" row>
         <TextField
-          error={filterError}
           style={{ width: '50%' }}
           variant='outlined'
           label='Filter'
           onChange={(e) => setFilterValue(e.target.value.toLowerCase())}
         />
-        {Object.entries(filterCategories).map(([k, v]) => (
+        <RadioGroup value={filterCategory} onChange={handleFilterChange} row>
+        {["Name", "Artist", "Album", "Genre"].map((k) => (
           <FormControlLabel
-            control={<Checkbox color="primary" checked={v} onChange={handleFilterChange} name={k} />}
+            control={<Radio />}
             label={k}
             labelPlacement="top"
+            value={k}
             style={{ marginLeft: '5px', marginRight: '5px' }}
           />
         ))}
+        </RadioGroup>
       </FormGroup>
-      {filterError ? (
-        <FormHelperText>Select one of {english}</FormHelperText>
-      ) : ""}
-
     </FormControl >
 
   )
