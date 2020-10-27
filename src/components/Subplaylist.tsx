@@ -183,7 +183,7 @@ const TrackInRange = (track : TrackObj) : boolean => {
     for (let artist of track.artists) {
       for (let genre of artist.genres) {
         if (selectedGenres.includes(genre)) {
-          return true
+          return TrackInRange(track)
         }
       }
     }
@@ -281,7 +281,8 @@ const TrackInRange = (track : TrackObj) : boolean => {
                 />
               </TableCell>
             </TableRow>
-            {tracks.filter(TrackCorrectGenre && TrackInRange).map(track => (
+            {tracks.filter(TrackCorrectGenre ).map(track => (
+              
               <TableRow key={track.id}>
                 <TableCell colSpan={2} component='th' scope='row'>
                   <Track track={track} />
