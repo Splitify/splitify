@@ -31,11 +31,11 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 
 export function CheckboxesTags(props: {
-  giveOptionToPlaylist : (option: string, checked: boolean) => void
+  giveOptionToPlaylist : (option: string) => void
 }) {
 
-  const handleChange = (selected:string, checked: boolean) => {
-    props.giveOptionToPlaylist(selected, checked)
+  const handleChange = (selected:any) => {
+    props.giveOptionToPlaylist(selected)
   }
   return (
     <Autocomplete
@@ -43,7 +43,11 @@ export function CheckboxesTags(props: {
       id="checkboxes-tags-demo"
       options={audioFeaturesTags}
       disableCloseOnSelect
-      getOptionLabel={(option) => option.title}
+      getOptionLabel={(option) => option.name}
+      onChange={(event: any, newValue) => {
+        console.log(newValue)
+        handleChange(newValue)
+      }}
       renderOption={(option, { selected }) => (
         <React.Fragment>
           <Checkbox
@@ -51,9 +55,9 @@ export function CheckboxesTags(props: {
             checkedIcon={checkedIcon}
             style={{ marginRight: 8 }}
             checked={selected}
-            onChange={() => {handleChange(option.title, selected)}}
+            //onChange={() => {handleChange(option.title, selected)}}
           />
-          {option.title}
+          {option.name}
         </React.Fragment>
       )}
       renderInput={(params) => (
@@ -71,13 +75,13 @@ export function CheckboxesTags(props: {
 
 // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
 const audioFeaturesTags = [
-  { title: 'Acousticness'},
-  {  title: 'Danceability'},
-  {  title: 'Energy'},
-  {  title: 'Instrumentalness'},
-  {  title: 'Liveness',}, 
-  {  title: 'Speechiness'},
-  {  title: 'Valence'}
+  { name: 'Acousticness', min: 10, max: 90},
+  {  name: 'Danceability',min: 10, max: 90},
+  {  name: 'Energy',min: 10, max: 90},
+  {  name: 'Instrumentalness',min: 10, max: 90},
+  {  name: 'Liveness',min: 10, max: 90}, 
+  {  name: 'Speechiness',min: 10, max: 90},
+  {  name: 'Valence',min: 10, max: 90}
 ];
 
 const useStyles = makeStyles(theme => ({
@@ -136,14 +140,9 @@ const getFeaturesFromSlider = (name:string, incomingFeatures: Number[]) => {
   
 }
 
-const getOptionFromCheckboxes = (option : string, checked : boolean) =>
-{
-  if (checked === true){
-    deleteSlider(option)
-  }else{
-    addSlider(option);
-  }
-  console.log(sliders)
+const getOptionFromCheckboxes = (option:any) =>
+{ 
+  setSliders(option)
 }
 const TrackInRange = (track : TrackObj) : boolean => {
   var found = true;
