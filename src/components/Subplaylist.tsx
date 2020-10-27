@@ -6,7 +6,7 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import AudioFeatureSlider from './AudioFeatureSlider'
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import {
   Button,
   Checkbox,
@@ -26,63 +26,44 @@ import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 
 
 
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
-
-
 export function CheckboxesTags(props: {
   giveOptionToPlaylist : (option: string) => void
 }) {
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleClick = (event:any) => {
+    setAnchorEl(event.currentTarget);
+  };
   const handleChange = (selected:any) => {
     props.giveOptionToPlaylist(selected)
   }
   return (
-    <Autocomplete
-      multiple
-      id="checkboxes-tags-demo"
-      options={audioFeaturesTags}
-      disableCloseOnSelect
-      getOptionLabel={(option) => option.name}
-      onChange={(event: any, newValue) => {
-        console.log(newValue)
-        handleChange(newValue)
-      }}
-      renderOption={(option, { selected }) => (
-        <React.Fragment>
-          <Checkbox
-            icon={icon}
-            checkedIcon={checkedIcon}
-            style={{ marginRight: 8 }}
-            checked={selected}
-            //onChange={() => {handleChange(option.title, selected)}}
-          />
-          {option.name}
-        </React.Fragment>
-      )}
-      renderInput={(params) => (
-        
-        <TextField         
-        style={{ width: '100%' }}
-        {...params}
-        variant='outlined'
-        label='Audio Features'
-        placeholder='Add Feature' />
-      )}
-    />
+    <div> 
+    <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+        Add Audio Feature
+      </Button>
+      <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={() => handleChange({name:'Acousticness', min:10, max:90})}>Acousticness</MenuItem>
+        <MenuItem onClick={() => handleChange({name:'Danceability', min:10, max:90})}>Danceability</MenuItem>
+        <MenuItem onClick={() => handleChange({name:'Energy', min:10, max:90})}>Energy</MenuItem>
+        <MenuItem onClick={() => handleChange({name:'Instrumentalness', min:10, max:90})}>Instrumentalness</MenuItem>
+        <MenuItem onClick={() => handleChange({name:'Liveness', min:10, max:90})}>Liveness</MenuItem>
+        <MenuItem onClick={() => handleChange({name:'Speechiness', min:10, max:90})}>Speechiness</MenuItem>
+        <MenuItem onClick={() => handleChange({name:'Valence', min:10, max:90})}>Valence</MenuItem>
+      </Menu>
+      </div>
   );
 }
 
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-const audioFeaturesTags = [
-  { name: 'Acousticness', min: 10, max: 90},
-  {  name: 'Danceability',min: 10, max: 90},
-  {  name: 'Energy',min: 10, max: 90},
-  {  name: 'Instrumentalness',min: 10, max: 90},
-  {  name: 'Liveness',min: 10, max: 90}, 
-  {  name: 'Speechiness',min: 10, max: 90},
-  {  name: 'Valence',min: 10, max: 90}
-];
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -137,7 +118,16 @@ const getFeaturesFromSlider = (name:string, incomingFeatures: Number[]) => {
 
 const getOptionFromCheckboxes = (option:any) =>
 { 
-  setSliders(option)
+  var found = false;
+  for(var i = 0; i < sliders.length; i++) {
+    if (sliders[i].name === option.name) {
+        found = true;
+        break;
+    }
+  }
+  if (!found){
+    setSliders([...sliders,option])
+  }
 }
 const TrackInRange = (track : TrackObj) : boolean => {
   var found = true;
@@ -223,6 +213,8 @@ const TrackInRange = (track : TrackObj) : boolean => {
                 <TableCell> 
               <AudioFeatureSlider feature_name = {p.name} feature_value = {[p.min,p.max]} delete = {() => deleteSlider(p.name)} giveFeaturesToPlaylist = {getFeaturesFromSlider}/>
               </TableCell>
+              <Button variant="contained" color="secondary" onClick = {() =>deleteSlider(p.name)}startIcon={<DeleteIcon />}>
+              </Button>
               </TableRow>
             ))}
               <TableRow>

@@ -44,7 +44,7 @@ export default function AudioFeatureSlider(props: {
                     defaultValue = {SliderVal.map((num) => Number(num))}
                     getAriaValueText = {valuetext}
                 />
-
+                
             </div>
         )
     }
