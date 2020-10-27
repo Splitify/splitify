@@ -26,7 +26,7 @@ import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 
 
 
-export function CheckboxesTags(props: {
+export function FeatureMenu(props: {
   giveOptionToPlaylist : (option: string) => void
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -116,7 +116,7 @@ const getFeaturesFromSlider = (name:string, incomingFeatures: Number[]) => {
   
 }
 
-const getOptionFromCheckboxes = (option:any) =>
+const getOptionFromMenu = (option:any) =>
 { 
   var found = false;
   for(var i = 0; i < sliders.length; i++) {
@@ -235,7 +235,7 @@ const TrackInRange = (track : TrackObj) : boolean => {
 
             <TableRow> 
               <TableCell colSpan = {2}>
-            <CheckboxesTags giveOptionToPlaylist = {getOptionFromCheckboxes}/>
+            <FeatureMenu giveOptionToPlaylist = {getOptionFromMenu}/>
             </TableCell>
             </TableRow>
             <TableRow>
