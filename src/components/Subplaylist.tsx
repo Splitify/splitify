@@ -117,11 +117,6 @@ export default function Subplaylist (props: {
 
   const [sliders, setSliders] = useState<{name:string, min:number, max:number}[]>([]); 
 
-
-  const addSlider = (option:string) => {
-    setSliders([...sliders, {name : option, min:10, max:90}]);
-    console.log("Adding sliders ", option);
-}
   const deleteSlider = (id: String) => {
     console.log("Deleting slider ", id);
     setSliders(sliders.filter(k => k.name !== id));
@@ -176,6 +171,7 @@ const TrackInRange = (track : TrackObj) : boolean => {
         found=false;
       }
   }
+  return found;
   })
   
   
@@ -222,8 +218,12 @@ const TrackInRange = (track : TrackObj) : boolean => {
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
             <TableHead>
-            {sliders.map(p => (
+              {sliders.map(p => (
+                <TableRow> 
+                <TableCell> 
               <AudioFeatureSlider feature_name = {p.name} feature_value = {[p.min,p.max]} delete = {() => deleteSlider(p.name)} giveFeaturesToPlaylist = {getFeaturesFromSlider}/>
+              </TableCell>
+              </TableRow>
             ))}
               <TableRow>
                 <TableCell>
