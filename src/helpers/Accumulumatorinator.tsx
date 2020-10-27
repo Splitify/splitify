@@ -1,7 +1,9 @@
+import { getStorage } from './localStorage'
+
 // accumulator
-export default class Accumulumatorinator<T> {
-  private readonly callback: Function
-  private readonly limit: Number
+export class Accumulumatorinator<T> {
+  callback: Function
+  limit: Number
 
   private _accumulator: string[]
   private _promise: Promise<T[]>
@@ -65,5 +67,30 @@ export default class Accumulumatorinator<T> {
 
     // Resolve the promise
     currentResolver(await this.callback(currentAccumulator))
+  }
+}
+
+export class CachingAccumulumatorinator<T> extends Accumulumatorinator<T> {
+  private readonly cache: LocalForage
+  private readonly cacheName: string
+  constructor (
+    cacheName: string,
+    limit: Number,
+    callback: (ids: string[]) => any
+  ) {
+    super(limit, callback)
+    this.cache = getStorage((this.cacheName = cacheName))
+  }
+
+  async request (id: string, instant?: boolean): Promise<T> {
+    let hit = await this.cache.getItem(id)
+    if (hit) {
+      // console.info(`${this.cacheName}:${id} found in cache`);
+      return hit as T
+    }
+
+    let data = await super.request(id, instant)
+    this.cache.setItem(id, data)
+    return data
   }
 }
