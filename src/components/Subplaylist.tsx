@@ -5,8 +5,8 @@ import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { IconButton } from '@material-ui/core';
 import {
+  IconButton,
   Button,
   Checkbox,
   Dialog,
@@ -20,9 +20,9 @@ import {
   TextField
 } from '@material-ui/core'
 import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
-import Track from './Track'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 import MultiFilter, { TrackFilter } from './MultiFilter'
+import TrackEntry from './TrackEntry'
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -153,11 +153,7 @@ export default function Subplaylist(props: {
           </TableHead>
           <TableBody>
             {tracks.filter(TrackCorrectGenre).filter(trackFilter.filter).map(track => (
-              <TableRow key={track.id}>
-                <TableCell colSpan={2} component='th' scope='row'>
-                  <Track track={track} />
-                </TableCell>
-              </TableRow>
+              <TrackEntry track={track} key={track.id} />
             ))}
           </TableBody>
         </Table>

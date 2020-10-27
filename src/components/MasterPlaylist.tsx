@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-
 import {
   Paper,
   Table,
@@ -10,10 +9,8 @@ import {
   TableRow,
   TableCell
 } from '@material-ui/core'
-
 import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
 import { allGenresFromPlaylist } from '../helpers/helpers'
-
 import TrackEntry from './TrackEntry'
 import MultiFilter, { TrackFilter } from './MultiFilter'
 
@@ -50,7 +47,7 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj }) {
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // TODO: Changing playlist? props.playlist
-
+  
   return (
     <TableContainer
       component={Paper}
@@ -74,8 +71,8 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj }) {
         </TableHead>
         <TableBody>
           {/* {props.playlist.tracks.length} */}
-          {props.playlist.tracks.filter(trackFilter.filter).map((track, i) => (
-            <TrackEntry track={track} key={i} />
+          {props.playlist.tracks.filter(trackFilter.filter).map((track) => (
+            <TrackEntry track={track} key={track.id} />
           ))}
         </TableBody>
       </Table>
