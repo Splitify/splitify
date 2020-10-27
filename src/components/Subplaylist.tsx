@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { IconButton } from '@material-ui/core';
 import {
   Button,
   Checkbox,
   Dialog,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -17,10 +16,12 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TextField
+  TextField,
+  makeStyles
 } from '@material-ui/core'
 import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
 import Track from './Track'
+import SortSelector from './SortSelector'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 
 const useStyles = makeStyles(theme => ({
@@ -53,6 +54,15 @@ export default function Subplaylist (props: {
 }) {
   const classes = useStyles()
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [sortType, setSortType] = useState("")
+
+  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
+  const checkedIcon = <CheckBoxIcon fontSize='small' />
+  // TODO: setTracks will be used for deletion, reordering and moving
+  // eslint-disable-next-line
+  const [tracks, setTracks] = useState(props.source.tracks)
+
 
   // TODO: Maybe put genres for each genre
   const TrackCorrectGenre = (track: TrackObj): boolean => {
@@ -66,20 +76,39 @@ export default function Subplaylist (props: {
     return false
   }
 
-  // TODO: setTracks will be used for deletion, reordering and moving
-  // eslint-disable-next-line
-  let [tracks, setTracks] = useState(props.source.tracks)
+  const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
+    let var1: string = "";
+    let var2: string = "";
+    console.log("sorting")
+    switch(sortType) {
+      case "Track Name":
+        var1 = track1.name
+        var2 = track2.name
+        break;
+      case "Artist":
+        var1 = track1.artists[0].name
+        var2 = track2.artists[0].name
+        break;
+      case "Album":
+        if (track1.album){
+          var1 = track1.album.name
+        }
+        if (track2.album){
+          var2 = track2.album.name
+        }
+        break;
+      default:
+        var1 = track1.name
+        var2 = track2.name
+    }
+    return var1.localeCompare(var2)
+  };
 
   // Save tracks to playlist when updated
   useEffect(() => {
     props.playlist.tracks = tracks
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
-
-  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
-  const checkedIcon = <CheckBoxIcon fontSize='small' />
-
-  const [editDialogOpen, setEditDialogOpen] = React.useState(false);
 
   return (
     <div>
@@ -93,13 +122,16 @@ export default function Subplaylist (props: {
       </Dialog>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  {props.playlist.name}
-                  <IconButton onClick={() => setEditDialogOpen(true)}>
-                    <EditIcon />
-                  </IconButton>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                {props.playlist.name}
+                <IconButton onClick={() => setEditDialogOpen(true)}>
+                  <EditIcon />
+                </IconButton>
+              </TableCell>
+              <TableCell>
+                  <SortSelector setSort={setSortType}/>
               </TableCell>
               <TableCell>
                   <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
@@ -144,7 +176,7 @@ export default function Subplaylist (props: {
                 />
               </TableCell>
             </TableRow>
-            {tracks.filter(TrackCorrectGenre).map(track => (
+              {tracks.filter(TrackCorrectGenre).sort(sortTracks).map(track => (
               <TableRow key={track.id}>
                 <TableCell colSpan={2} component='th' scope='row'>
                   <Track track={track} />

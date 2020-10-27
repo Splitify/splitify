@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-
+import TrackEntry from './TrackEntry'
+import { allGenresFromPlaylist } from '../helpers/helpers'
+import { Playlist as PlaylistObj } from '../types'
 import {
+  makeStyles,
   Paper,
   Table,
   TableContainer,
@@ -10,11 +12,6 @@ import {
   TableRow,
   TableCell
 } from '@material-ui/core'
-
-import { Playlist as PlaylistObj } from '../types'
-import { allGenresFromPlaylist } from '../helpers/helpers'
-
-import TrackEntry from './TrackEntry'
 
 const useStyles = makeStyles({
   table: {
@@ -63,7 +60,6 @@ export default function MasterPlaylist (props: { playlist: PlaylistObj }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {/* {props.playlist.tracks.length} */}
           {props.playlist.tracks.map((track, i) => (
             <TrackEntry track={track} key={i} />
           ))}
