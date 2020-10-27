@@ -5,8 +5,8 @@ import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { IconButton } from '@material-ui/core';
 import {
+  IconButton,
   Button,
   Checkbox,
   Dialog,
@@ -20,8 +20,9 @@ import {
   TextField
 } from '@material-ui/core'
 import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
-import Track from './Track'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
+import MultiFilter, { TrackFilter } from './MultiFilter'
+import TrackEntry from './TrackEntry'
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -45,7 +46,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function Subplaylist (props: {
+export default function Subplaylist(props: {
   source: PlaylistObj
   playlist: PlaylistObj
   genres: string[]
@@ -53,6 +54,8 @@ export default function Subplaylist (props: {
 }) {
   const classes = useStyles()
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+
+  const [trackFilter, setTrackFilter] = useState<TrackFilter>({ filter: (t: TrackObj) => true });
 
   // TODO: Maybe put genres for each genre
   const TrackCorrectGenre = (track: TrackObj): boolean => {
@@ -93,22 +96,20 @@ export default function Subplaylist (props: {
       </Dialog>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  {props.playlist.name}
-                  <IconButton onClick={() => setEditDialogOpen(true)}>
-                    <EditIcon />
-                  </IconButton>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                {props.playlist.name}
+                <IconButton onClick={() => setEditDialogOpen(true)}>
+                  <EditIcon />
+                </IconButton>
               </TableCell>
               <TableCell>
-                  <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
-                    Delete
+                <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
+                  Delete
                   </Button>
               </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
             <TableRow>
               <TableCell colSpan={2}>
                 <Autocomplete
@@ -144,16 +145,19 @@ export default function Subplaylist (props: {
                 />
               </TableCell>
             </TableRow>
-            {tracks.filter(TrackCorrectGenre).map(track => (
-              <TableRow key={track.id}>
-                <TableCell colSpan={2} component='th' scope='row'>
-                  <Track track={track} />
-                </TableCell>
-              </TableRow>
+            <TableRow>
+              <TableCell>
+                <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {tracks.filter(TrackCorrectGenre).filter(trackFilter.filter).map(track => (
+              <TrackEntry track={track} key={track.id} />
             ))}
-            </TableBody>
+          </TableBody>
         </Table>
       </TableContainer>
     </div>
-  );
+  )
 }

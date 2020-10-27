@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-
 import {
   Paper,
   Table,
@@ -10,11 +9,10 @@ import {
   TableRow,
   TableCell
 } from '@material-ui/core'
-
-import { Playlist as PlaylistObj } from '../types'
+import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
 import { allGenresFromPlaylist } from '../helpers/helpers'
-
 import TrackEntry from './TrackEntry'
+import MultiFilter, { TrackFilter } from './MultiFilter'
 
 const useStyles = makeStyles({
   table: {
@@ -22,12 +20,14 @@ const useStyles = makeStyles({
   }
 })
 
-export default function MasterPlaylist (props: { playlist: PlaylistObj }) {
+export default function MasterPlaylist(props: { playlist: PlaylistObj }) {
   const classes = useStyles()
 
   // Note: This genre list is likely to be incomplete until all Tracks have been expanded
   // Then again idk - Andrew
   const [genres, setGenres] = useState<string[]>([]);
+  const [trackFilter, setTrackFilter] = useState<TrackFilter>({ filter: (t: TrackObj) => true });
+
 
   // Async state update
   let _tick = useState(false)[1]
@@ -35,7 +35,7 @@ export default function MasterPlaylist (props: { playlist: PlaylistObj }) {
 
   useEffect(() => {
     // Expand the playlist (get tracks) and update the UI every 250ms
-    ;(async () => {
+    ; (async () => {
       let intl = setInterval(() => tick(), 250)
       props.playlist.expand().then(function () {
         clearInterval(intl)
@@ -47,7 +47,7 @@ export default function MasterPlaylist (props: { playlist: PlaylistObj }) {
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // TODO: Changing playlist? props.playlist
-
+  
   return (
     <TableContainer
       component={Paper}
@@ -61,11 +61,18 @@ export default function MasterPlaylist (props: { playlist: PlaylistObj }) {
           <TableRow key='genres'>
             <TableCell>{genres.toString()}</TableCell>
           </TableRow>
+          {genres.length > 0 ? (
+            <TableRow>
+              <TableCell>
+                <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
+              </TableCell>
+            </TableRow>
+          ) : ""}
         </TableHead>
         <TableBody>
           {/* {props.playlist.tracks.length} */}
-          {props.playlist.tracks.map((track, i) => (
-            <TrackEntry track={track} key={i} />
+          {props.playlist.tracks.filter(trackFilter.filter).map((track) => (
+            <TrackEntry track={track} key={track.id} />
           ))}
         </TableBody>
       </Table>

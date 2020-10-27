@@ -10,6 +10,7 @@ import Subplaylist from '../../components/Subplaylist'
 import { Playlist as PlaylistObj } from "../../types";
 import { allGenresFromPlaylist } from "../../helpers/helpers";
 import { v4 as uuid } from 'uuid';
+import AddIcon from '@material-ui/icons/Add';
 
 export const useStyles = makeStyles(theme => ({
   root: {
@@ -105,6 +106,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                 variant='contained'
                 color='primary'
                 onClick={() => addPlaylist()}
+                startIcon={<AddIcon />}
               >
                 Add
               </Button>
