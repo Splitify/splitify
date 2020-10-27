@@ -3,6 +3,7 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import { Track as TrackObj } from '../types'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
+import Track from './Track'
 // import Track from './Track'
 
 // let id: number = 0
@@ -21,7 +22,7 @@ export default function (props: { track: TrackObj }) {
     <TableRow /* key={track?.id || id++} */>
       <TableCell component='th' scope='row'>
         {track ? (
-          /*<Track track={track} />*/ track.name
+          <Track track={track} />
         ) : (
           <Skeleton variant='rect' />
         )}
