@@ -169,7 +169,7 @@ export default function Subplaylist(props: {
     for (let artist of track.artists) {
       for (let genre of artist.genres) {
         if (selectedGenres.includes(genre)) {
-          return TrackInRange(track)
+          return true
         }
       }
     }
@@ -204,15 +204,6 @@ export default function Subplaylist(props: {
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
-            {sliders.map(p => (
-              <TableRow>
-                <TableCell>
-                  <AudioFeatureSlider feature_name={p.name} feature_value={[p.min, p.max]} delete={() => deleteSlider(p.name)} giveFeaturesToPlaylist={getFeaturesFromSlider} />
-                </TableCell>
-                <Button variant="contained" color="secondary" onClick={() => deleteSlider(p.name)} startIcon={<DeleteIcon />}>
-                </Button>
-              </TableRow>
-            ))}
             <TableRow>
               <TableCell>
                 {props.playlist.name}
@@ -226,14 +217,22 @@ export default function Subplaylist(props: {
                   </Button>
               </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-
             <TableRow>
               <TableCell colSpan={2}>
                 <FeatureMenu giveOptionToPlaylist={getOptionFromMenu} alreadyActive={sliders.map(el => el.name)} />
               </TableCell>
             </TableRow>
+            {sliders.map(p => (
+              <TableRow>
+                <TableCell>
+                  <AudioFeatureSlider feature_name={p.name} feature_value={[p.min, p.max]} delete={() => deleteSlider(p.name)} giveFeaturesToPlaylist={getFeaturesFromSlider} />
+                </TableCell>
+                <Button variant="contained" color="secondary" onClick={() => deleteSlider(p.name)} startIcon={<DeleteIcon />}>
+                </Button>
+              </TableRow>
+            ))}
+          </TableHead>
+          <TableBody>
             <TableRow>
               <TableCell colSpan={2}>
                 <Autocomplete
@@ -269,7 +268,7 @@ export default function Subplaylist(props: {
                 />
               </TableCell>
             </TableRow>
-            {tracks.filter(TrackCorrectGenre).map(track => (
+            {tracks.filter(TrackCorrectGenre).filter(TrackInRange).map(track => (
 
               <TableRow key={track.id}>
                 <TableCell colSpan={2} component='th' scope='row'>
