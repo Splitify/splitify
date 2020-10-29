@@ -20,9 +20,14 @@ export default function AudioFeatureSlider(props: {
 
     const handleChange = (event: any, value: number | number[]) => {
         console.log('changing a value')
-        setSliderVal(value as number[]);
-        props.giveFeaturesToPlaylist(props.featureName,value as number[]);
-        console.log(value)
+        if (typeof(value) === 'number'){
+            setSliderVal([value,value])
+            props.giveFeaturesToPlaylist(props.featureName,[value,value]);
+
+        }else{
+            setSliderVal(value)
+            props.giveFeaturesToPlaylist(props.featureName,value);
+        }
     };
 
 
