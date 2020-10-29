@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
+import TrackEntry from './TrackEntry'
+import { allGenresFromPlaylist } from '../helpers/helpers'
+import { Playlist as PlaylistObj } from '../types'
+import { Track as TrackObj } from '../types'
 import {
+  makeStyles,
   Paper,
   Table,
   TableContainer,
@@ -9,9 +13,6 @@ import {
   TableRow,
   TableCell
 } from '@material-ui/core'
-import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
-import { allGenresFromPlaylist } from '../helpers/helpers'
-import TrackEntry from './TrackEntry'
 import MultiFilter, { TrackFilter } from './MultiFilter'
 
 const useStyles = makeStyles({

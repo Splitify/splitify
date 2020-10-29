@@ -48,7 +48,8 @@ export default function MultiFilter(props: {
             label={k}
             labelPlacement="top"
             value={k}
-            style={{ marginLeft: '5px', marginRight: '5px' }}
+            //We should change all styling from fixed px to percentages in the future to conform to mobile and changing screen sizes. 
+            style={{ marginLeft: '4px', marginRight: '4px' }}
           />
         ))}
         </RadioGroup>

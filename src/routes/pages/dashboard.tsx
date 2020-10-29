@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import Grid from '@material-ui/core/Grid'
-import { makeStyles } from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button'
 import Auth from '../../auth'
-import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import MasterPlaylist from '../../components/MasterPlaylist'
+import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
-import { Playlist as PlaylistObj } from "../../types";
 import { allGenresFromPlaylist } from "../../helpers/helpers";
+import { Playlist as PlaylistObj } from "../../types";
+import { Grid, Button, makeStyles} from '@material-ui/core';
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
 
@@ -30,6 +28,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>()
   const [genres, setGenres] = useState<string[]>([])
 
+
   function loadPlaylist (playlist: PlaylistObj) {
     playlist.expand().then(p => {
       Promise.all(p.tracks.map(t => t.expand())).then(() => {
@@ -39,9 +38,10 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     })
   }
 
-  const deletePlaylist = (playlist: PlaylistObj) => {
-    console.log('Deleting playlist', playlist.id)
-    setPlaylists(playlists.filter(p => p.id !== playlist.id))
+  const addPlaylist = () => {
+    const playlist = createPlaylist()
+    console.log('Adding playlist', playlist.id)
+    setPlaylists([...playlists, playlist])
   }
 
   const createPlaylist = (): PlaylistObj => {
@@ -60,13 +60,12 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     }
   }
 
-  const addPlaylist = () => {
-    const playlist = createPlaylist()
-    console.log('Adding playlist', playlist.id)
-    setPlaylists([...playlists, playlist])
-  }
-
   const [playlists, setPlaylists] = useState<PlaylistObj[]>([createPlaylist()])
+
+  const deletePlaylist = (playlist: PlaylistObj) => {
+    console.log('Deleting playlist', playlist.id)
+    setPlaylists(playlists.filter(p => p.id !== playlist.id))
+  }
 
   return (
     <div className={classes.root}>
