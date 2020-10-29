@@ -40,8 +40,8 @@ export default function Track(props: { track: TrackObj }): JSX.Element {
     img: {
       margin: 'auto',
       display: 'block',
-      maxWidth: '80%',
-      maxHeight: '80%',
+      maxWidth: 180,
+      maxHeight: 180,
     },
     container: {
       display: 'grid',
@@ -71,25 +71,6 @@ export default function Track(props: { track: TrackObj }): JSX.Element {
   }).filter(v => !EXCLUDED_FEATURES.includes(v.name))
 
 
-  const albumGrid = (
-    <Grid container spacing={2}>
-      <Grid item xs={4}>
-        <img className={classes.img} alt="complex" src={props.track.album?.image.toString()} />
-      </Grid>
-      <Grid item xs={6}>
-        <Typography gutterBottom variant="subtitle1">
-          {props.track.album?.name} {props.track.explicit ? <ExplicitIcon /> : ""}
-        </Typography>
-        <Typography variant="body2" gutterBottom>
-          Released: {props.track.album?.release_date.toDateString()}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Track: {props.track.track_number} of {props.track.album?.total_tracks}
-        </Typography>
-      </Grid>
-    </Grid>
-  );
-
   var colourIndex = -1;
 
   const open = Boolean(anchorEl);
@@ -107,7 +88,6 @@ export default function Track(props: { track: TrackObj }): JSX.Element {
           {props.track.name}
         </Typography>
         <Popover
-          style={{ width: '40%' }}
           id="mouse-over-popover"
           className={classes.popover}
           classes={{
@@ -126,23 +106,50 @@ export default function Track(props: { track: TrackObj }): JSX.Element {
           onClose={handlePopoverClose}
           disableRestoreFocus
         >
-          <Typography>
-          </Typography>
           <Grid container spacing={2}>
-            {props.track.album === undefined ? "" : albumGrid}
-            <Grid item>
-              Artists: {artistEnglish}
+            <Grid item xs>
+              {props.track.album === undefined ? "" :
+                (<Grid container>
+                  <Grid item xs>
+                    <img className={classes.img} alt="complex" src={props.track.album?.image.toString()} />
+                  </Grid>
+                  <Grid item xs>
+                    <Typography gutterBottom variant="subtitle1">
+                      {props.track.name}{props.track.explicit ? <ExplicitIcon /> : ""}
+                    </Typography>
+                    <Typography gutterBottom variant="subtitle1">
+                      {props.track.album?.name}
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                      Released: {props.track.album?.release_date.toDateString()}
+                    </Typography>
+                    <Typography variant="body1" gutterBottom color="textSecondary">
+                      Track {props.track.track_number} of {props.track.album?.total_tracks}
+                    </Typography>
+                  </Grid>
+                </Grid>)}
+              <Grid item xs>
+                <Typography gutterBottom variant="body1">
+                  Artists: {artistEnglish}
+                </Typography>
+                <Typography gutterBottom variant="body1">
+                  {genresEnglish.length > 0 ? "Genres: " + genresEnglish : ""}
+                </Typography>
+              </Grid>
+              <Grid container>
+                <Grid item xs>
+                  <Typography gutterBottom variant="body1">
+                    Popularity: {props.track.popularity}
+                  </Typography>
+                </Grid>
+                <Grid item xs>
+                  <Typography gutterBottom variant="body1">
+                    Length: {lengthEnglish}
+                  </Typography>
+                </Grid>
+              </Grid>
             </Grid>
-            <Grid item>
-              {genresEnglish.length > 0 ? "Genres: " + genresEnglish : ""}
-            </Grid>
-            <Grid item>
-              Popularity: {props.track.popularity}
-            </Grid>
-            <Grid item>
-              Length: {lengthEnglish}
-            </Grid>
-            <Grid item>
+            <Grid item xs>
               <BarChart width={400} height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 50 }} layout={"vertical"}
               >
                 <XAxis type={"number"} domain={[0, 1]} hide />
@@ -160,6 +167,6 @@ export default function Track(props: { track: TrackObj }): JSX.Element {
           </Grid>
         </Popover>
       </div>
-    </React.Fragment>
+    </React.Fragment >
   )
 }
