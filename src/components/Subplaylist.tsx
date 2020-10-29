@@ -208,7 +208,6 @@ export default function Subplaylist(props: {
               <TableCell colSpan={2}>
                 <Autocomplete
                   multiple
-                  id='checkboxes-tags-demo'
                   options={props.genres}
                   disableCloseOnSelect
                   getOptionLabel={option => option}
