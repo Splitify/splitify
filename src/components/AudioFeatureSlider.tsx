@@ -20,14 +20,11 @@ export default function AudioFeatureSlider(props: {
 
     const handleChange = (event: any, value: number | number[]) => {
         console.log('changing a value')
-        console.log(value)
         setSliderVal(value as number[]);
         props.giveFeaturesToPlaylist(props.featureName,value as number[]);
+        console.log(value)
     };
 
-    function valueText(value:Number) {
-        return `${value}`;
-    }
 
     return(
             <div className = {classes.root}>
@@ -36,13 +33,12 @@ export default function AudioFeatureSlider(props: {
                     
                 </Typography>
                 <Slider
-                    onChangeCommitted={handleChange}
+                    onChangeCommitted={(handleChange)}
                     aria-label = {props.featureName}
                     orientation = "horizontal"
                     valueLabelDisplay = "auto"
                     aria-labelledby = "range-slider"
                     defaultValue = {SliderVal.map((num) => Number(num))}
-                    getAriaValueText = {valueText}
                 />
                 
             </div>
