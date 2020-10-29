@@ -5,10 +5,10 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {
+  IconButton,
   Button,
   Checkbox,
   Dialog,
-  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -20,9 +20,10 @@ import {
   makeStyles
 } from '@material-ui/core'
 import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
-import Track from './Track'
 import SortSelector from './SortSelector'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
+import MultiFilter, { TrackFilter } from './MultiFilter'
+import TrackEntry from './TrackEntry'
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -46,7 +47,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function Subplaylist (props: {
+export default function Subplaylist(props: {
   source: PlaylistObj
   playlist: PlaylistObj
   genres: string[]
@@ -63,6 +64,8 @@ export default function Subplaylist (props: {
   // eslint-disable-next-line
   const [tracks, setTracks] = useState(props.source.tracks)
 
+
+  const [trackFilter, setTrackFilter] = useState<TrackFilter>({ filter: (t: TrackObj) => true });
 
   // TODO: Maybe put genres for each genre
   const TrackCorrectGenre = (track: TrackObj): boolean => {
@@ -138,15 +141,13 @@ export default function Subplaylist (props: {
                   <SortSelector setSort={changeSortType}/>
               </TableCell>
               <TableCell>
-                  <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
-                    Delete
+                <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
+                  Delete
                   </Button>
               </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
             <TableRow>
-              <TableCell colSpan={2}>
+              <TableCell colSpan={3}>
                 <Autocomplete
                   multiple
                   id='checkboxes-tags-demo'
@@ -180,16 +181,19 @@ export default function Subplaylist (props: {
                 />
               </TableCell>
             </TableRow>
-              {tracks.filter(TrackCorrectGenre).sort(sortTracks).map(track => (
-              <TableRow key={track.id}>
-                <TableCell colSpan={2} component='th' scope='row'>
-                  <Track track={track} />
-                </TableCell>
-              </TableRow>
+            <TableRow>
+              <TableCell colSpan={3}>
+                <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {tracks.filter(TrackCorrectGenre).filter(trackFilter.filter).map(track => (
+              <TrackEntry track={track} key={track.id} />
             ))}
-            </TableBody>
+          </TableBody>
         </Table>
       </TableContainer>
     </div>
-  );
+  )
 }
