@@ -146,7 +146,7 @@ export default function Subplaylist(props: {
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>
+              <TableCell colSpan={2}>
                 <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
               </TableCell>
             </TableRow>
