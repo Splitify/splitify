@@ -175,29 +175,13 @@ export default function Subplaylist(props: {
               let sourceIdx = FITI(evt.source?.index)
               let destIdx = FITI(evt.destination?.index)
 
+              setTracks(tracks => {
+                const newTracks = [...tracks];
+                const [removed] = newTracks.splice(sourceIdx, 1);
+                newTracks.splice(destIdx, 0, removed);
+                return newTracks
+              })
 
-              
-              if (destIdx > sourceIdx) {
-              // Before: 0  1  2 [3] 4  5  6  7  8  9
-              // After:  0  1  2  4  5  6  7 [3] 8  9
-
-              setTracks(tracks => [
-                 ...tracks.slice(0, sourceIdx),
-                 ...tracks.slice(sourceIdx + 1, destIdx+1),
-                 tracks[sourceIdx],
-                 ...tracks.slice(destIdx+ 1)
-              ])
-            } else {
-              // destIdx < sourceIdx
-              // Before: 0  1  2  3  4  5  6 [7] 8  9
-              // After:  0  1  2 [7] 3  4  5  6  8  9
-              setTracks(tracks => [
-                ...tracks.slice(0, destIdx),
-                tracks[sourceIdx],
-                ...tracks.slice(destIdx, sourceIdx),
-                ...tracks.slice(sourceIdx+1 )
-              ])
-            }
             }}
           >
             <Droppable droppableId={props.playlist.id}>
