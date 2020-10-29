@@ -209,6 +209,7 @@ export default function Subplaylist(props: {
                       )}
                     </Draggable>
                   ))}
+                  {provided.placeholder}
                 </TableBody>
               )}
             </Droppable>
