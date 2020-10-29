@@ -19,7 +19,7 @@ export default function (props: { track: TrackObj }) {
 
   return (
     <TableRow /* key={track?.id || id++} */>
-      <TableCell component='th' scope='row'>
+      <TableCell colSpan={2} component='th' scope='row'>
         {track ? (
           /*<Track track={track} />*/ track.name
         ) : (
