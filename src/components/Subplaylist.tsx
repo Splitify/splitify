@@ -74,18 +74,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-export interface SnackbarMessage {
-  message: string;
-  key: number;
-}
-
-export interface State {
-  open: boolean;
-  snackPack: SnackbarMessage[];
-  messageInfo?: SnackbarMessage;
-}
-
-
 export default function Subplaylist (props: {
   source: PlaylistObj
   playlist: PlaylistObj
@@ -96,8 +84,9 @@ export default function Subplaylist (props: {
   const classes = useStyles();
 
   // SAVING ANIMATION STUFF
-  const [loading, setLoading] = React.useState(false);
-  const [success, setSuccess] = React.useState(false);
+  const [active, setActive] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("Save")
 
   const buttonClassname = clsx({
@@ -124,6 +113,7 @@ export default function Subplaylist (props: {
         setSuccess(false);
       },4000);
     }
+    setActive(false);
   };
 
   // TODO: Maybe put genres for each genre
@@ -152,7 +142,10 @@ export default function Subplaylist (props: {
 
   // Save tracks to playlist when updated
   useEffect(() => {
+    console.log(tracks);
     props.playlist.tracks = tracks;
+    setActive(true);
+    console.log(active);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
 
@@ -191,7 +184,7 @@ export default function Subplaylist (props: {
                   variant="contained" 
                   color="primary" 
                   className={buttonClassname} 
-                  disabled={loading} 
+                  disabled={!active} 
                   onClick={handleButtonClick} 
                   startIcon={<SaveIcon />}>
                   {buttonLabel}
