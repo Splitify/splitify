@@ -194,14 +194,18 @@ export default function Subplaylist(props: {
                       key={track.id}
                     >
                       {(provided, snapshot) => (
-                        <TableRow>
+                        <TableRow
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={{
+                            ...provided.draggableProps.style, 
+                            ...(snapshot.isDragging ? {backgroundColor: '#E6E6E6'} : undefined)
+                          }}
+                          >
                           <TableCell
                             colSpan={2}
-                            component='th'
                             scope='row'
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
                           >
                             <TrackEntry track={track} />
                           </TableCell>
