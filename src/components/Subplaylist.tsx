@@ -129,39 +129,14 @@ export default function Subplaylist(props: {
     var found = true;
     sliders.map((slider) => {
       if (track.features) {
-        if (slider.name === 'Acousticness' && (track.features.acousticness < slider.min / 100 || track.features.acousticness > slider.max / 100)) {
-          found = false;
-        }
-        if (slider.name === 'Danceability' && (track.features.danceability < slider.min / 100 || track.features.danceability > slider.max / 100)) {
-          found = false;
-        }
-        if (slider.name === 'Energy' && (track.features.energy < slider.min / 100 || track.features.energy > slider.max / 100)) {
-          found = false;
-        }
-        if (slider.name === 'Instrumentalness' && (track.features.instrumentalness < slider.min / 100 || track.features.instrumentalness > slider.max / 100)) {
-          found = false;
-        }
-        if (slider.name === 'Liveness' && (track.features.liveness < slider.min / 100 || track.features.liveness > slider.max / 100)) {
-          found = false;
-        }
-        // if (slider.name === 'Loudness' && track.features.loudness < slider.min/100 || track.features.loudness > slider.max/100){
-        //   found=false;
-        // }
-        if (slider.name === 'Speechiness' && (track.features.speechiness < slider.min / 100 || track.features.speechiness > slider.max / 100)) {
-          found = false;
-        }
-        // if (slider.name === 'Tempo' && track.features.tempo < slider.min/100 || track.features.tempo > slider.max/100){
-        //   found=false;
-        // }
-        if (slider.name === 'Valence' && (track.features.valence < slider.min / 100 || track.features.valence > slider.max / 100)) {
-          found = false;
+        for (const [feature,value] of Object.entries(track.features)){
+          if (slider.name.toLowerCase() === feature && (value < slider.min / 100 || value > slider.max / 100)){
+            found= false;
+          }
         }
       }
       return found;
     })
-
-
-
     return found;
   }
   // TODO: Maybe put genres for each genre
