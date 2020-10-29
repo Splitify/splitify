@@ -194,14 +194,14 @@ export default function Subplaylist(props: {
                       key={track.id}
                     >
                       {(provided, snapshot) => (
-                        <TableRow>
+                        <TableRow
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}>
                           <TableCell
                             colSpan={2}
-                            component='th'
+                            component='td'
                             scope='row'
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
                           >
                             <TrackEntry track={track} />
                           </TableCell>
