@@ -92,6 +92,7 @@ export default function Subplaylist(props: {
     updateFilteredView(
       tracks.filter(TrackCorrectGenre).filter(trackFilter.filter)
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks, selectedGenres, trackFilter.filter])
 
   const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
