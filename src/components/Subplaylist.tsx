@@ -225,7 +225,7 @@ export default function Subplaylist(props: {
             {sliders.map(p => (
               <TableRow>
                 <TableCell>
-                  <AudioFeatureSlider feature_name={p.name} feature_value={[p.min, p.max]} delete={() => deleteSlider(p.name)} giveFeaturesToPlaylist={getFeaturesFromSlider} />
+                  <AudioFeatureSlider featureName={p.name} featureValue={[p.min, p.max]} delete={() => deleteSlider(p.name)} giveFeaturesToPlaylist={getFeaturesFromSlider} />
                 </TableCell>
                 <Button variant="contained" color="secondary" onClick={() => deleteSlider(p.name)} startIcon={<DeleteIcon />}>
                 </Button>

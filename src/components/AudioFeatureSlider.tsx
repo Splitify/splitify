@@ -9,20 +9,20 @@ const useStylesslider = makeStyles({
     },
   });
 export default function AudioFeatureSlider(props: {
-    feature_name: string,
-    feature_value: Number[],
+    featureName: string,
+    featureValue: Number[],
     delete: () => void;
     giveFeaturesToPlaylist: (name:string, feature: Number[]) => void,
 }) {
     const classes = useStylesslider();
     //state for slider
-    const [SliderVal, setSliderVal] = useState(props.feature_value);
+    const [SliderVal, setSliderVal] = useState(props.featureValue);
 
     const handleChange = (event: any, value: number | number[]) => {
         console.log('changing a value')
         console.log(value)
         setSliderVal(value as number[]);
-        props.giveFeaturesToPlaylist(props.feature_name,value as number[]);
+        props.giveFeaturesToPlaylist(props.featureName,value as number[]);
     };
 
     function valuetext(value:Number) {
@@ -32,12 +32,12 @@ export default function AudioFeatureSlider(props: {
     return(
             <div className = {classes.root}>
                 <Typography id="range-slider" gutterBottom>
-                    {props.feature_name}
+                    {props.featureName}
                     
                 </Typography>
                 <Slider
                     onChangeCommitted={handleChange}
-                    aria-label = {props.feature_name}
+                    aria-label = {props.featureName}
                     orientation = "horizontal"
                     valueLabelDisplay = "auto"
                     aria-labelledby = "range-slider"
