@@ -8,9 +8,9 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import { green } from '@material-ui/core/colors';
-// import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { Playlist as PlaylistObj, Track as TrackObj } from "../types"
 import {
+  IconButton,
   Button,
   Checkbox,
   Dialog,
@@ -22,16 +22,13 @@ import {
   TableRow,
   Paper,
   TextField,
-  IconButton,
   CircularProgress
 } from '@material-ui/core'
 import Track from './Track'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 import { createOrUpdatePlaylist, getUserProfile } from '../helpers/helpers';
-
-// function Alert(props: AlertProps) {
-//   return <MuiAlert elevation={6} variant="filled" {...props} />;
-// }
+import MultiFilter, { TrackFilter } from './MultiFilter'
+import TrackEntry from './TrackEntry'
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -74,7 +71,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-export default function Subplaylist (props: {
+export default function Subplaylist(props: {
   source: PlaylistObj
   playlist: PlaylistObj
   genres: string[]
@@ -115,6 +112,8 @@ export default function Subplaylist (props: {
     }
     setActive(false);
   };
+
+  const [trackFilter, setTrackFilter] = useState<TrackFilter>({ filter: (t: TrackObj) => true });
 
   // TODO: Maybe put genres for each genre
   const TrackCorrectGenre = (track: TrackObj): boolean => {
@@ -167,13 +166,13 @@ export default function Subplaylist (props: {
       </Dialog>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  {props.playlist.name}
-                  <IconButton onClick={() => setEditDialogOpen(true)}>
-                    <EditIcon />
-                  </IconButton>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                {props.playlist.name}
+                <IconButton onClick={() => setEditDialogOpen(true)}>
+                  <EditIcon />
+                </IconButton>
               </TableCell>
               <TableCell>
                 <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
@@ -193,8 +192,6 @@ export default function Subplaylist (props: {
                 {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
               </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
             <TableRow>
               <TableCell colSpan={2}>
                 <Autocomplete
@@ -230,16 +227,19 @@ export default function Subplaylist (props: {
                 />
               </TableCell>
             </TableRow>
-            {tracks.filter(TrackCorrectGenre).map(track => (
-              <TableRow key={track.id}>
-                <TableCell colSpan={2} component='th' scope='row'>
-                  <Track track={track} />
-                </TableCell>
-              </TableRow>
+            <TableRow>
+              <TableCell>
+                <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {tracks.filter(TrackCorrectGenre).filter(trackFilter.filter).map(track => (
+              <TrackEntry track={track} key={track.id} />
             ))}
-            </TableBody>
+          </TableBody>
         </Table>
       </TableContainer>
     </div>
-  );
+  )
 }
