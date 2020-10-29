@@ -67,12 +67,18 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj }) {
                 <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
               </TableCell>
             </TableRow>
-          ) : ""}
+          ) : (
+            ''
+          )}
         </TableHead>
         <TableBody>
           {/* {props.playlist.tracks.length} */}
-          {props.playlist.tracks.filter(trackFilter.filter).map((track) => (
-            <TrackEntry track={track} key={track.id} />
+          {props.playlist.tracks.filter(trackFilter.filter).map(track => (
+            <TableRow key={track.id}>
+              <TableCell colSpan={2} component='th' scope='row'>
+                <TrackEntry track={track} />
+              </TableCell>
+            </TableRow>
           ))}
         </TableBody>
       </Table>

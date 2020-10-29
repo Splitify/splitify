@@ -24,6 +24,8 @@ import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 import MultiFilter, { TrackFilter } from './MultiFilter'
 import TrackEntry from './TrackEntry'
 
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+
 const useStyles = makeStyles(theme => ({
   table: {
     //Add styling for tables here
@@ -73,11 +75,24 @@ export default function Subplaylist(props: {
   // eslint-disable-next-line
   let [tracks, setTracks] = useState(props.source.tracks)
 
+  // Resolves filter index to track source index
+  function FITI(idx: number) {
+    return tracks.findIndex(t => t.id === filterView[idx].id)
+  }
+
   // Save tracks to playlist when updated
   useEffect(() => {
     props.playlist.tracks = tracks
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
+
+  let [filterView, updateFilteredView] = useState<TrackObj[]>([])
+
+  useEffect(() => {
+    updateFilteredView(
+      tracks.filter(TrackCorrectGenre).filter(trackFilter.filter)
+    )
+  }, [tracks, selectedGenres, trackFilter.filter])
 
   const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
   const checkedIcon = <CheckBoxIcon fontSize='small' />
@@ -151,11 +166,68 @@ export default function Subplaylist(props: {
               </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {tracks.filter(TrackCorrectGenre).filter(trackFilter.filter).map(track => (
-              <TrackEntry track={track} key={track.id} />
-            ))}
-          </TableBody>
+          <DragDropContext
+            onDragEnd={evt => {
+              console.log(evt)
+              if (!evt.destination) return
+
+              let sourceIdx = FITI(evt.source?.index)
+              let destIdx = FITI(evt.destination?.index)
+
+
+              
+              if (destIdx > sourceIdx) {
+              // Before: 0  1  2 [3] 4  5  6  7  8  9
+              // After:  0  1  2  4  5  6  7 [3] 8  9
+
+              setTracks(tracks => [
+                 ...tracks.slice(0, sourceIdx),
+                 ...tracks.slice(sourceIdx + 1, destIdx+1),
+                 tracks[sourceIdx],
+                 ...tracks.slice(destIdx+ 1)
+              ])
+            } else {
+              // destIdx < sourceIdx
+              // Before: 0  1  2  3  4  5  6 [7] 8  9
+              // After:  0  1  2 [7] 3  4  5  6  8  9
+              setTracks(tracks => [
+                ...tracks.slice(0, destIdx),
+                tracks[sourceIdx],
+                ...tracks.slice(destIdx, sourceIdx),
+                ...tracks.slice(sourceIdx+1 )
+              ])
+            }
+            }}
+          >
+            <Droppable droppableId={props.playlist.id}>
+              {(provided, snapshot) => (
+                <TableBody ref={provided.innerRef} {...provided.droppableProps}>
+                  {filterView.map((track, idx) => (
+                    <Draggable
+                      draggableId={track.id}
+                      index={idx}
+                      key={track.id}
+                    >
+                      {(provided, snapshot) => (
+                        <TableRow>
+                          <TableCell
+                            colSpan={2}
+                            component='th'
+                            scope='row'
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <TrackEntry track={track} />
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </Draggable>
+                  ))}
+                </TableBody>
+              )}
+            </Droppable>
+          </DragDropContext>
         </Table>
       </TableContainer>
     </div>

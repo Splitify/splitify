@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Skeleton from '@material-ui/lab/Skeleton'
 import { Track as TrackObj } from '../types'
-import TableCell from '@material-ui/core/TableCell'
-import TableRow from '@material-ui/core/TableRow'
 // import Track from './Track'
 
 // let id: number = 0
@@ -18,14 +16,12 @@ export default function (props: { track: TrackObj }) {
   }, [])
 
   return (
-    <TableRow /* key={track?.id || id++} */>
-      <TableCell colSpan={2} component='th' scope='row'>
-        {track ? (
-          /*<Track track={track} />*/ track.name
-        ) : (
-          <Skeleton variant='rect' />
-        )}
-      </TableCell>
-    </TableRow>
+    <>
+      {track ? (
+        /*<Track track={track} />*/ track.name
+      ) : (
+        <Skeleton variant='rect' />
+      )}
+    </>
   )
 }
