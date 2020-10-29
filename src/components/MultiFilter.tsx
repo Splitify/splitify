@@ -48,7 +48,7 @@ export default function MultiFilter(props: {
             label={k}
             labelPlacement="top"
             value={k}
-            //We should change all styling from fixed px to percentages in the future to conform to mobile and changing screen sizes
+            //We should change all styling from fixed px to percentages in the future to conform to mobile and changing screen sizes. 
             style={{ marginLeft: '4px', marginRight: '4px' }}
           />
         ))}
