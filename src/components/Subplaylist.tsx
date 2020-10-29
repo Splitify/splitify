@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles'
 import Autocomplete from '@material-ui/lab/Autocomplete'
@@ -141,11 +141,12 @@ export default function Subplaylist (props: {
   let [tracks, setTracks] = useState(Array<TrackObj>());
 
   // Save tracks to playlist when updated
+  const firstRender = useRef(true);
   useEffect(() => {
-    console.log(tracks);
     props.playlist.tracks = tracks;
-    setActive(true);
-    console.log(active);
+    if(!firstRender){
+      setActive(true);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
 
