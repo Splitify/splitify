@@ -6,18 +6,18 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 
 export default function Subplaylist (props: {
-  setSort: Dispatch<SetStateAction<string>>
+  setSort: (type: string) => void
 }) {
 	const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
-    },
-    selectEmpty: {
-      marginTop: theme.spacing(2),
-    },
-  }),
+  	createStyles({
+		formControl: {
+		margin: theme.spacing(1),
+		minWidth: 120,
+		},
+		selectEmpty: {
+		marginTop: theme.spacing(2),
+		},
+  	}),
 );
 	const classes = useStyles();
 	const [sortType, setSortType] = useState('');

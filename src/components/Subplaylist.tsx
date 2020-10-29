@@ -104,6 +104,10 @@ export default function Subplaylist (props: {
     return var1.localeCompare(var2)
   };
 
+  const changeSortType = (type: string): void => {
+    setSortType(type)
+  }
+
   // Save tracks to playlist when updated
   useEffect(() => {
     props.playlist.tracks = tracks
@@ -131,7 +135,7 @@ export default function Subplaylist (props: {
                 </IconButton>
               </TableCell>
               <TableCell>
-                  <SortSelector setSort={setSortType}/>
+                  <SortSelector setSort={changeSortType}/>
               </TableCell>
               <TableCell>
                   <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
