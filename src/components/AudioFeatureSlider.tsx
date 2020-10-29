@@ -3,7 +3,7 @@ import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core';
 
-const useStylesslider = makeStyles({
+const useStylesSlider = makeStyles({
     root: {
       width: 300,
     },
@@ -14,7 +14,7 @@ export default function AudioFeatureSlider(props: {
     delete: () => void;
     giveFeaturesToPlaylist: (name:string, feature: Number[]) => void,
 }) {
-    const classes = useStylesslider();
+    const classes = useStylesSlider();
     //state for slider
     const [SliderVal, setSliderVal] = useState(props.featureValue);
 
@@ -25,7 +25,7 @@ export default function AudioFeatureSlider(props: {
         props.giveFeaturesToPlaylist(props.featureName,value as number[]);
     };
 
-    function valuetext(value:Number) {
+    function valueText(value:Number) {
         return `${value}`;
     }
 
@@ -42,7 +42,7 @@ export default function AudioFeatureSlider(props: {
                     valueLabelDisplay = "auto"
                     aria-labelledby = "range-slider"
                     defaultValue = {SliderVal.map((num) => Number(num))}
-                    getAriaValueText = {valuetext}
+                    getAriaValueText = {valueText}
                 />
                 
             </div>
