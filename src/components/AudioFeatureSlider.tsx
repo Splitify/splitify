@@ -12,21 +12,21 @@ export default function AudioFeatureSlider(props: {
     featureName: string,
     featureValue: Number[],
     delete: () => void;
-    giveFeaturesToPlaylist: (name:string, feature: Number[]) => void,
+    onFeatureUpdate: (name:string, feature: Number[]) => void,
 }) {
     const classes = useStylesSlider();
     //state for slider
-    const [SliderVal, setSliderVal] = useState(props.featureValue);
+    const [sliderVal, setSliderVal] = useState(props.featureValue);
 
     const handleChange = (event: any, value: number | number[]) => {
         console.log('changing a value')
         if (typeof(value) === 'number'){
             setSliderVal([value,value])
-            props.giveFeaturesToPlaylist(props.featureName,[value,value]);
+            props.onFeatureUpdate(props.featureName,[value,value]);
 
         }else{
             setSliderVal(value)
-            props.giveFeaturesToPlaylist(props.featureName,value);
+            props.onFeatureUpdate(props.featureName,value);
         }
     };
 
@@ -43,7 +43,9 @@ export default function AudioFeatureSlider(props: {
                     orientation = "horizontal"
                     valueLabelDisplay = "auto"
                     aria-labelledby = "range-slider"
-                    defaultValue = {SliderVal.map((num) => Number(num))}
+                    defaultValue = {sliderVal.map((num) => {
+                        console.log(num, typeof num)
+                        return Number(num)})}
                 />
                 
             </div>

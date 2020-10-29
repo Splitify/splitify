@@ -110,7 +110,6 @@ export default function Subplaylist(props: {
   }
   const getFeaturesFromSlider = (name: string, incomingFeatures: Number[]) => {
     updateSlider(name, incomingFeatures)
-
   }
 
   const getOptionFromMenu = (option: any) => {
@@ -200,7 +199,7 @@ export default function Subplaylist(props: {
             {sliders.map(p => (
               <TableRow>
                 <TableCell>
-                  <AudioFeatureSlider featureName={p.name} featureValue={[p.min, p.max]} delete={() => deleteSlider(p.name)} giveFeaturesToPlaylist={getFeaturesFromSlider} />
+                  <AudioFeatureSlider featureName={p.name} featureValue={[p.min, p.max]} delete={() => deleteSlider(p.name)} onFeatureUpdate={getFeaturesFromSlider} />
                 </TableCell>
                 <Button variant="contained" color="secondary" onClick={() => deleteSlider(p.name)} startIcon={<DeleteIcon />}>
                 </Button>
