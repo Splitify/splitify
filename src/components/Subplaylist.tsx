@@ -24,7 +24,6 @@ import {
   TextField,
   CircularProgress
 } from '@material-ui/core'
-import Track from './Track'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 import { createOrUpdatePlaylist, getUserProfile } from '../helpers/helpers';
 import MultiFilter, { TrackFilter } from './MultiFilter'
