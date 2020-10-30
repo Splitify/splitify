@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
@@ -7,8 +6,8 @@ import AudioFeatureSlider from './featureSlider/AudioFeatureSlider'
 import FeatureMenu from './featureSlider/FeatureMenu'
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { IconButton} from '@material-ui/core';
 import {
+  IconButton,
   Button,
   Checkbox,
   Dialog,
@@ -19,11 +18,15 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TextField
+  TextField,
+  makeStyles
 } from '@material-ui/core'
 import { Playlist as PlaylistObj, Track as TrackObj, FeatureSliderItem as FeatureSliderItemObj} from '../types'
 import Track from './Track'
+import SortSelector from './SortSelector'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
+import MultiFilter, { TrackFilter } from './MultiFilter'
+import TrackEntry from './TrackEntry'
 
 
 
@@ -50,7 +53,6 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-
 export default function Subplaylist(props: {
   source: PlaylistObj
   playlist: PlaylistObj
@@ -59,6 +61,17 @@ export default function Subplaylist(props: {
 }) {
   const classes = useStyles()
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [sortType, setSortType] = useState("")
+
+  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
+  const checkedIcon = <CheckBoxIcon fontSize='small' />
+  // TODO: setTracks will be used for deletion, reordering and moving
+  // eslint-disable-next-line
+  const [tracks, setTracks] = useState(props.source.tracks)
+
+
+  const [trackFilter, setTrackFilter] = useState<TrackFilter>({ filter: (t: TrackObj) => true });
 
   const [sliders, setSliders] = useState<FeatureSliderItemObj[]>([]);
 
@@ -114,20 +127,43 @@ export default function Subplaylist(props: {
     return false
   }
 
-  // TODO: setTracks will be used for deletion, reordering and moving
-  // eslint-disable-next-line
-  let [tracks, setTracks] = useState(props.source.tracks)
+  const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
+    let var1: string = "";
+    let var2: string = "";
+    console.log("sorting")
+    switch(sortType) {
+      case "Track Name":
+        var1 = track1.name
+        var2 = track2.name
+        break;
+      case "Artist":
+        var1 = track1.artists[0].name
+        var2 = track2.artists[0].name
+        break;
+      case "Album":
+        if (track1.album){
+          var1 = track1.album.name
+        }
+        if (track2.album){
+          var2 = track2.album.name
+        }
+        break;
+      default:
+        var1 = track1.name
+        var2 = track2.name
+    }
+    return var1.localeCompare(var2)
+  };
+
+  const changeSortType = (type: string): void => {
+    setSortType(type)
+  }
 
   // Save tracks to playlist when updated
   useEffect(() => {
     props.playlist.tracks = tracks
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
-
-  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
-  const checkedIcon = <CheckBoxIcon fontSize='small' />
-
-  const [editDialogOpen, setEditDialogOpen] = React.useState(false);
 
   return (
     <div>
@@ -150,11 +186,16 @@ export default function Subplaylist(props: {
                 </IconButton>
               </TableCell>
               <TableCell>
+                  <SortSelector setSort={changeSortType}/>
+              </TableCell>
+              <TableCell>
                 <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
                   Delete
                   </Button>
               </TableCell>
             </TableRow>
+            //here!
+
             <TableRow>
               <TableCell colSpan={2}>
                 <FeatureMenu onSelect={handleAddFeature} hidden={sliders.map(el => el.name)} />
@@ -170,10 +211,8 @@ export default function Subplaylist(props: {
                 </TableCell>
               </TableRow>
             ))}
-          </TableHead>
-          <TableBody>
             <TableRow>
-              <TableCell colSpan={2}>
+              <TableCell colSpan={3}>
                 <Autocomplete
                   multiple
                   options={props.genres}
@@ -206,17 +245,25 @@ export default function Subplaylist(props: {
                 />
               </TableCell>
             </TableRow>
-            {tracks.filter(TrackCorrectGenre).filter(TrackInRange).map(track => (
-
-              <TableRow key={track.id}>
-                <TableCell colSpan={2} component='th' scope='row'>
-                  <Track track={track} />
-                </TableCell>
-              </TableRow>
-            ))}
+            //here!
+            <TableRow>
+              <TableCell colSpan={3}>
+                <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell colSpan={3}>
+                {tracks.filter(TrackCorrectGenre).filter(trackFilter.filter).sort(sortTracks).map(track => (
+                  <TrackEntry track={track} key={track.id} />
+                ))}
+              </TableCell>
+            </TableRow>
+            
           </TableBody>
         </Table>
       </TableContainer>
     </div>
-  );
+  )
 }
