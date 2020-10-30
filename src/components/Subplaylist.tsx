@@ -188,14 +188,9 @@ export default function Subplaylist(props: {
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell colSpan={3}>
                 {tracks.filter(TrackCorrectGenre).filter(trackFilter.filter).sort(sortTracks).map(track => (
                   <TrackEntry track={track} key={track.id} />
                 ))}
-              </TableCell>
-            </TableRow>
-            
           </TableBody>
         </Table>
       </TableContainer>
