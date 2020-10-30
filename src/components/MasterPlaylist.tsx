@@ -68,7 +68,7 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj }) {
                 <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
               </TableCell>
             </TableRow>
-          ) : ""}
+          ) : null}
         </TableHead>
         <TableBody>
           {/* {props.playlist.tracks.length} */}

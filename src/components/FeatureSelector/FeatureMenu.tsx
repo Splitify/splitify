@@ -36,10 +36,10 @@ export default function FeatureMenu(props: {
           id="feature-menu"
           anchorEl={anchorEl}
           keepMounted
-          open={Boolean(anchorEl)}
+          open={!!anchorEl}
           onClose={handleClose}
         >
-          {options.map(o => (<MenuItem onClick={() => props.onSelect({ name: o.name, min: o.min, max: o.max, currentMin: o.currentMin, currentMax: o.currentMax, units: o.units })}>{o.name}</MenuItem>))}
+          {options.map(o => (<MenuItem onClick={() => props.onSelect(o)}>{o.name}</MenuItem>))}
         </Menu>
       </div>
     );
