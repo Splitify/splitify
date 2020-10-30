@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Skeleton from '@material-ui/lab/Skeleton'
 import { Track as TrackObj } from '../types'
-// import Track from './Track'
-
-// let id: number = 0
+import TableCell from '@material-ui/core/TableCell'
+import TableRow from '@material-ui/core/TableRow'
+import Track from './Track'
 
 export default function (props: { track: TrackObj }) {
   let [track, setTrack] = useState<TrackObj>()
@@ -16,12 +16,14 @@ export default function (props: { track: TrackObj }) {
   }, [])
 
   return (
-    <>
-      {track ? (
-        /*<Track track={track} />*/ track.name
-      ) : (
-        <Skeleton variant='rect' />
-      )}
-    </>
+    <TableRow style={{cursor: 'pointer'}}>
+      <TableCell colSpan={100}>
+        {track ? (
+          <Track track={track} />
+        ) : (
+          <Skeleton variant='rect' />
+        )}
+      </TableCell>
+    </TableRow>
   )
 }
