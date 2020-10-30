@@ -19,7 +19,7 @@ export default function (props: { track: TrackObj }) {
   }, [])
 
   return (
-    <TableRow /* key={track?.id || id++} */>
+    <TableRow style={{cursor: 'pointer'}}>
       <TableCell colSpan={100}>
         {track ? (
           <Track track={track} />
