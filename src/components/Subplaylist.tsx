@@ -27,6 +27,7 @@ import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 
 
 
+
 const useStyles = makeStyles(theme => ({
   table: {
     //Add styling for tables here
@@ -162,10 +163,11 @@ export default function Subplaylist(props: {
             {sliders.map(p => (
               <TableRow>
                 <TableCell>
-                  <AudioFeatureSlider featureName={p.name} featureValue={[p.currentMin, p.currentMax]} featureLimits={[p.min,p.max]} featureLabel = {p.units} delete={() => deleteSlider(p.name)} onFeatureUpdate={updateSlider} />
+                  <AudioFeatureSlider  featureName={p.name} featureValue={[p.currentMin, p.currentMax]} featureLimits={[p.min,p.max]} featureLabel = {p.units} delete={() => deleteSlider(p.name)} onFeatureUpdate={updateSlider} />
                 </TableCell>
-                <Button variant="contained" color="secondary" onClick={() => deleteSlider(p.name)} startIcon={<DeleteIcon />}>
-                </Button>
+                <TableCell> 
+                <Button variant="contained" color="secondary" onClick={() => deleteSlider(p.name)}  size = {'small'} startIcon={<DeleteIcon />}/>
+                </TableCell>
               </TableRow>
             ))}
           </TableHead>
