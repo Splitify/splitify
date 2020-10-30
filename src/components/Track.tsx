@@ -39,7 +39,6 @@ export default function Track(props: { track: TrackObj }): JSX.Element {
       padding: theme.spacing(1),
     },
     img: {
-      margin: 'auto',
       display: 'block',
       maxWidth: 180,
       maxHeight: 180,
