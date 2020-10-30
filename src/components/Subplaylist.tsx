@@ -162,7 +162,7 @@ export default function Subplaylist(props: {
             </TableRow>
             {sliders.map(p => (
               <TableRow>
-                <TableCell>
+                <TableCell size = 'small'>
                   <AudioFeatureSlider  featureName={p.name} featureValue={[p.currentMin, p.currentMax]} featureLimits={[p.min,p.max]} featureLabel = {p.units} delete={() => deleteSlider(p.name)} onFeatureUpdate={updateSlider} />
                 </TableCell>
                 <TableCell> 

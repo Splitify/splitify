@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core';
 
 const useStylesSlider = makeStyles({
     root: {
-      width: 180,
+      width: 280,
     },
   });
 
