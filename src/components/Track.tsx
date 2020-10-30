@@ -26,6 +26,7 @@ const EXCLUDED_FEATURES = [ // TODO: This should be shared with Zach's feature c
   "tempo",
   "mode",
   "time_signature",
+  "loudness",
   "key"];
 
 export default function Track(props: { track: TrackObj }): JSX.Element {
@@ -113,29 +114,31 @@ export default function Track(props: { track: TrackObj }): JSX.Element {
                   <Grid item xs>
                     <img className={classes.img} alt="complex" src={props.track.album?.image.toString()} />
                   </Grid>
-                  <Grid item xs>
-                    <Typography gutterBottom variant="subtitle1">
+                  <Grid item xs={6}>
+                    <Typography gutterBottom variant="h4" style={{ fontSize: 30 }}>
                       {props.track.name}{props.track.explicit ? <ExplicitIcon /> : ""}
                     </Typography>
-                    <Typography gutterBottom variant="subtitle1">
+                    <Typography gutterBottom variant="h6">
                       {props.track.album?.name}
                     </Typography>
-                    <Typography variant="body1" gutterBottom>
+                    <Typography variant="body2" gutterBottom>
                       Released: {props.track.album?.release_date.toDateString()}
                     </Typography>
-                    <Typography variant="body1" gutterBottom color="textSecondary">
+                    <Typography variant="body2" gutterBottom color="textSecondary">
                       Track {props.track.track_number} of {props.track.album?.total_tracks}
                     </Typography>
                   </Grid>
                 </Grid>)}
-              <Grid item xs>
-                <Typography gutterBottom variant="body1">
-                  Artists: {artistEnglish}
-                </Typography>
-                <Typography gutterBottom variant="body1">
-                  {genresEnglish.length > 0 ? "Genres: " + genresEnglish : ""}
-                </Typography>
-              </Grid>
+                <Grid item xs>
+                  <Typography gutterBottom variant="body1">
+                    Artists: {artistEnglish}
+                  </Typography>
+                </Grid>
+                <Grid item xs>
+                  <Typography gutterBottom variant="body1">
+                    {genresEnglish.length > 0 ? "Genres: " + genresEnglish : ""}
+                  </Typography>
+                </Grid>
               <Grid container>
                 <Grid item xs>
                   <Typography gutterBottom variant="body1">
