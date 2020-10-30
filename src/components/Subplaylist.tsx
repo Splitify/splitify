@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import Autocomplete from '@material-ui/lab/Autocomplete'
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
-import CheckBoxIcon from '@material-ui/icons/CheckBox'
-import AudioFeatureSlider from './FeatureSelector/AudioFeatureSlider'
-import FeatureMenu from './FeatureSelector/FeatureMenu'
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
+import {
+  CheckBox as CheckBoxIcon,
+  CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon
+} from '@material-ui/icons'
 import {
   IconButton,
   Button,
@@ -21,14 +21,12 @@ import {
   TextField,
   makeStyles
 } from '@material-ui/core'
-import { Playlist as PlaylistObj, Track as TrackObj, FeatureSliderItem as FeatureSliderItemObj} from '../types'
+import { Playlist as PlaylistObj, Track as TrackObj} from '../types'
 import SortSelector from './SortSelector'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 import MultiFilter, { TrackFilter } from './MultiFilter'
+import { FeatureMenu, AudioFeatureSlider, FeatureSliderItem as FeatureSliderItemObj } from './FeatureSelector/'
 import TrackEntry from './TrackEntry'
-
-
-
 
 const useStyles = makeStyles(theme => ({
   table: {

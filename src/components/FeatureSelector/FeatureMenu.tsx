@@ -1,11 +1,11 @@
-import { FeatureSliderItem as FeatureSliderItemObj} from '../../types'
 import React from 'react';
+import { FeatureSliderItem } from './FeatureSliderItem'
 import { Button, Menu, MenuItem } from '@material-ui/core';
 
 
 
 export default function FeatureMenu(props: {
-    onSelect: (option: FeatureSliderItemObj) => void
+    onSelect: (option: FeatureSliderItem) => void
     hidden: string[]
   }) {
     const options = [

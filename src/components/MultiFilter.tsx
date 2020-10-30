@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { TextField } from '@material-ui/core'
+import { TextField, FormGroup, FormControl, FormControlLabel, Radio, RadioGroup } from '@material-ui/core'
 import { Artist, Track as TrackObj } from '../types'
-import FormControlLabel from '@material-ui/core/FormControlLabel/FormControlLabel'
-import FormGroup from '@material-ui/core/FormGroup/FormGroup'
-import FormControl from '@material-ui/core/FormControl/FormControl'
-import RadioGroup from '@material-ui/core/RadioGroup/RadioGroup'
-import Radio from '@material-ui/core/Radio/Radio'
 
 export interface TrackFilter {
   filter: (t: TrackObj) => boolean;
