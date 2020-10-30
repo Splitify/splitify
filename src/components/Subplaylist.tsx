@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
+import AudioFeatureSlider from './featureSlider/AudioFeatureSlider'
+import FeatureMenu from './featureSlider/FeatureMenu'
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {
@@ -19,11 +21,14 @@ import {
   TextField,
   makeStyles
 } from '@material-ui/core'
-import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
+import { Playlist as PlaylistObj, Track as TrackObj, FeatureSliderItem as FeatureSliderItemObj} from '../types'
 import SortSelector from './SortSelector'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 import MultiFilter, { TrackFilter } from './MultiFilter'
 import TrackEntry from './TrackEntry'
+
+
+
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -67,6 +72,48 @@ export default function Subplaylist(props: {
 
   const [trackFilter, setTrackFilter] = useState<TrackFilter>({ filter: (t: TrackObj) => true });
 
+  const [sliders, setSliders] = useState<FeatureSliderItemObj[]>([]);
+
+  const deleteSlider = (id: String) => {
+    console.log("Deleting slider ", id);
+    setSliders(sliders.filter(k => k.name !== id));
+  }
+
+  const updateSlider = (id: String, range: number[]) => {
+    setSliders(
+      sliders.map(
+        el => el.name === id ? { ...el, currentMin: range[0], currentMax: range[1] } : el
+      )
+    )
+
+  }
+
+  const handleAddFeature = (option: FeatureSliderItemObj) => {
+    if (!sliders.find(slider=>slider.name === option.name)) {
+      setSliders([...sliders, option])
+    }
+  }
+
+  const TrackInRange = (track: TrackObj): boolean => {
+    var found = true;
+    sliders.forEach((slider) => {
+      if (track.features) {
+        for (const [feature,value] of Object.entries(track.features)){
+          //special cases for loudness and tempo.
+          // note that this needs to be a nested if statement to make else if only trigger if it isn't tempo or loudness
+          if (slider.name.toLowerCase() === 'loudness' || slider.name.toLowerCase() === 'tempo'){
+            if (slider.name.toLowerCase() === feature && (value < slider.currentMin || value > slider.currentMax )){
+              found=false
+            }
+          } else if (slider.name.toLowerCase() === feature && (value < slider.currentMin / 100 || value > slider.currentMax / 100)){
+            found= false;
+          }
+        }
+      }
+      return found;
+    })
+    return found;
+  }
   // TODO: Maybe put genres for each genre
   const TrackCorrectGenre = (track: TrackObj): boolean => {
     for (let artist of track.artists) {
@@ -147,10 +194,24 @@ export default function Subplaylist(props: {
               </TableCell>
             </TableRow>
             <TableRow>
+              <TableCell colSpan={2}>
+                <FeatureMenu onSelect={handleAddFeature} hidden={sliders.map(el => el.name)} />
+              </TableCell>
+            </TableRow>
+            {sliders.map(p => (
+              <TableRow>
+                <TableCell size = 'small'>
+                  <AudioFeatureSlider  featureName={p.name} featureValue={[p.currentMin, p.currentMax]} featureLimits={[p.min,p.max]} featureLabel = {p.units} delete={() => deleteSlider(p.name)} onFeatureUpdate={updateSlider} />
+                </TableCell>
+                <TableCell> 
+                <Button variant="contained" color="secondary" onClick={() => deleteSlider(p.name)}  size = {'small'} startIcon={<DeleteIcon />}/>
+                </TableCell>
+              </TableRow>
+            ))}
+            <TableRow>
               <TableCell colSpan={3}>
                 <Autocomplete
                   multiple
-                  id='checkboxes-tags-demo'
                   options={props.genres}
                   disableCloseOnSelect
                   getOptionLabel={option => option}
@@ -188,9 +249,13 @@ export default function Subplaylist(props: {
             </TableRow>
           </TableHead>
           <TableBody>
-                {tracks.filter(TrackCorrectGenre).filter(trackFilter.filter).sort(sortTracks).map(track => (
+            <TableRow>
+              <TableCell colSpan={3}>
+                {tracks.filter(TrackCorrectGenre).filter(TrackInRange).filter(trackFilter.filter).sort(sortTracks).map(track => (
                   <TrackEntry track={track} key={track.id} />
                 ))}
+                </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
