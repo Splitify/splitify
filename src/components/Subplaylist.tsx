@@ -22,7 +22,6 @@ import {
   makeStyles
 } from '@material-ui/core'
 import { Playlist as PlaylistObj, Track as TrackObj, FeatureSliderItem as FeatureSliderItemObj} from '../types'
-import Track from './Track'
 import SortSelector from './SortSelector'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 import MultiFilter, { TrackFilter } from './MultiFilter'
@@ -194,8 +193,6 @@ export default function Subplaylist(props: {
                   </Button>
               </TableCell>
             </TableRow>
-            //here!
-
             <TableRow>
               <TableCell colSpan={2}>
                 <FeatureMenu onSelect={handleAddFeature} hidden={sliders.map(el => el.name)} />
@@ -245,7 +242,6 @@ export default function Subplaylist(props: {
                 />
               </TableCell>
             </TableRow>
-            //here!
             <TableRow>
               <TableCell colSpan={3}>
                 <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
@@ -255,7 +251,7 @@ export default function Subplaylist(props: {
           <TableBody>
             <TableRow>
               <TableCell colSpan={3}>
-                {tracks.filter(TrackCorrectGenre).filter(trackFilter.filter).sort(sortTracks).map(track => (
+                {tracks.filter(TrackCorrectGenre).filter(TrackInRange).filter(trackFilter.filter).sort(sortTracks).map(track => (
                   <TrackEntry track={track} key={track.id} />
                 ))}
               </TableCell>
