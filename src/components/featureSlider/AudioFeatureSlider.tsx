@@ -12,11 +12,12 @@ const useStylesSlider = makeStyles({
 export default function AudioFeatureSlider(props: {
     featureName: string,
     featureValue: number[],
+    featureLimits: number[],
+    featureLabel: string,
     delete: () => void;
     onFeatureUpdate: (name:string, feature: number[]) => void,
 }) {
     const classes = useStylesSlider();
-
     return(
             <div className = {classes.root}>
                 <Typography id="range-slider" gutterBottom>
@@ -28,8 +29,15 @@ export default function AudioFeatureSlider(props: {
                     aria-label = {props.featureName}
                     orientation = "horizontal"
                     valueLabelDisplay = "auto"
+                    //valueLabelFormat = {(x) => x.toString().concat(props.featureLabel)}
                     aria-labelledby = "range-slider"
+                    min = {props.featureLimits[0]}
+                    max = {props.featureLimits[1]}
                     defaultValue = {props.featureValue}
+                    marks = {[
+                        {value : props.featureLimits[0], label: props.featureLimits[0].toString().concat(props.featureLabel)},
+                        {value : props.featureLimits[1], label: props.featureLimits[1].toString().concat(props.featureLabel)}
+                    ]}
                 />
                 
             </div>

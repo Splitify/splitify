@@ -3,10 +3,11 @@ import { makeStyles } from '@material-ui/core/styles'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
-import AudioFeatureSlider from './AudioFeatureSlider'
+import AudioFeatureSlider from './featureSlider/AudioFeatureSlider'
+import FeatureMenu from './featureSlider/FeatureMenu'
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import { IconButton} from '@material-ui/core';
 import {
   Button,
   Checkbox,
@@ -20,44 +21,10 @@ import {
   Paper,
   TextField
 } from '@material-ui/core'
-import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
+import { Playlist as PlaylistObj, Track as TrackObj, FeatureSliderItem as FeatureSliderItemObj} from '../types'
 import Track from './Track'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 
-
-
-export function FeatureMenu(props: {
-  onSelect: (option: FeatureSliderItem) => void
-  hidden: string[]
-}) {
-  const options = ['Acousticness', 'Danceability', 'Energy',
-    'Instrumentalness', 'Liveness', 'Speechiness', 'Valence'].filter(o => !props.hidden.includes(o));
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const handleMenuOpen = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
-  
-  return (
-    <div>
-      <Button aria-controls="feature-menu" aria-haspopup="true" onClick={handleMenuOpen}>
-        Add Audio Feature
-      </Button>
-      <Menu
-        id="feature-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        {options.map(o => (<MenuItem onClick={() => props.onSelect({ name: o, min: 10, max: 90 })}>{o}</MenuItem>))}
-      </Menu>
-    </div>
-  );
-}
 
 
 const useStyles = makeStyles(theme => ({
@@ -82,11 +49,6 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-interface FeatureSliderItem {
-  name: string
-  min: number
-  max: number
-}
 
 export default function Subplaylist(props: {
   source: PlaylistObj
@@ -97,7 +59,7 @@ export default function Subplaylist(props: {
   const classes = useStyles()
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
 
-  const [sliders, setSliders] = useState<FeatureSliderItem[]>([]);
+  const [sliders, setSliders] = useState<FeatureSliderItemObj[]>([]);
 
   const deleteSlider = (id: String) => {
     console.log("Deleting slider ", id);
@@ -107,13 +69,13 @@ export default function Subplaylist(props: {
   const updateSlider = (id: String, range: number[]) => {
     setSliders(
       sliders.map(
-        el => el.name === id ? { ...el, min: range[0], max: range[1] } : el
+        el => el.name === id ? { ...el, currentMin: range[0], currentMax: range[1] } : el
       )
     )
 
   }
 
-  const handleAddFeature = (option: FeatureSliderItem) => {
+  const handleAddFeature = (option: FeatureSliderItemObj) => {
     if (!sliders.find(slider=>slider.name === option.name)) {
       setSliders([...sliders, option])
     }
@@ -124,7 +86,13 @@ export default function Subplaylist(props: {
     sliders.forEach((slider) => {
       if (track.features) {
         for (const [feature,value] of Object.entries(track.features)){
-          if (slider.name.toLowerCase() === feature && (value < slider.min / 100 || value > slider.max / 100)){
+          //special cases for loudness and tempo.
+          // note that this needs to be a nested if statement to make else if only trigger if it isn't tempo or loudness
+          if (slider.name.toLowerCase() === 'loudness' || slider.name.toLowerCase() === 'tempo'){
+            if (slider.name.toLowerCase() === feature && (value < slider.currentMin || value > slider.currentMax )){
+              found=false
+            }
+          } else if (slider.name.toLowerCase() === feature && (value < slider.currentMin / 100 || value > slider.currentMax / 100)){
             found= false;
           }
         }
@@ -194,7 +162,7 @@ export default function Subplaylist(props: {
             {sliders.map(p => (
               <TableRow>
                 <TableCell>
-                  <AudioFeatureSlider featureName={p.name} featureValue={[p.min, p.max]} delete={() => deleteSlider(p.name)} onFeatureUpdate={updateSlider} />
+                  <AudioFeatureSlider featureName={p.name} featureValue={[p.currentMin, p.currentMax]} featureLimits={[p.min,p.max]} featureLabel = {p.units} delete={() => deleteSlider(p.name)} onFeatureUpdate={updateSlider} />
                 </TableCell>
                 <Button variant="contained" color="secondary" onClick={() => deleteSlider(p.name)} startIcon={<DeleteIcon />}>
                 </Button>
