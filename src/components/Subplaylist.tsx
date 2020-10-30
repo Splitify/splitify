@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
-import AudioFeatureSlider from './featureSlider/AudioFeatureSlider'
-import FeatureMenu from './featureSlider/FeatureMenu'
+import AudioFeatureSlider from './FeatureSelector/AudioFeatureSlider'
+import FeatureMenu from './FeatureSelector/FeatureMenu'
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {
