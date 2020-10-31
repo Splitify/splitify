@@ -65,7 +65,10 @@ export default function Subplaylist(props: {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   
   const [tracks, setTracks] = useState<TrackObj[]>(props.source.tracks)
+
+  // eslint-disable-next-line 
   const [includedTracks, setIncludedTracks] = useState<TrackObj[]>([])
+  // eslint-disable-next-line 
   const [excludedTracks, setExcludedTracks] = useState<TrackObj[]>([])
   
   // Track selector
@@ -90,6 +93,8 @@ export default function Subplaylist(props: {
 
   const [sortType, setSortType] = useState("")
 
+  // TODO: @Cary pls re-integrate
+  // eslint-disable-next-line 
   const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
     let var1: string = "";
     let var2: string = "";

@@ -59,7 +59,7 @@ export default function (props: {
   return (
     <>
       <TableRow>
-        <TableCell colSpan={2}>
+        <TableCell colSpan={100}>
           <FeatureMenu
             onSelect={addSlider}
             hidden={sliders.map(el => el.name)}
@@ -68,14 +68,14 @@ export default function (props: {
       </TableRow>
       {sliders.map(p => (
         <TableRow>
-          <TableCell size='small'>
+          <TableCell size='small' colSpan={2}>
             <AudioFeatureSlider
               feature={p}
               delete={() => deleteSlider(p.name)}
               onFeatureUpdate={updateSlider}
             />
           </TableCell>
-          <TableCell>
+          <TableCell colSpan={1}>
             <Button
               variant='contained'
               color='secondary'
