@@ -89,8 +89,6 @@ export default function Subplaylist(props: {
     return false
   }
 
-    
-  // TODO: Confirm whether sorting is only for visual aspects, or affects the playlist
   const [sortType, setSortType] = useState("")
 
   const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
@@ -151,7 +149,9 @@ export default function Subplaylist(props: {
     updateFilteredView(tracks => 
       tracks
       .filter(trackFilter)
+      .sort(sortTracks)
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks, trackFilter, excludedTracks])
 
   return (
