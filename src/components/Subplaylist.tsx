@@ -72,10 +72,10 @@ export default function Subplaylist(props: {
   
   // Track selector
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
-  const [featureFilter, setFeatureFilter] = useState<TrackFilter>(t => true);
+  const [featureFilter, setFeatureFilter] = useState<TrackFilter>(() => (() => true));
 
   // Visual properties
-  const [trackFilter, setTrackFilter] = useState<TrackFilter>(t => true);
+  const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => (() => true));
 
   // TODO: Maybe put genres in each track
   const TrackCorrectGenre = (track: TrackObj): boolean => {
@@ -183,7 +183,7 @@ export default function Subplaylist(props: {
                   </Button>
               </TableCell>
             </TableRow>
-            <FeatureSelector onUpdateFilterFunction={setFeatureFilter} />
+            <FeatureSelector onUpdateFilterFunction={f => setFeatureFilter(() => f)} />
             <TableRow>
               <TableCell colSpan={3}>
                 <Autocomplete
@@ -220,7 +220,7 @@ export default function Subplaylist(props: {
             </TableRow>
             <TableRow>
               <TableCell colSpan={3}>
-                <MultiFilter callback={setTrackFilter} />
+                <MultiFilter callback={f => setTrackFilter(() => f)} />
               </TableCell>
             </TableRow>
           </TableHead>

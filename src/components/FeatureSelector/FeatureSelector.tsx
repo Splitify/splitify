@@ -9,7 +9,7 @@ import FeatureMenu from './FeatureMenu'
 import AudioFeatureSlider from './AudioFeatureSlider'
 
 export default function (props: {
-  onUpdateFilterFunction: (f: TrackFilter) => any
+  onUpdateFilterFunction: (f: TrackFilter) => void
 }) {
   const [sliders, setSliders] = useState<FeatureSliderData[]>([])
 
