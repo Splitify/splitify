@@ -32,7 +32,7 @@ export default function (props: {
         aria-labelledby='range-slider'
         min={props.feature.currentMin}
         max={props.feature.currentMax}
-        defaultValue={[props.feature.currentMin, props.feature.currentMax]}
+        defaultValue={[props.feature.min, props.feature.max]}
         marks={[
           {
             value: props.feature.min,
