@@ -180,7 +180,6 @@ export default function Subplaylist(props: {
                   </Button>
               </TableCell>
             </TableRow>
-            <FeatureSelector onUpdateFilterFunction={f => setFeatureFilter(() => f)} />
             <TableRow>
               <TableCell colSpan={3}>
                 <Autocomplete
@@ -215,6 +214,7 @@ export default function Subplaylist(props: {
                 />
               </TableCell>
             </TableRow>
+            <FeatureSelector onUpdateFilterFunction={f => setFeatureFilter(() => f)} />
             <TableRow>
               <TableCell colSpan={3}>
                 <MultiFilter callback={f => setTrackFilter(() => f)} />

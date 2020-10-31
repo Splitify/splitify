@@ -19,7 +19,7 @@ export default function FeatureMenu(props: {
     return (
       <div>
         <Button aria-controls="feature-menu" aria-haspopup="true" onClick={handleMenuOpen}>
-          Add Audio Feature
+          Add Feature Filter
         </Button>
         <Menu
           id="feature-menu"
