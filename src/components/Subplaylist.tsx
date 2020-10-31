@@ -143,7 +143,7 @@ export default function Subplaylist(props: {
   let [filterView, updateFilteredView] = useState<TrackObj[]>([])
   useEffect(() => {
     // Update the displayed items when the tracks change, or the track filter changes
-    updateFilteredView(tracks => 
+    updateFilteredView(
       tracks
       .filter(trackFilter)
       .sort(sortTracks)
