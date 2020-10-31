@@ -77,6 +77,7 @@ export default function Subplaylist(props: {
 
   // TODO: Maybe put genres in each track
   const TrackCorrectGenre = (track: TrackObj): boolean => {
+    if (selectedGenres.length === 0) return true;
     for (let artist of track.artists) {
       for (let genre of artist.genres) {
         if (selectedGenres.includes(genre)) {
