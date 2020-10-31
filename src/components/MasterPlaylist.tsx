@@ -11,7 +11,8 @@ import {
   TableCell
 } from '@material-ui/core'
 import TrackEntry from './TrackEntry'
-import MultiFilter, { TrackFilter } from './MultiFilter'
+import MultiFilter from './MultiFilter'
+import { TrackFilter } from "../types/TrackFilter"
 
 const useStyles = makeStyles({
   table: {

@@ -21,11 +21,12 @@ import {
   TextField,
   makeStyles
 } from '@material-ui/core'
-import { Playlist as PlaylistObj, Track as TrackObj} from '../types'
+import { Playlist as PlaylistObj, Track as TrackObj, TrackFilter} from '../types'
 import SortSelector from './SortSelector'
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
-import MultiFilter, { TrackFilter } from './MultiFilter'
-import { FeatureMenu, AudioFeatureSlider, FeatureSliderItem as FeatureSliderItemObj } from './FeatureSelector/'
+import MultiFilter from './MultiFilter'
+import { FeatureSelector, FeatureSliderData } from './FeatureSelector/'
+
 import TrackEntry from './TrackEntry'
 
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
@@ -59,59 +60,24 @@ export default function Subplaylist(props: {
   onDelete?: (playlist: PlaylistObj) => any
 }) {
   const classes = useStyles()
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [sortType, setSortType] = useState("")
-
+  
   const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
   const checkedIcon = <CheckBoxIcon fontSize='small' />
-  // TODO: setTracks will be used for deletion, reordering and moving
-  // eslint-disable-next-line
+
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  
   const [tracks, setTracks] = useState(props.source.tracks)
 
-  const [trackFilter, setTrackFilter] = useState<TrackFilter>((t: TrackObj) => true);
-  const [sliders, setSliders] = useState<FeatureSliderItemObj[]>([]);
+  // Track selector
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  const [featureFilter, setFeatureFilter] = useState<TrackFilter>(t => true);
 
-  const deleteSlider = (id: String) => {
-    console.log("Deleting slider ", id);
-    setSliders(sliders.filter(k => k.name !== id));
-  }
+  // Visual properties
+  const [trackFilter, setTrackFilter] = useState<TrackFilter>(t => true);
+  
+  // TODO: Confirm whether sorting is only for visual aspects, or affects the playlist
+  const [sortType, setSortType] = useState("")
 
-  const updateSlider = (id: String, range: number[]) => {
-    setSliders(
-      sliders.map(
-        el => el.name === id ? { ...el, currentMin: range[0], currentMax: range[1] } : el
-      )
-    )
-
-  }
-
-  const handleAddFeature = (option: FeatureSliderItemObj) => {
-    if (!sliders.find(slider=>slider.name === option.name)) {
-      setSliders([...sliders, option])
-    }
-  }
-
-  const TrackInRange = (track: TrackObj): boolean => {
-    var found = true;
-    sliders.forEach((slider) => {
-      if (track.features) {
-        for (const [feature,value] of Object.entries(track.features)){
-          //special cases for loudness and tempo.
-          // note that this needs to be a nested if statement to make else if only trigger if it isn't tempo or loudness
-          if (slider.name.toLowerCase() === 'loudness' || slider.name.toLowerCase() === 'tempo'){
-            if (slider.name.toLowerCase() === feature && (value < slider.currentMin || value > slider.currentMax )){
-              found=false
-            }
-          } else if (slider.name.toLowerCase() === feature && (value < slider.currentMin / 100 || value > slider.currentMax / 100)){
-            found= false;
-          }
-        }
-      }
-      return found;
-    })
-    return found;
-  }
   // TODO: Maybe put genres for each genre
   const TrackCorrectGenre = (track: TrackObj): boolean => {
     for (let artist of track.artists) {
@@ -205,21 +171,7 @@ export default function Subplaylist(props: {
                   </Button>
               </TableCell>
             </TableRow>
-            <TableRow>
-              <TableCell colSpan={2}>
-                <FeatureMenu onSelect={handleAddFeature} hidden={sliders.map(el => el.name)} />
-              </TableCell>
-            </TableRow>
-            {sliders.map(p => (
-              <TableRow>
-                <TableCell size = 'small'>
-                  <AudioFeatureSlider feature={p} delete={() => deleteSlider(p.name)} onFeatureUpdate={updateSlider} />
-                </TableCell>
-                <TableCell> 
-                <Button variant="contained" color="secondary" onClick={() => deleteSlider(p.name)}  size = {'small'} startIcon={<DeleteIcon />}/>
-                </TableCell>
-              </TableRow>
-            ))}
+            <FeatureSelector onUpdateFilterFunction={setFeatureFilter} />
             <TableRow>
               <TableCell colSpan={3}>
                 <Autocomplete
@@ -256,7 +208,7 @@ export default function Subplaylist(props: {
             </TableRow>
             <TableRow>
               <TableCell colSpan={3}>
-                <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
+                <MultiFilter callback={setTrackFilter} />
               </TableCell>
             </TableRow>
           </TableHead>

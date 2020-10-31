@@ -2,7 +2,7 @@ import React from 'react'
 import Slider from '@material-ui/core/Slider'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core'
-import { FeatureSliderItem } from './FeatureSliderItem'
+import { FeatureSliderData } from './FeatureSliderData'
 
 const useStylesSlider = makeStyles({
   root: {
@@ -11,7 +11,7 @@ const useStylesSlider = makeStyles({
 })
 
 export default function (props: {
-  feature: FeatureSliderItem
+  feature: FeatureSliderData
   delete: () => void
   onFeatureUpdate: (name: string, feature: number[]) => void
 }) {
