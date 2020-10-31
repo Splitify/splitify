@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { TableCell, TableRow, Button } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { Track, TrackFilter } from '../../types'
+import { TrackFilter } from '../../types'
 
 import { FeatureSliderData } from './FeatureSliderData'
 import FeatureMenu from './FeatureMenu'
@@ -30,6 +30,7 @@ export default function (props: {
         )
       })
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sliders])
 
   // Append a slider

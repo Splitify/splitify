@@ -66,19 +66,18 @@ export default function Subplaylist(props: {
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   
-  const [tracks, setTracks] = useState(props.source.tracks)
-
+  const [tracks, setTracks] = useState<TrackObj[]>(props.source.tracks)
+  const [includedTracks, setIncludedTracks] = useState<TrackObj[]>([])
+  const [excludedTracks, setExcludedTracks] = useState<TrackObj[]>([])
+  
   // Track selector
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [featureFilter, setFeatureFilter] = useState<TrackFilter>(t => true);
 
   // Visual properties
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(t => true);
-  
-  // TODO: Confirm whether sorting is only for visual aspects, or affects the playlist
-  const [sortType, setSortType] = useState("")
 
-  // TODO: Maybe put genres for each genre
+  // TODO: Maybe put genres in each track
   const TrackCorrectGenre = (track: TrackObj): boolean => {
     for (let artist of track.artists) {
       for (let genre of artist.genres) {
@@ -89,6 +88,10 @@ export default function Subplaylist(props: {
     }
     return false
   }
+
+    
+  // TODO: Confirm whether sorting is only for visual aspects, or affects the playlist
+  const [sortType, setSortType] = useState("")
 
   const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
     let var1: string = "";
@@ -122,25 +125,34 @@ export default function Subplaylist(props: {
     setSortType(type)
   }
 
-  // Resolves filter index to track source index
-  function FITI(idx: number) {
-    return tracks.findIndex(t => t.id === filterView[idx].id)
-  }
+  useEffect(() => {
+    // FIXME: Ordering property isn't persisted between updates to genre and features
+
+    // Update the list of track in the playlist when the genre / features filter is changed
+    setTracks(
+      props.source.tracks
+      .filter(TrackCorrectGenre)
+      .filter(featureFilter)
+      .filter(t => !excludedTracks.includes(t))
+      .concat(includedTracks) // Add items after concat
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedGenres, featureFilter, excludedTracks, includedTracks])
 
   // Save tracks to playlist when updated
   useEffect(() => {
     props.playlist.tracks = tracks
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
-
+  
   let [filterView, updateFilteredView] = useState<TrackObj[]>([])
-
   useEffect(() => {
-    updateFilteredView(
-      tracks.filter(TrackCorrectGenre).filter(trackFilter)
+    // Update the displayed items when the tracks change, or the track filter changes
+    updateFilteredView(tracks => 
+      tracks
+      .filter(trackFilter)
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tracks, selectedGenres, trackFilter])
+  }, [tracks, trackFilter, excludedTracks])
 
   return (
     <div>
