@@ -56,7 +56,7 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj }) {
               </TableCell>
             </TableRow>
         </TableHead>
-        <TrackList id={props.playlist.id} tracks={props.playlist.tracks.filter(trackFilter)} />
+        <TrackList id={props.playlist.id} tracks={props.playlist.tracks.filter(trackFilter)} isDragDisabled={true} isDropDisabled={true} />
       </Table>
     </TableContainer>
   )

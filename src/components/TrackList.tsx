@@ -4,13 +4,13 @@ import { Droppable } from 'react-beautiful-dnd'
 import TrackEntry from './TrackEntry'
 import { Track } from '../types'
 
-export default function (props: { id?: string; tracks: Track[] }) {
+export default function (props: { id?: string; tracks: Track[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDragClone?: boolean }) {
   return (
-    <Droppable droppableId={props.id || 'unknown'}>
+    <Droppable droppableId={props.id || 'unknown'} isDropDisabled={props.isDropDisabled} >
       {(provided, snapshot) => (
         <TableBody ref={provided.innerRef} {...provided.droppableProps}>
           {props.tracks.map((track, idx) => (
-            <TrackEntry track={track} index={idx} key={track.id} />
+            <TrackEntry track={track} index={idx} key={track.id} isDragDisabled={props.isDragDisabled} />
           ))}
           {provided.placeholder}
         </TableBody>

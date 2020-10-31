@@ -5,7 +5,7 @@ import { TableRow, TableCell } from '@material-ui/core'
 import { Draggable } from 'react-beautiful-dnd'
 import Track from './Track'
 
-export default function (props: { track: TrackObj; index?: number }) {
+export default function (props: { track: TrackObj; index?: number, isDragDisabled?: boolean }) {
   let [track, setTrack] = useState<TrackObj>()
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function (props: { track: TrackObj; index?: number }) {
   }, [])
 
   return (
-    <Draggable draggableId={props.track.id} index={props.index ?? -1}>
+    <Draggable draggableId={props.track.id} index={props.index ?? -1} isDragDisabled={props.isDragDisabled} >
       {(provided, snapshot) => (
         <TableRow
           ref={provided.innerRef}
