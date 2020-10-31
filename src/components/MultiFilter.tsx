@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { TextField, FormGroup, FormControl, FormControlLabel, Radio, RadioGroup } from '@material-ui/core'
 import { Artist, Track as TrackObj } from '../types'
 
-export interface TrackFilter {
-  filter: (t: TrackObj) => boolean;
-}
+export type TrackFilter = (t: TrackObj) => boolean
 
 export default function MultiFilter(props: {
   callback: (f: TrackFilter) => void;
@@ -23,7 +21,7 @@ export default function MultiFilter(props: {
         || (filterCategory === "Genre" && track.artists.some((a: Artist) => a.genres.some((g: string) => g.includes(filterValue))));
     }
     console.log(filterCategory, filterValue)
-    props.callback({ filter: TrackMatchesFilter });
+    props.callback(TrackMatchesFilter);
     // eslint-disable-next-line
   }, [filterValue, filterCategory]);
 

@@ -22,7 +22,7 @@ const useStyles = makeStyles({
 export default function MasterPlaylist(props: { playlist: PlaylistObj }) {
   const classes = useStyles()
 
-  const [trackFilter, setTrackFilter] = useState<TrackFilter>({ filter: (t: TrackObj) => true });
+  const [trackFilter, setTrackFilter] = useState<TrackFilter>((t: TrackObj) => true);
 
   // Async state update
   let _tick = useState(false)[1]
@@ -52,12 +52,12 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj }) {
           </TableRow>
             <TableRow>
               <TableCell>
-                <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
+                <MultiFilter callback={setTrackFilter} />
               </TableCell>
             </TableRow>
         </TableHead>
         <TableBody>
-          {props.playlist.tracks.filter(trackFilter.filter).map((track) => (
+          {props.playlist.tracks.filter(trackFilter).map((track) => (
             <TrackEntry track={track} key={track.id} />
           ))}
         </TableBody>

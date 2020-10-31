@@ -69,9 +69,7 @@ export default function Subplaylist(props: {
   // eslint-disable-next-line
   const [tracks, setTracks] = useState(props.source.tracks)
 
-
-  const [trackFilter, setTrackFilter] = useState<TrackFilter>({ filter: (t: TrackObj) => true });
-
+  const [trackFilter, setTrackFilter] = useState<TrackFilter>((t: TrackObj) => true);
   const [sliders, setSliders] = useState<FeatureSliderItemObj[]>([]);
 
   const deleteSlider = (id: String) => {
@@ -173,10 +171,10 @@ export default function Subplaylist(props: {
 
   useEffect(() => {
     updateFilteredView(
-      tracks.filter(TrackCorrectGenre).filter(trackFilter.filter)
+      tracks.filter(TrackCorrectGenre).filter(trackFilter)
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tracks, selectedGenres, trackFilter.filter])
+  }, [tracks, selectedGenres, trackFilter])
 
   return (
     <div>
