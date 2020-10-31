@@ -54,6 +54,7 @@ export default function Subplaylist(props: {
   source: PlaylistObj
   playlist: PlaylistObj
   genres: string[]
+  onFilterUpdate?: (tracks: TrackObj[]) => any
   onDelete?: (playlist: PlaylistObj) => any
 }) {
   const classes = useStyles()
@@ -143,11 +144,11 @@ export default function Subplaylist(props: {
   let [filterView, updateFilteredView] = useState<TrackObj[]>([])
   useEffect(() => {
     // Update the displayed items when the tracks change, or the track filter changes
-    updateFilteredView(
-      tracks
+    let view = tracks
       .filter(trackFilter)
-      .sort(sortTracks)
-    )
+      // .sort(sortTracks)
+    updateFilteredView(view)
+    props.onFilterUpdate && props.onFilterUpdate(view)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks, trackFilter, excludedTracks])
 
