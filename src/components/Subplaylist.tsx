@@ -142,6 +142,11 @@ export default function Subplaylist(props: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
   
+  useEffect(() => {
+    setTracks(props.playlist.tracks)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.playlist.tracks])
+
   let [filterView, updateFilteredView] = useState<TrackObj[]>([])
   useEffect(() => {
     // Update the displayed items when the tracks change, or the track filter changes
