@@ -31,7 +31,7 @@ export default function (props: { track: TrackObj; index?: number, isDragDisable
           }}
         >
           <TableCell colSpan={100}>
-            {track ? <Track track={track} /> : <Skeleton variant='rect' />}
+            {track ? <Track track={track} isDragging={snapshot.isDragging} /> : <Skeleton variant='rect' />}
           </TableCell>
         </TableRow>
       )}
