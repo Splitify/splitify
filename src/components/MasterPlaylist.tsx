@@ -43,7 +43,7 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj }) {
   return (
     <TableContainer
       component={Paper}
-      style={{ maxHeight: 1000, overflow: 'auto' }}
+      style={{ maxHeight: 800, overflowY: 'auto' }}
     >
       <Table className={classes.table} aria-label='master playlist'>
         <TableHead>

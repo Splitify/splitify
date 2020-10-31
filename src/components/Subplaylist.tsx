@@ -163,7 +163,7 @@ export default function Subplaylist(props: {
             if (newName) props.playlist.name = newName;
           }} />
       </Dialog>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} style={{ maxHeight: 800, overflowY: 'auto' }}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
