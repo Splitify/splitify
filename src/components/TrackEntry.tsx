@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import Skeleton from '@material-ui/lab/Skeleton'
 import { Track as TrackObj } from '../types'
-import TableCell from '@material-ui/core/TableCell'
-import TableRow from '@material-ui/core/TableRow'
+import { TableRow, TableCell } from '@material-ui/core'
+import { Draggable } from 'react-beautiful-dnd'
 import Track from './Track'
 
-export default function (props: { track: TrackObj }) {
+export default function (props: { track: TrackObj; index?: number }) {
   let [track, setTrack] = useState<TrackObj>()
 
   useEffect(() => {
@@ -16,14 +16,25 @@ export default function (props: { track: TrackObj }) {
   }, [])
 
   return (
-    <TableRow style={{cursor: 'pointer'}}>
-      <TableCell colSpan={100}>
-        {track ? (
-          <Track track={track} />
-        ) : (
-          <Skeleton variant='rect' />
-        )}
-      </TableCell>
-    </TableRow>
+    <Draggable draggableId={props.track.id} index={props.index ?? -1}>
+      {(provided, snapshot) => (
+        <TableRow
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          style={{
+            ...provided.draggableProps.style,
+            cursor: 'pointer',
+            ...(snapshot.isDragging
+              ? { backgroundColor: '#E6E6E6' }
+              : undefined)
+          }}
+        >
+          <TableCell colSpan={100}>
+            {track ? <Track track={track} /> : <Skeleton variant='rect' />}
+          </TableCell>
+        </TableRow>
+      )}
+    </Draggable>
   )
 }

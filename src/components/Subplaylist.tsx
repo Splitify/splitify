@@ -12,7 +12,6 @@ import {
   Checkbox,
   Dialog,
   Table,
-  TableBody,
   TableCell,
   TableContainer,
   TableHead,
@@ -22,14 +21,12 @@ import {
   makeStyles
 } from '@material-ui/core'
 import { Playlist as PlaylistObj, Track as TrackObj, TrackFilter} from '../types'
-import SortSelector from './SortSelector'
+
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
+import SortSelector from './SortSelector'
 import MultiFilter from './MultiFilter'
-import { FeatureSelector, FeatureSliderData } from './FeatureSelector/'
-
-import TrackEntry from './TrackEntry'
-
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { FeatureSelector } from './FeatureSelector'
+import TrackList from './TrackList'
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -224,57 +221,7 @@ export default function Subplaylist(props: {
               </TableCell>
             </TableRow>
           </TableHead>
-          <DragDropContext
-            onDragEnd={evt => {
-              console.log(evt)
-              if (!evt.destination) return
-
-              let sourceIdx = FITI(evt.source?.index)
-              let destIdx = FITI(evt.destination?.index)
-
-              setTracks(tracks => {
-                const newTracks = [...tracks];
-                const [removed] = newTracks.splice(sourceIdx, 1);
-                newTracks.splice(destIdx, 0, removed);
-                return newTracks
-              })
-
-            }}
-          >
-            <Droppable droppableId={props.playlist.id}>
-              {(provided, snapshot) => (
-                <TableBody ref={provided.innerRef} {...provided.droppableProps}>
-                  {filterView.map((track, idx) => (
-                    <Draggable
-                      draggableId={track.id}
-                      index={idx}
-                      key={track.id}
-                    >
-                      {(provided, snapshot) => (
-                        <TableRow
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          style={{
-                            ...provided.draggableProps.style, 
-                            ...(snapshot.isDragging ? {backgroundColor: '#E6E6E6'} : undefined)
-                          }}
-                          >
-                          <TableCell
-                            colSpan={2}
-                            scope='row'
-                          >
-                            <TrackEntry track={track} />
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </TableBody>
-              )}
-            </Droppable>
-          </DragDropContext>
+        <TrackList id={props.playlist.id} tracks={filterView} />
         </Table>
       </TableContainer>
     </div>

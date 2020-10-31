@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { Playlist as PlaylistObj, Track as TrackObj } from '../types'
+import { Playlist as PlaylistObj } from '../types'
 import {
   makeStyles,
   Paper,
   Table,
   TableContainer,
   TableHead,
-  TableBody,
   TableRow,
   TableCell
 } from '@material-ui/core'
-import TrackEntry from './TrackEntry'
-import MultiFilter from './MultiFilter'
 import { TrackFilter } from "../types/TrackFilter"
+import MultiFilter from './MultiFilter'
+import TrackList from './TrackList'
 
 const useStyles = makeStyles({
   table: {
@@ -57,11 +56,7 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj }) {
               </TableCell>
             </TableRow>
         </TableHead>
-        <TableBody>
-          {props.playlist.tracks.filter(trackFilter).map((track) => (
-            <TrackEntry track={track} key={track.id} />
-          ))}
-        </TableBody>
+        <TrackList id={props.playlist.id} tracks={props.playlist.tracks.filter(trackFilter)} />
       </Table>
     </TableContainer>
   )
