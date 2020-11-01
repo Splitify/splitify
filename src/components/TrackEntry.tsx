@@ -4,6 +4,7 @@ import { Track as TrackObj } from '../types'
 import { TableRow, TableCell } from '@material-ui/core'
 import { Draggable } from 'react-beautiful-dnd'
 import Track from './Track'
+import DragHandleIcon from '@material-ui/icons/DragHandle';
 
 export default function (props: { track: TrackObj; parent?: string, index?: number, isDragDisabled?: boolean }) {
   let [track, setTrack] = useState<TrackObj>()
@@ -30,9 +31,14 @@ export default function (props: { track: TrackObj; parent?: string, index?: numb
               : undefined)
           }}
         >
-          <TableCell colSpan={100}>
+          <TableCell colSpan={props.isDragDisabled ? 3 : 2 }>
             {track ? <Track track={track} isDragging={snapshot.isDragging} /> : <Skeleton variant='rect' />}
           </TableCell>
+          {props.isDragDisabled ? null : 
+            <TableCell colSpan={1}>
+              <DragHandleIcon />
+            </TableCell>
+          }
         </TableRow>
       )}
     </Draggable>
