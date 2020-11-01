@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import {
   CheckBox as CheckBoxIcon,
@@ -91,40 +91,38 @@ export default function Subplaylist(props: {
     return false
   }
 
-  const [sortType, setSortType] = useState("")
+  function handleSortAction(type: string) {
 
-  // TODO: @Cary pls re-integrate
-  // eslint-disable-next-line 
-  const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
-    let var1: string = "";
-    let var2: string = "";
-    console.log("sorting")
-    switch(sortType) {
-      case "Track Name":
-        var1 = track1.name
-        var2 = track2.name
-        break;
-      case "Artist":
-        var1 = track1.artists[0].name
-        var2 = track2.artists[0].name
-        break;
-      case "Album":
-        if (track1.album){
-          var1 = track1.album.name
-        }
-        if (track2.album){
-          var2 = track2.album.name
-        }
-        break;
-      default:
-        var1 = track1.name
-        var2 = track2.name
-    }
-    return var1.localeCompare(var2)
-  };
+    const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
+      let var1: string = "";
+      let var2: string = "";
+      
+      switch(type) {
+        case "Track Name":
+          var1 = track1.name
+          var2 = track2.name
+          break;
+        case "Artist":
+          var1 = track1.artists[0].name
+          var2 = track2.artists[0].name
+          break;
+        case "Album":
+          if (track1.album){
+            var1 = track1.album.name
+          }
+          if (track2.album){
+            var2 = track2.album.name
+          }
+          break;
+        default:
+          var1 = track1.name
+          var2 = track2.name
+      }
+      return var1.localeCompare(var2)
+    };
 
-  const changeSortType = (type: string): void => {
-    setSortType(type)
+    setTracks([...tracks].sort(sortTracks))
+    updateView()
   }
 
   useEffect(() => {
@@ -153,15 +151,20 @@ export default function Subplaylist(props: {
   }, [props.playlist.tracks])
 
   let [filterView, updateFilteredView] = useState<TrackObj[]>([])
-  useEffect(() => {
-    // Update the displayed items when the tracks change, or the track filter changes
-    let view = tracks
-      .filter(trackFilter)
-      // .sort(sortTracks)
+
+  const updateView = useCallback(() => {
+    let view = tracks.filter(trackFilter)
     updateFilteredView(view)
     props.onFilterUpdate && props.onFilterUpdate(view)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tracks, trackFilter, excludedTracks])
+  }, [tracks, trackFilter, props.onFilterUpdate])
+
+  useEffect(() => {
+    // Update the displayed items when the tracks change, or the track filter changes
+    updateView()
+  
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tracks, excludedTracks])
 
   return (
     <div>
@@ -184,7 +187,7 @@ export default function Subplaylist(props: {
                 </IconButton>
               </TableCell>
               <TableCell>
-                  <SortSelector setSort={changeSortType}/>
+                  <SortSelector onSort={handleSortAction}/>
               </TableCell>
               <TableCell>
                 <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
