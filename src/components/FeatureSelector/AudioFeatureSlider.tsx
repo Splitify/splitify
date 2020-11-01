@@ -35,12 +35,12 @@ export default function (props: {
         defaultValue={[props.feature.min, props.feature.max]}
         marks={[
           {
-            value: props.feature.currentMin,
-            label: props.feature.currentMin.toString().concat(props.feature.units)
+            value: props.feature.min,
+            label: props.feature.min.toString().concat(props.feature.units)
           },
           {
-            value: props.feature.currentMax,
-            label: props.feature.currentMax.toString().concat(props.feature.units)
+            value: props.feature.max,
+            label: props.feature.max.toString().concat(props.feature.units)
           }
         ]}
       />
