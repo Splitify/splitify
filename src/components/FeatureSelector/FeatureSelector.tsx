@@ -8,16 +8,14 @@ import { FeatureSliderData } from './FeatureSliderData'
 import FeatureMenu from './FeatureMenu'
 import AudioFeatureSlider from './AudioFeatureSlider'
 
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import Divider from '@material-ui/core/Divider'
-
-
 export default function (props: {
   onUpdateFilterFunction: (f: TrackFilter) => void
+  component: React.ElementType
+  childComponent: React.ElementType
 }) {
+  const Wrapper = props.component
+  const ChildWrapper = props.childComponent
+
   const [sliders, setSliders] = useState<FeatureSliderData[]>([])
 
   useEffect(() => {
@@ -64,26 +62,30 @@ export default function (props: {
   }
 
   return (
-    <>
-      <ListItem>
+    <Wrapper>
+      <ChildWrapper>
         <FeatureMenu onSelect={addSlider} hidden={sliders.map(el => el.name)} />
-      </ListItem>
+      </ChildWrapper>
       {sliders.map(p => (
-        <ListItem>
-          <AudioFeatureSlider
-            feature={p}
-            delete={() => deleteSlider(p.name)}
-            onFeatureUpdate={updateSlider}
-          />
-          <Button
-            variant='contained'
-            color='secondary'
-            onClick={() => deleteSlider(p.name)}
-            size={'small'}
-            startIcon={<DeleteIcon />}
-          />
-        </ListItem>
+        <ChildWrapper>
+          <ChildWrapper>
+            <AudioFeatureSlider
+              feature={p}
+              delete={() => deleteSlider(p.name)}
+              onFeatureUpdate={updateSlider}
+            />
+          </ChildWrapper>
+          <ChildWrapper>
+            <Button
+              variant='contained'
+              color='secondary'
+              onClick={() => deleteSlider(p.name)}
+              size={'small'}
+              startIcon={<DeleteIcon />}
+            />
+          </ChildWrapper>
+        </ChildWrapper>
       ))}
-    </>
+    </Wrapper>
   )
 }

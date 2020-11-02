@@ -10,7 +10,7 @@ export default function (props: { id?: string; tracks: Track[], isDropDisabled?:
       {(provided, snapshot) => (
         <Wrapper ref={provided.innerRef} {...provided.droppableProps}>
           {props.tracks.map((track, idx) => (
-            <TrackEntry key={track.id} parent={props.id} track={track} index={idx} isDragDisabled={props.isDragDisabled} component={props.childComponent} />
+            <TrackEntry key={track.id} parent={props.id} track={track} index={idx} isDragDisabled={props.isDragDisabled} />
           ))}
           {provided.placeholder}
         </Wrapper>

@@ -2,8 +2,7 @@ import React from 'react'
 
 import { BarChart, Bar, Cell, XAxis, YAxis } from 'recharts'
 
-import { Grid, Popover, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
+import { Grid, Popover, Typography, makeStyles } from '@material-ui/core'
 import ExplicitIcon from '@material-ui/icons/Explicit'
 
 import { Track as TrackObj } from '../types'

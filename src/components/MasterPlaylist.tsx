@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Playlist as PlaylistObj } from '../types'
-import { makeStyles } from '@material-ui/core'
+import { Playlist as PlaylistObj,  TrackFilter } from '../types'
 
-import List from '@material-ui/core/List'
-import Paper from '@material-ui/core/Paper'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import Divider from '@material-ui/core/Divider'
+import { makeStyles, List, ListItem, Paper } from '@material-ui/core'
 
-import { TrackFilter } from '../types/TrackFilter'
 import MultiFilter from './MultiFilter'
 import TrackList from './TrackList'
 

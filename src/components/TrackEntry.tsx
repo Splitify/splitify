@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import Skeleton from '@material-ui/lab/Skeleton'
-import { Track as TrackObj } from '../types'
 import { Draggable } from 'react-beautiful-dnd'
-import Track from './Track'
-import DragHandleIcon from '@material-ui/icons/DragHandle'
+import Skeleton from '@material-ui/lab/Skeleton'
 
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import Divider from '@material-ui/core/Divider'
+import { Track as TrackObj } from '../types'
+import Track from './Track'
+
+import DragHandleIcon from '@material-ui/icons/DragHandle'
+import { ListItem, ListItemIcon } from '@material-ui/core'
 
 export default function (props: {
   track: TrackObj
   parent?: string
   index?: number
   isDragDisabled?: boolean
-  component: React.ElementType
 }) {
   let [track, setTrack] = useState<TrackObj>()
 
@@ -27,8 +23,6 @@ export default function (props: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const Wrapper = props.component;
-
   return (
     <Draggable
       draggableId={`${props.parent}:${props.track.id}`}
@@ -36,7 +30,7 @@ export default function (props: {
       isDragDisabled={props.isDragDisabled}
     >
       {(provided, snapshot) => (
-        <Wrapper
+        <ListItem
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
@@ -47,18 +41,21 @@ export default function (props: {
               ? { backgroundColor: '#E6E6E6' }
               : undefined)
           }}
+          divider={true}
         >
           {track ? (
-            <Track track={track} isDragging={snapshot.isDragging} />
+            <>
+              <Track track={track} isDragging={snapshot.isDragging} />
+              {props.isDragDisabled ?? (
+                <ListItemIcon>
+                  <DragHandleIcon />
+                </ListItemIcon>
+              )}
+            </>
           ) : (
             <Skeleton variant='rect' />
           )}
-          {props.isDragDisabled ?? 
-            <ListItemIcon>
-              <DragHandleIcon />
-            </ListItemIcon>
-          }
-        </Wrapper>
+        </ListItem>
       )}
     </Draggable>
   )
