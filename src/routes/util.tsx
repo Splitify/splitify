@@ -46,9 +46,5 @@ const AuthProxy: React.FunctionComponent<{ component: React.ComponentClass }> = 
 
   let [ready, setReady] = useState(false)
 
-  if (ready) {
-    return <Component {...props} />
-  } else {
-    return <span>pls wait :)</span>
-  }
+  return ready ? <Component {...props} /> : <></>
 }

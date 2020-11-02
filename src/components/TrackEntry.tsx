@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import Skeleton from '@material-ui/lab/Skeleton'
 import { Track as TrackObj } from '../types'
-import TableCell from '@material-ui/core/TableCell'
-import TableRow from '@material-ui/core/TableRow'
+import { TableRow, TableCell } from '@material-ui/core'
+import { Draggable } from 'react-beautiful-dnd'
 import Track from './Track'
-// import Track from './Track'
+import DragHandleIcon from '@material-ui/icons/DragHandle';
 
-// let id: number = 0
-
-export default function (props: { track: TrackObj }) {
+export default function (props: { track: TrackObj; parent?: string, index?: number, isDragDisabled?: boolean }) {
   let [track, setTrack] = useState<TrackObj>()
 
   useEffect(() => {
@@ -19,14 +17,30 @@ export default function (props: { track: TrackObj }) {
   }, [])
 
   return (
-    <TableRow /* key={track?.id || id++} */>
-      <TableCell component='th' scope='row'>
-        {track ? (
-          <Track track={track} />
-        ) : (
-          <Skeleton variant='rect' />
-        )}
-      </TableCell>
-    </TableRow>
+    <Draggable draggableId={`${props.parent}:${props.track.id}`} index={props.index ?? -1} isDragDisabled={props.isDragDisabled} >
+      {(provided, snapshot) => (
+        <TableRow
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          style={{
+            ...provided.draggableProps.style,
+            cursor: 'pointer',
+            ...(snapshot.isDragging
+              ? { backgroundColor: '#E6E6E6' }
+              : undefined)
+          }}
+        >
+          <TableCell colSpan={props.isDragDisabled ? 3 : 2 }>
+            {track ? <Track track={track} isDragging={snapshot.isDragging} /> : <Skeleton variant='rect' />}
+          </TableCell>
+          {props.isDragDisabled ? null : 
+            <TableCell colSpan={1}>
+              <DragHandleIcon />
+            </TableCell>
+          }
+        </TableRow>
+      )}
+    </Draggable>
   )
 }

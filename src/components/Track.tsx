@@ -29,7 +29,7 @@ const EXCLUDED_FEATURES = [ // TODO: This should be shared with Zach's feature c
   "loudness",
   "key"];
 
-export default function Track(props: { track: TrackObj }): JSX.Element {
+export default function Track(props: { track: TrackObj, isDragging?: boolean }): JSX.Element {
 
   const useStyles = makeStyles((theme) => ({
     popover: {
@@ -39,7 +39,6 @@ export default function Track(props: { track: TrackObj }): JSX.Element {
       padding: theme.spacing(1),
     },
     img: {
-      margin: 'auto',
       display: 'block',
       maxWidth: 180,
       maxHeight: 180,
@@ -55,7 +54,7 @@ export default function Track(props: { track: TrackObj }): JSX.Element {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handlePopoverOpen = (event: any) => {
-    setAnchorEl(event.currentTarget);
+    props.isDragging || setAnchorEl(event.currentTarget);
   };
 
   const handlePopoverClose = () => {
