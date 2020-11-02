@@ -9,6 +9,8 @@ import ExplicitIcon from '@material-ui/icons/Explicit';
 import {
   BarChart, Bar, Cell, XAxis, YAxis
 } from 'recharts';
+import ListItemText from '@material-ui/core/ListItemText'
+
 
 const strArrayToEngligh = (arr: string[]) => {
   const re = /(.*), (\w+)/;
@@ -78,6 +80,7 @@ export default function Track(props: { track: TrackObj, isDragging?: boolean }):
     <React.Fragment>
       <CssBaseline />
       <div>
+        <ListItemText>
         <Typography
           aria-owns={open ? 'mouse-over-popover' : undefined}
           aria-haspopup="true"
@@ -87,6 +90,7 @@ export default function Track(props: { track: TrackObj, isDragging?: boolean }):
         >
           {props.track.name}
         </Typography>
+        </ListItemText>
         <Popover
           id="mouse-over-popover"
           className={classes.popover}

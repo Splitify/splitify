@@ -7,19 +7,22 @@ import {
   Delete as DeleteIcon
 } from '@material-ui/icons'
 import {
+  Paper,
   IconButton,
   Button,
   Checkbox,
   Dialog,
-  Table,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   TextField,
   makeStyles
 } from '@material-ui/core'
+
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
+
+
 import { Playlist as PlaylistObj, Track as TrackObj, TrackFilter} from '../types'
 
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
@@ -176,27 +179,22 @@ export default function Subplaylist(props: {
             if (newName) props.playlist.name = newName;
           }} />
       </Dialog>
-      <TableContainer component={Paper} style={{ maxHeight: 800, overflowY: 'auto' }}>
-        <Table className={classes.table} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>
+      <List component={Paper} /* style={{ maxHeight: 800, overflowY: 'auto' }} */>
+            <ListItem>
                 {props.playlist.name}
                 <IconButton onClick={() => setEditDialogOpen(true)}>
                   <EditIcon />
                 </IconButton>
-              </TableCell>
-              <TableCell>
+              <ListItem>
                   <SortSelector onSort={handleSortAction}/>
-              </TableCell>
-              <TableCell>
+              </ListItem>
+              <ListItem>
                 <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
                   Delete
                   </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell colSpan={3}>
+              </ListItem>
+            </ListItem>
+            <ListItem>
                 <Autocomplete
                   multiple
                   options={props.genres}
@@ -227,18 +225,16 @@ export default function Subplaylist(props: {
                     />
                   )}
                 />
-              </TableCell>
-            </TableRow>
-            <FeatureSelector onUpdateFilterFunction={f => setFeatureFilter(() => f)} />
-            <TableRow>
-              <TableCell colSpan={3}>
-                <MultiFilter callback={f => setTrackFilter(() => f)} />
-              </TableCell>
-            </TableRow>
-          </TableHead>
-        <TrackList id={props.playlist.id} tracks={filterView} />
-        </Table>
-      </TableContainer>
+            </ListItem>
+            <ListItem>
+              <FeatureSelector onUpdateFilterFunction={f => setFeatureFilter(() => f)} />
+            </ListItem>
+            <ListItem>
+              <MultiFilter callback={f => setTrackFilter(() => f)} />
+            </ListItem>
+            <Divider />
+        <TrackList id={props.playlist.id} tracks={filterView} component={List} childComponent={ListItem} />
+      </List>
     </div>
   )
 }

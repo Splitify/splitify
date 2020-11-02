@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { TableCell, TableRow, Button } from '@material-ui/core'
+import { Button } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 import { TrackFilter } from '../../types'
@@ -7,6 +7,13 @@ import { TrackFilter } from '../../types'
 import { FeatureSliderData } from './FeatureSliderData'
 import FeatureMenu from './FeatureMenu'
 import AudioFeatureSlider from './AudioFeatureSlider'
+
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
+import Divider from '@material-ui/core/Divider'
+
 
 export default function (props: {
   onUpdateFilterFunction: (f: TrackFilter) => void
@@ -58,33 +65,24 @@ export default function (props: {
 
   return (
     <>
-      <TableRow>
-        <TableCell colSpan={100}>
-          <FeatureMenu
-            onSelect={addSlider}
-            hidden={sliders.map(el => el.name)}
-          />
-        </TableCell>
-      </TableRow>
+      <ListItem>
+        <FeatureMenu onSelect={addSlider} hidden={sliders.map(el => el.name)} />
+      </ListItem>
       {sliders.map(p => (
-        <TableRow>
-          <TableCell size='small' colSpan={2}>
-            <AudioFeatureSlider
-              feature={p}
-              delete={() => deleteSlider(p.name)}
-              onFeatureUpdate={updateSlider}
-            />
-          </TableCell>
-          <TableCell colSpan={1}>
-            <Button
-              variant='contained'
-              color='secondary'
-              onClick={() => deleteSlider(p.name)}
-              size={'small'}
-              startIcon={<DeleteIcon />}
-            />
-          </TableCell>
-        </TableRow>
+        <ListItem>
+          <AudioFeatureSlider
+            feature={p}
+            delete={() => deleteSlider(p.name)}
+            onFeatureUpdate={updateSlider}
+          />
+          <Button
+            variant='contained'
+            color='secondary'
+            onClick={() => deleteSlider(p.name)}
+            size={'small'}
+            startIcon={<DeleteIcon />}
+          />
+        </ListItem>
       ))}
     </>
   )
