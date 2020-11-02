@@ -159,7 +159,7 @@ export default function Subplaylist (props: {
     updateView()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tracks, excludedTracks])
+  }, [tracks, trackFilter, excludedTracks])
 
   return (
     <div>
