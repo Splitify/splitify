@@ -28,7 +28,6 @@ export default function Subplaylist (props: {
   }
 
   const doClick = (val: string) => {
-	  console.log('dododo');
     props.onSort(val)
     handleMenuClose()
   }

@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import Skeleton from '@material-ui/lab/Skeleton'
-import { Track as TrackObj } from '../types'
-import { TableRow, TableCell } from '@material-ui/core'
 import { Draggable } from 'react-beautiful-dnd'
-import Track from './Track'
-import DragHandleIcon from '@material-ui/icons/DragHandle';
+import Skeleton from '@material-ui/lab/Skeleton'
 
-export default function (props: { track: TrackObj; parent?: string, index?: number, isDragDisabled?: boolean }) {
+import { Track as TrackObj } from '../types'
+import Track from './Track'
+
+import DragHandleIcon from '@material-ui/icons/DragHandle'
+import { ListItem, ListItemIcon } from '@material-ui/core'
+
+export default function (props: {
+  track: TrackObj
+  parent?: string
+  index?: number
+  isDragDisabled?: boolean
+}) {
   let [track, setTrack] = useState<TrackObj>()
 
   useEffect(() => {
@@ -17,9 +24,13 @@ export default function (props: { track: TrackObj; parent?: string, index?: numb
   }, [])
 
   return (
-    <Draggable draggableId={`${props.parent}:${props.track.id}`} index={props.index ?? -1} isDragDisabled={props.isDragDisabled} >
+    <Draggable
+      draggableId={`${props.parent}:${props.track.id}`}
+      index={props.index ?? -1}
+      isDragDisabled={props.isDragDisabled}
+    >
       {(provided, snapshot) => (
-        <TableRow
+        <ListItem
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
@@ -30,16 +41,21 @@ export default function (props: { track: TrackObj; parent?: string, index?: numb
               ? { backgroundColor: '#E6E6E6' }
               : undefined)
           }}
+          divider={true}
         >
-          <TableCell colSpan={props.isDragDisabled ? 3 : 2 }>
-            {track ? <Track track={track} isDragging={snapshot.isDragging} /> : <Skeleton variant='rect' />}
-          </TableCell>
-          {props.isDragDisabled ? null : 
-            <TableCell colSpan={1}>
-              <DragHandleIcon />
-            </TableCell>
-          }
-        </TableRow>
+          {track ? (
+            <>
+              <Track track={track} isDragging={snapshot.isDragging} />
+              {props.isDragDisabled ?? (
+                <ListItemIcon>
+                  <DragHandleIcon />
+                </ListItemIcon>
+              )}
+            </>
+          ) : (
+            <Skeleton variant='rect' />
+          )}
+        </ListItem>
       )}
     </Draggable>
   )

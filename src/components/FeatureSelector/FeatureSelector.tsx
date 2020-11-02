@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { TableCell, TableRow, Button } from '@material-ui/core'
+import { Button } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 import { TrackFilter } from '../../types'
@@ -10,7 +10,12 @@ import AudioFeatureSlider from './AudioFeatureSlider'
 
 export default function (props: {
   onUpdateFilterFunction: (f: TrackFilter) => void
+  component: React.ElementType
+  childComponent: React.ElementType
 }) {
+  const Wrapper = props.component
+  const ChildWrapper = props.childComponent
+
   const [sliders, setSliders] = useState<FeatureSliderData[]>([])
 
   useEffect(() => {
@@ -57,25 +62,20 @@ export default function (props: {
   }
 
   return (
-    <>
-      <TableRow>
-        <TableCell colSpan={100}>
-          <FeatureMenu
-            onSelect={addSlider}
-            hidden={sliders.map(el => el.name)}
-          />
-        </TableCell>
-      </TableRow>
+    <Wrapper>
+      <ChildWrapper>
+        <FeatureMenu onSelect={addSlider} hidden={sliders.map(el => el.name)} />
+      </ChildWrapper>
       {sliders.map(p => (
-        <TableRow>
-          <TableCell size='small' colSpan={2}>
+        <ChildWrapper>
+          <ChildWrapper>
             <AudioFeatureSlider
               feature={p}
               delete={() => deleteSlider(p.name)}
               onFeatureUpdate={updateSlider}
             />
-          </TableCell>
-          <TableCell colSpan={1}>
+          </ChildWrapper>
+          <ChildWrapper>
             <Button
               variant='contained'
               color='secondary'
@@ -83,9 +83,9 @@ export default function (props: {
               size={'small'}
               startIcon={<DeleteIcon />}
             />
-          </TableCell>
-        </TableRow>
+          </ChildWrapper>
+        </ChildWrapper>
       ))}
-    </>
+    </Wrapper>
   )
 }
