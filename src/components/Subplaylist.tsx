@@ -194,12 +194,12 @@ export default function Subplaylist(props: {
                   </Button>
               </ListItem>
             </ListItem>
-            <ListItem>
-                <Autocomplete
-                  multiple
-                  options={props.genres}
-                  disableCloseOnSelect
-                  getOptionLabel={option => option}
+        <ListItem divider={true}>
+          <GenreSelector
+            genres={props.genres}
+            onSelect={values => setSelectedGenres(values)}
+          />
+        </ListItem>
                   onChange={(event: any, newValue: string[]) => {
                     console.log(newValue)
                     setSelectedGenres(newValue)
