@@ -1,6 +1,6 @@
 /* UI component to select a playlist */
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -34,19 +34,24 @@ const useStyles = makeStyles({
   }
 })
 
+let playlistCache: Playlist[] = [];
+
 export default function (props: { onSelect: (playlist: Playlist) => void }) {
   const classes = useStyles()
 
   async function handleRefresh () {
     setLoading(true)
-    let res = await getPlaylists()
-    setPlaylists(res)
+    setPlaylists((playlistCache = await getPlaylists()))
     setLoading(false)
   }
-
-  let [playlists, setPlaylists] = useState<Playlist[]>([])
+  
+  let [playlists, setPlaylists] = useState<Playlist[]>(playlistCache)
   let [loading, setLoading] = useState(false)
   let [search, setSearch] = useState('')
+
+  useEffect(() => {
+    handleRefresh()
+  }, [])
 
   return (
     <Card className={classes.root}>

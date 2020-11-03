@@ -13,7 +13,9 @@ export interface TrackFilter {
 
 export default function MultiFilter(props: {
   callback: (f: TrackFilter) => void;
+  filterIsActive?: (v: boolean) => void;
 }) {
+
   const [filterValue, setFilterValue] = useState("");
   const [filterCategory, setFilterCategory] = useState("Name");
 
@@ -29,6 +31,12 @@ export default function MultiFilter(props: {
     }
     console.log(filterCategory, filterValue)
     props.callback({ filter: TrackMatchesFilter });
+
+    if(props.filterIsActive && filterValue === ""){
+      props.filterIsActive(false)
+    }else if(props.filterIsActive){
+      props.filterIsActive(true)
+    }
     // eslint-disable-next-line
   }, [filterValue, filterCategory]);
 
@@ -48,7 +56,8 @@ export default function MultiFilter(props: {
             label={k}
             labelPlacement="top"
             value={k}
-            style={{ marginLeft: '5px', marginRight: '5px' }}
+            //We should change all styling from fixed px to percentages in the future to conform to mobile and changing screen sizes. 
+            style={{ marginLeft: '4px', marginRight: '4px' }}
           />
         ))}
         </RadioGroup>

@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles'
-import Autocomplete from '@material-ui/lab/Autocomplete'
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
-import CheckBoxIcon from '@material-ui/icons/CheckBox'
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import { green } from '@material-ui/core/colors';
-import { Playlist as PlaylistObj, Track as TrackObj } from "../types"
+import { Playlist as PlaylistObj, Track as TrackObj } from "../types";
 import {
   IconButton,
   Button,
@@ -22,12 +21,15 @@ import {
   TableRow,
   Paper,
   TextField,
-  CircularProgress
-} from '@material-ui/core'
-import EditPlaylistNameDialog from './EditPlaylistNameDialog'
+  CircularProgress,
+  makeStyles,
+  Tooltip
+} from '@material-ui/core';
+import SortSelector from './SortSelector';
+import EditPlaylistNameDialog from './EditPlaylistNameDialog';
 import { createOrUpdatePlaylist, getUserProfile } from '../helpers/helpers';
-import MultiFilter, { TrackFilter } from './MultiFilter'
-import TrackEntry from './TrackEntry'
+import MultiFilter, { TrackFilter } from './MultiFilter';
+import TrackEntry from './TrackEntry';
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -80,10 +82,11 @@ export default function Subplaylist(props: {
   const classes = useStyles();
 
   // SAVING ANIMATION STUFF
-  const [active, setActive] = useState(false);
+  const [saveDisabled, setsaveDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("Save")
+  const [filterIsActive, setFilterIsActive] = useState(false);
 
   const buttonClassname = clsx({
     [classes.button]: true,
@@ -91,6 +94,7 @@ export default function Subplaylist(props: {
   });
 
   const handleButtonClick = async () => {
+
     if (!loading) {
       // Start loading animation while saving playlist
       setSuccess(false);
@@ -109,8 +113,15 @@ export default function Subplaylist(props: {
         setSuccess(false);
       },4000);
     }
-    setActive(false);
+
+    setsaveDisabled(true);
   };
+
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [sortType, setSortType] = useState("")
+
+  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
+  const checkedIcon = <CheckBoxIcon fontSize='small' />
 
   const [trackFilter, setTrackFilter] = useState<TrackFilter>({ filter: (t: TrackObj) => true });
 
@@ -137,18 +148,44 @@ export default function Subplaylist(props: {
   // TODO: setTracks will be used for deletion, reordering and moving
   // eslint-disable-next-line
   let [tracks, setTracks] = useState(Array<TrackObj>());
+  const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
+    let var1: string = "";
+    let var2: string = "";
+    console.log("sorting")
+    switch(sortType) {
+      case "Track Name":
+        var1 = track1.name
+        var2 = track2.name
+        break;
+      case "Artist":
+        var1 = track1.artists[0].name
+        var2 = track2.artists[0].name
+        break;
+      case "Album":
+        if (track1.album){
+          var1 = track1.album.name
+        }
+        if (track2.album){
+          var2 = track2.album.name
+        }
+        break;
+      default:
+        var1 = track1.name
+        var2 = track2.name
+    }
+    return var1.localeCompare(var2)
+  };
+
+  const changeSortType = (type: string): void => {
+    setSortType(type)
+  }
 
   // Save tracks to playlist when updated
   useEffect(() => {
     props.playlist.tracks = tracks;
-    tracks.length === 0 ? setActive(false) : setActive(true);
+    tracks.length === 0 ? setsaveDisabled(true) : setsaveDisabled(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
-
-  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
-  const checkedIcon = <CheckBoxIcon fontSize='small' />
-
-  const [editDialogOpen, setEditDialogOpen] = React.useState(false);
 
   return (
     <div>
@@ -171,25 +208,63 @@ export default function Subplaylist(props: {
                 </IconButton>
               </TableCell>
               <TableCell>
+                  <SortSelector setSort={changeSortType}/>
+              </TableCell>
+              <TableCell>
                 <Button variant="contained" color="secondary" onClick={() => props.onDelete && props.onDelete(props.playlist)} startIcon={<DeleteIcon />}>
                   Delete
                 </Button>
               </TableCell>
               <TableCell className={classes.wrapper}>
-                <Button 
-                  variant="contained" 
-                  color="primary" 
-                  className={buttonClassname} 
-                  disabled={!active} 
-                  onClick={handleButtonClick} 
-                  startIcon={<SaveIcon />}>
-                  {buttonLabel}
-                </Button>
-                {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+                {loading ? (
+                  <CircularProgress size={24} className={classes.buttonProgress} />
+                ) : (
+                  filterIsActive ? (
+                    <Tooltip title="Saving is disabled while filter is active.">
+                      <span>
+                        <Button 
+                          variant="contained" 
+                          color="primary" 
+                          className={buttonClassname} 
+                          disabled={true}
+                          onClick={handleButtonClick} 
+                          startIcon={<SaveIcon />}>
+                          {buttonLabel}
+                        </Button>
+                      </span>
+                    </Tooltip>
+                  ) : (
+                    saveDisabled ? (
+                      <Tooltip title="No change detected since last save.">
+                        <span>
+                          <Button 
+                            variant="contained" 
+                            color="primary" 
+                            className={buttonClassname} 
+                            disabled={saveDisabled} 
+                            onClick={handleButtonClick} 
+                            startIcon={<SaveIcon />}>
+                            {buttonLabel}
+                          </Button>
+                        </span>
+                      </Tooltip>
+                    ) : (
+                      <Button 
+                        variant="contained" 
+                        color="primary" 
+                        className={buttonClassname} 
+                        disabled={saveDisabled} 
+                        onClick={handleButtonClick} 
+                        startIcon={<SaveIcon />}>
+                        {buttonLabel}
+                      </Button>
+                    )
+                  )
+                )}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell colSpan={2}>
+              <TableCell colSpan={3}>
                 <Autocomplete
                   multiple
                   id='checkboxes-tags-demo'
@@ -224,15 +299,20 @@ export default function Subplaylist(props: {
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>
-                <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} />
+              <TableCell colSpan={3}>
+                <MultiFilter callback={(f: TrackFilter) => setTrackFilter(f)} filterIsActive={(v: boolean) => setFilterIsActive(v)}/>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {tracks.filter(TrackCorrectGenre).filter(trackFilter.filter).map(track => (
-              <TrackEntry track={track} key={track.id} />
-            ))}
+            <TableRow>
+              <TableCell colSpan={3}>
+                {tracks.filter(TrackCorrectGenre).filter(trackFilter.filter).sort(sortTracks).map(track => (
+                  <TrackEntry track={track} key={track.id} />
+                ))}
+              </TableCell>
+            </TableRow>
+            
           </TableBody>
         </Table>
       </TableContainer>
