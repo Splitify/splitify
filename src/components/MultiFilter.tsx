@@ -17,7 +17,7 @@ export default function MultiFilter(props: {
       return (filterCategory === "Name" && track.name.toLowerCase().includes(filterValue))
         || (filterCategory === "Artist" && track.artists.some((a: Artist) => a.name.toLowerCase().includes(filterValue)))
         || (filterCategory === "Album" && track.album?.name.toLowerCase().includes(filterValue) === true)
-        || (filterCategory === "Genre" && track.artists.some((a: Artist) => a.genres.some((g: string) => g.includes(filterValue))));
+        || (filterCategory === "Genre" && track.genres.some((g: string) => g.includes(filterValue)));
     }
     console.log(filterCategory, filterValue)
     props.callback(TrackMatchesFilter);

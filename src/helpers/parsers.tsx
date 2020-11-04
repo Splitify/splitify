@@ -91,8 +91,6 @@ export async function parseTrackJSON (
           this.album,
           this.artists
         )
-        console.log(this.genres);
-
         resolve(this)
       })
 
@@ -108,7 +106,8 @@ export function parseGenres (
   artists: Artist[]
 ) {
   const artistNames = artists.map((a:Artist) => a.name.toLowerCase());
-  let genres = lm.toptags.tag.filter((t: any) => t.count > 50).map((t: any) => t.name)
+  let genres = lm.toptags?.tag.filter((t: any) => t.count > 50).map((t: any) => t.name.toLowerCase()) ?? [];
+  genres.splice(3,99)
   genres = genres.filter((g: string) => !artistNames.includes(g));
     
   if (genres.length === 0) {
