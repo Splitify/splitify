@@ -126,6 +126,12 @@ export function parseGenres(
     genres = artists.map((a: Artist) => a.genres).flat();
   }
   
+  const date = Math.floor((album?.release_date.getFullYear() ?? 0) / 10) * 10
+  console.log(Math.floor((album?.release_date.getFullYear() ?? 0) / 10) * 10, (album?.release_date.getFullYear() ?? 0) / 10, Math.floor(album?.release_date.getFullYear() ?? 0))
+  if (date > 1920) {
+    genres.push(`${date}s`);
+  }
+
 
   return genres;
 }
