@@ -94,7 +94,6 @@ export class CachingAccumulumatorinator<T> extends Accumulumatorinator<T> {
     return data
   }
   
-  
   async requestURL (id: string, urlparams: string, instant?: boolean): Promise<T> {
     let hit = await this.cache.getItem(id)
     if (hit) {
@@ -104,7 +103,6 @@ export class CachingAccumulumatorinator<T> extends Accumulumatorinator<T> {
     console.log(id, urlparams)
 
     let data = await super.request(urlparams, instant)
-    console.log(data);
     this.cache.setItem(id, data)
     return data
   }
