@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
 import { Track } from '../types'
 import TrackEntry from './TrackEntry'
 
-export default function (props: { id?: string; tracks: Track[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDragClone?: boolean, component: React.ElementType, childComponent: React.ElementType}) {
+export default function (props: { id?: string; tracks: Track[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDragClone?: boolean, component: React.ElementType, childComponent: React.ElementType, handleDelete: (tracks: Track[]) => void}) {
   const Wrapper = props.component;
+  let [checked, setChecked] = useState<Track[]>([])
+
+  
   return (
     <Droppable droppableId={props.id || 'unknown'} isDropDisabled={props.isDropDisabled} >
       {(provided, snapshot) => (

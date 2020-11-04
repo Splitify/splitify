@@ -6,7 +6,7 @@ import { Track as TrackObj } from '../types'
 import Track from './Track'
 
 import DragHandleIcon from '@material-ui/icons/DragHandle'
-import { ListItem, ListItemIcon } from '@material-ui/core'
+import { ListItem, ListItemIcon, Checkbox } from '@material-ui/core'
 
 export default function (props: {
   track: TrackObj
@@ -15,6 +15,11 @@ export default function (props: {
   isDragDisabled?: boolean
 }) {
   let [track, setTrack] = useState<TrackObj>()
+  let [checked, setChecked] = useState<string[]>([])
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.id)
+  };
 
   useEffect(() => {
     ;(async () => {
@@ -43,8 +48,15 @@ export default function (props: {
           }}
           divider={true}
         >
+          
           {track ? (
             <>
+              <Checkbox
+                  checked={checked.indexOf(track) !== -1}
+                  tabIndex={-1}
+                  disableRipple
+                  inputProps={{ 'aria-labelledby': labelId }}
+                />
               <Track track={track} isDragging={snapshot.isDragging} />
               {props.isDragDisabled ?? (
                 <ListItemIcon>

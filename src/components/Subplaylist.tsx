@@ -60,6 +60,8 @@ export default function Subplaylist (props: {
 
   const [tracks, setTracks] = useState<TrackObj[]>(props.source.tracks)
 
+  const [blackList, setBlackList] = useState<TrackObj[]>([])
+
   // eslint-disable-next-line
   const [includedTracks, setIncludedTracks] = useState<TrackObj[]>([])
   // eslint-disable-next-line
@@ -70,6 +72,7 @@ export default function Subplaylist (props: {
   const [featureFilter, setFeatureFilter] = useState<TrackFilter>(() => () =>
     true
   )
+  
 
   // Visual properties
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => () => true)
@@ -87,7 +90,15 @@ export default function Subplaylist (props: {
     return false
   }
 
-  function handleSortAction (type: string) {
+  const handleDelete = (tracks: TrackObj[]): void => {
+    setBlackList(tracks)
+  }
+
+  const filterByBlacklist = (track: TrackObj): boolean => {
+    return !blackList.includes(track)
+  }
+
+  const handleSortAction  = (type: string) => {
     const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
       let var1: string = ''
       let var2: string = ''
@@ -207,7 +218,16 @@ export default function Subplaylist (props: {
         <ListItem divider={true}>
           <MultiFilter callback={f => setTrackFilter(() => f)} />
         </ListItem>
+        <Button
+              variant='contained'
+              color='secondary'
+              onClick={() => setTracks([...tracks].filter(filterByBlacklist))}
+              startIcon={<DeleteIcon />}
+            >
+              Remove Selected Tracks
+            </Button>
         <TrackList
+          handleDelete={handleDelete}
           id={props.playlist.id}
           tracks={filterView}
           component={List}
