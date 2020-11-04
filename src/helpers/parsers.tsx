@@ -6,6 +6,31 @@ import { getPaginationRawGen } from './helpers'
 
 import Queue from 'queue'
 
+
+
+const ToURLParam = (track: string, artist: string) => {
+  let params = new URLSearchParams();
+  params.append("artist", artist);
+  params.append("track", track);
+  params.append("api_key", "f21088bf9097b49ad4e7f487abab981e");
+  params.append("format", "json");
+  params.append("method", "track.gettoptags");
+  return params.toString();
+}
+
+async function fetchLFM(
+  request: RequestInfo
+): Promise<any> {
+  const response = await fetch(request);
+  const res = await response.json();
+  // console.log(res);
+  return res;
+}
+
+const GenreAccumulator = new CachingAccumulumatorinator<
+  any
+>('genres', 1, async id => (await fetchLFM("http://ws.audioscrobbler.com/2.0/?" + id)))
+
 const TrackAccumulator = new CachingAccumulumatorinator<
   SpotifyApi.TrackObjectFull
 >('tracks', 50, async ids => (await api.getTracks(ids))['tracks'])
@@ -30,6 +55,7 @@ export async function parseTrackJSON (
   let track: Track = {
     features: undefined,
     album: undefined,
+    genres: [],
     artists: [],
     duration_ms: json.duration_ms,
     explicit: json.explicit,
@@ -58,6 +84,14 @@ export async function parseTrackJSON (
         this.album = await parseAlbumJSON(
           await AlbumAccumulator.request(json.album.id)
         )
+        
+        this.genres = await parseGenres(
+          await fetchLFM("http://ws.audioscrobbler.com/2.0/?" + ToURLParam(json.name, json.artists[0].name)),
+          // await GenreAccumulator.requestURL(this.id, ToURLParam(json.name, json.artists[0].name), true),
+          this.album,
+          this.artists
+        )
+        console.log(this.genres);
 
         resolve(this)
       })
@@ -66,6 +100,26 @@ export async function parseTrackJSON (
     }
   }
   return expand ? await track.expand() : track
+}
+
+export function parseGenres (
+  lm: any,
+  album: Album,
+  artists: Artist[]
+) {
+  const artistNames = artists.map((a:Artist) => a.name.toLowerCase());
+  let genres = lm.toptags.tag.filter((t: any) => t.count > 50).map((t: any) => t.name)
+  genres = genres.filter((g: string) => !artistNames.includes(g));
+    
+  if (genres.length === 0) {
+    genres = album.genres;
+  }
+  
+  if (genres.length === 0) {
+    genres = artists.map((a: Artist) => a.genres).flat();
+  }
+  
+  return genres;
 }
 
 export function parseFeaturesJSON (
