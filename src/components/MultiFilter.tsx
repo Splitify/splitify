@@ -33,8 +33,9 @@ export default function MultiFilter(props: {
           onChange={(e) => setFilterValue(e.target.value.toLowerCase())}
         />
         <RadioGroup value={filterCategory} onChange={handleFilterChange} row>
-        {["Name", "Artist", "Album", "Genre"].map((k) => (
+        {["Name", "Artist", "Album", "Genre"].map((k, index) => (
           <FormControlLabel
+            key={index}
             control={<Radio />}
             label={k}
             labelPlacement="top"

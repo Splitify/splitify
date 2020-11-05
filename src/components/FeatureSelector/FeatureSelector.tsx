@@ -66,8 +66,8 @@ export default function (props: {
       <ChildWrapper>
         <FeatureMenu onSelect={addSlider} hidden={sliders.map(el => el.name)} />
       </ChildWrapper>
-      {sliders.map(p => (
-        <ChildWrapper>
+      {sliders.map((p, index) => (
+        <ChildWrapper key={index}>
           <ChildWrapper>
             <AudioFeatureSlider
               feature={p}
