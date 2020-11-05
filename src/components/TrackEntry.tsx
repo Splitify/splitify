@@ -13,6 +13,7 @@ export default function (props: {
   parent?: string
   index?: number
   isDragDisabled?: boolean
+  style?: any
 }) {
   let [track, setTrack] = useState<TrackObj>()
 
@@ -35,6 +36,7 @@ export default function (props: {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           style={{
+            ...props.style,
             ...provided.draggableProps.style,
             cursor: 'pointer',
             ...(snapshot.isDragging

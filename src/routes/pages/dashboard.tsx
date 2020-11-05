@@ -93,7 +93,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       >
         Logout
       </Button>
-      <Grid style={{ padding: '10%' }} container spacing={5}>
+      <Grid style={{ padding: '5%' }} container spacing={5}>
       <DragDropContext
             onDragEnd={evt => {
               if (!evt.destination) return
