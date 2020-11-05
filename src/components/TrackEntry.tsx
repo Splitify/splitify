@@ -6,7 +6,7 @@ import { Track as TrackObj } from '../types'
 import Track from './Track'
 
 import DragHandleIcon from '@material-ui/icons/DragHandle'
-import { ListItem, ListItemIcon } from '@material-ui/core'
+import { ListItem, ListItemText, ListItemSecondaryAction, ListItemIcon } from '@material-ui/core'
 
 export default function (props: {
   track: TrackObj

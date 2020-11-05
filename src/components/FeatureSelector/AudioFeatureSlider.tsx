@@ -1,7 +1,5 @@
 import React from 'react'
-import Slider from '@material-ui/core/Slider'
-import Typography from '@material-ui/core/Typography'
-import { makeStyles } from '@material-ui/core'
+import { Slider, Typography, makeStyles } from '@material-ui/core'
 import { FeatureSliderData } from './FeatureSliderData'
 
 const useStylesSlider = makeStyles({

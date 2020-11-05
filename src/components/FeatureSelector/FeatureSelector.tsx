@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Button } from '@material-ui/core'
-import DeleteIcon from '@material-ui/icons/Delete'
+import { IconButton, ListItemSecondaryAction  } from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close'
 
 import { TrackFilter } from '../../types'
 
