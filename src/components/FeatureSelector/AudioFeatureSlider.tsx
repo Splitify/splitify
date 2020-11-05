@@ -25,7 +25,7 @@ export default function (props: {
         onChangeCommitted={(evt, val) =>
           props.onFeatureUpdate(props.feature.name, [val].flat())
         }
-        aria-label={props.feature.name}
+        getAriaLabel={() => props.feature.name}
         orientation='horizontal'
         valueLabelDisplay='auto'
         //valueLabelFormat = {(x) => x.toString().concat(props.featureLabel)}
