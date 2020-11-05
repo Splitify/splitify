@@ -48,13 +48,13 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTrack
   }, []) // TODO: Changing playlist? props.playlist
 
   const usedFilter = (t: TrackObj) => {
-    return !filterUsedTracks || !props.usedTracks.some((m: TrackObj) => m.id == t.id);
+    return !filterUsedTracks || !props.usedTracks.some((m: TrackObj) => m.id === t.id);
   }
 
   const calRecommendedGenres = () => {
     let map = new Map<string, number>();
-    const unused = props.playlist.tracks
-      .filter((t: TrackObj) => !props.usedTracks.some((m: TrackObj) => m.id == t.id))
+    props.playlist.tracks
+      .filter((t: TrackObj) => !props.usedTracks.some((m: TrackObj) => m.id === t.id))
       .map((t: TrackObj) => t.genres)
       .flat()
       .forEach((g: string) => map.set(g, (map.get(g) ?? 0) + 1));
@@ -63,7 +63,7 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTrack
     const suggestions = mapAsc.map(a => a[0]);
     const re = /(.*), (\w+)/
     const english = suggestions.join(', ').replace(re, 'Try $1 or $2')
-    return suggestions.length == 0 ? "Add a any genre/feature to a sub-playlist to begin" : english;
+    return suggestions.length === 0 ? "Add a any genre/feature to a sub-playlist to begin" : english;
   }
 
   return (
