@@ -41,6 +41,19 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTrack
     return !filterUsedTracks || !props.usedTracks.some((m: TrackObj) => m.id == t.id);
   }
 
+  const calRecommendedGenres = () => {
+    let map = new Map<string, number>();
+    const unused = props.playlist.tracks
+      .filter((t: TrackObj) => !props.usedTracks.some((m: TrackObj) => m.id == t.id))
+      .map((t: TrackObj) => t.genres)
+      .flat()
+      .forEach((g: string) => map.set(g, (map.get(g) ?? 0) + 1));
+    var mapAsc = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+    mapAsc.splice(3,99999);
+    return mapAsc.map(a => a[0]);
+  }
+  console.log(calRecommendedGenres());
+
   return (
     <div className={classes.root}>
       <List component={Paper}>
@@ -48,9 +61,9 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTrack
         <ListItem>{props.usedTracks.map((t: TrackObj) => t.name)}</ListItem>
         <ListItem>
           <ToggleButton
-          size="small"
+            size="small"
             selected={!filterUsedTracks}
-            onChange={()=> setFilterUsedTracks(!filterUsedTracks)}
+            onChange={() => setFilterUsedTracks(!filterUsedTracks)}
           >
             Show All
           </ToggleButton>
