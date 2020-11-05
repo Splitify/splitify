@@ -53,17 +53,30 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTrack
 
   const calRecommendedGenres = () => {
     let map = new Map<string, number>();
+    let filter = (t: TrackObj) => !props.usedTracks.some((m: TrackObj) => m.id === t.id);
+    
+    if (props.usedTracks.length === props.playlist.tracks.length) {
+      filter = (t: TrackObj) => true;
+    }
     props.playlist.tracks
-      .filter((t: TrackObj) => !props.usedTracks.some((m: TrackObj) => m.id === t.id))
+      .filter(filter)
       .map((t: TrackObj) => t.genres)
       .flat()
       .forEach((g: string) => map.set(g, (map.get(g) ?? 0) + 1));
+      
     var mapAsc = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
     mapAsc.splice(3, 99999);
     const suggestions = mapAsc.map(a => a[0]);
+    
+    if (suggestions.length === 0) {
+      return "No suggestions"
+    } else if (suggestions.length === 1) {
+      return "Try " + suggestions[0];
+    }
+    
     const re = /(.*), (\w+)/
     const english = suggestions.join(', ').replace(re, 'Try $1 or $2')
-    return suggestions.length === 0 ? "Add a any genre/feature to a sub-playlist to begin" : english;
+    return english;
   }
 
   return (
