@@ -50,7 +50,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   const createPlaylist = (): PlaylistObj => {
     return {
       id: 'temp:' + uuid(),
-      name: 'Playlist',
+      name: 'Sub-playlist',
       description: '',
       image: '',
       owner: { id: 'owner', display_name: 'Owner' },
