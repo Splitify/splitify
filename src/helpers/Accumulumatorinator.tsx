@@ -100,7 +100,6 @@ export class CachingAccumulumatorinator<T> extends Accumulumatorinator<T> {
       console.info(`${this.cacheName}:${id} found in cache`);
       return hit as T
     }
-    console.log(id, urlparams)
 
     let data = await super.request(urlparams, instant)
     this.cache.setItem(id, data)

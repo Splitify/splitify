@@ -30,7 +30,7 @@ async function fetchLFM(
 
 const GenreAccumulator = new CachingAccumulumatorinator<
   any
->('genres', 1, async id => ([await fetchLFM("http://ws.audioscrobbler.com/2.0/?" + id)]))
+>('genres', 1, async id => ([await fetchLFM("https://ws.audioscrobbler.com/2.0/?" + id)]))
 const TrackAccumulator = new CachingAccumulumatorinator<
   SpotifyApi.TrackObjectFull
 >('tracks', 50, async ids => (await api.getTracks(ids))['tracks'])
