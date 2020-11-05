@@ -3,15 +3,16 @@ import PlaylistSelector from './PlaylistSelector'
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 import { Icon, Dialog, Box, Paper } from '@material-ui/core'
-import { Playlist } from '../../types'
+import { Playlist, Track as TrackObj } from '../../types'
 
 export default function (props: {
   text?: string
   playlist?: Playlist
   component: any,
+  usedTracks: TrackObj[],
   onSelect?: (playlist: Playlist) => any
 }) {
-  const { component: Component } = props
+  const { component: Component, usedTracks} = props
 
   let [playlist, setPlaylist] = useState(props.playlist)
   let [selectorOpen, setSelectorOpen] = useState(false)
@@ -25,7 +26,7 @@ export default function (props: {
   // Loaded state - display the playlist component
 
   return playlist ? (
-    <Component playlist={playlist} />
+    <Component playlist={playlist} usedTracks={usedTracks}/>
   ) : (
     <React.Fragment>
       <Box
