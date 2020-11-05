@@ -24,6 +24,7 @@ export default function Track (props: {
           onMouseEnter={handlePopoverOpen}
           onMouseLeave={handlePopoverClose}
           align='center'
+          style={{'userSelect': 'none'}}
         >
           {props.track.name}
         </Typography>
