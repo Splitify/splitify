@@ -93,4 +93,16 @@ export class CachingAccumulumatorinator<T> extends Accumulumatorinator<T> {
     this.cache.setItem(id, data)
     return data
   }
+  
+  async requestCustom (id: string, urlparams: string, instant?: boolean): Promise<T> {
+    let hit = await this.cache.getItem(id)
+    if (hit) {
+      console.info(`${this.cacheName}:${id} found in cache`);
+      return hit as T
+    }
+
+    let data = await super.request(urlparams, instant)
+    this.cache.setItem(id, data)
+    return data
+  }
 }
