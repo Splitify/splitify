@@ -49,7 +49,6 @@ export default function (props: { id?: string; tracks: TrackObj[], isDropDisable
         >
           {EntryInvariant}
         </List>
-        // {provided.placeholder}
       )}
     </Droppable>
   )

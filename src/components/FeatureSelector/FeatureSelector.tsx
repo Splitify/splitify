@@ -68,22 +68,16 @@ export default function (props: {
       </ChildWrapper>
       {sliders.map((p, index) => (
         <ChildWrapper key={index}>
-          <ChildWrapper>
-            <AudioFeatureSlider
-              feature={p}
-              delete={() => deleteSlider(p.name)}
-              onFeatureUpdate={updateSlider}
-            />
-          </ChildWrapper>
-          <ChildWrapper>
-            <Button
-              variant='contained'
-              color='secondary'
-              onClick={() => deleteSlider(p.name)}
-              size={'small'}
-              startIcon={<DeleteIcon />}
-            />
-          </ChildWrapper>
+          <AudioFeatureSlider
+            feature={p}
+            delete={() => deleteSlider(p.name)}
+            onFeatureUpdate={updateSlider}
+          />
+          <ListItemSecondaryAction >
+            <IconButton onClick={() => deleteSlider(p.name)}>
+              <CloseIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
         </ChildWrapper>
       ))}
     </Wrapper>

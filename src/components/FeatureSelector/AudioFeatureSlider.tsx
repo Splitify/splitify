@@ -2,11 +2,13 @@ import React from 'react'
 import { Slider, Typography, makeStyles } from '@material-ui/core'
 import { FeatureSliderData } from './FeatureSliderData'
 
-const useStylesSlider = makeStyles({
+const useStylesSlider = makeStyles((theme) => ({
   root: {
-    width: 280
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(2),
+    width: '100%'
   }
-})
+}))
 
 export default function (props: {
   feature: FeatureSliderData
