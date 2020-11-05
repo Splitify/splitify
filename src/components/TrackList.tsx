@@ -41,7 +41,7 @@ export default function (props: { id?: string; tracks: TrackObj[], isDropDisable
           outerRef={provided.innerRef}
           {...provided.droppableProps}
           innerElementType={Wrapper}
-          height={400}
+          height={800}
           itemCount={props.tracks.length + (snapshot.isUsingPlaceholder ? 1 : 0)}
           itemData={props.tracks}
           itemSize={() => 60}
