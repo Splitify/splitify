@@ -19,7 +19,6 @@ export default function MultiFilter(props: {
         || (filterCategory === "Album" && track.album?.name.toLowerCase().includes(filterValue) === true)
         || (filterCategory === "Genre" && track.genres.some((g: string) => g.includes(filterValue)));
     }
-    console.log(filterCategory, filterValue)
     props.callback(TrackMatchesFilter);
     // eslint-disable-next-line
   }, [filterValue, filterCategory]);

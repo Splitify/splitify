@@ -24,7 +24,6 @@ async function fetchLFM(
 ): Promise<any> {
   const response = await fetch(request);
   const res = await response.json();
-  // console.log(res);
   return res;
 }
 
