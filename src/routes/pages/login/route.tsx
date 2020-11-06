@@ -36,7 +36,6 @@ const Login: React.FC<RouteComponentProps> = () => {
     return <span>Authenticating...</span>
   } else {
     // Case: Login page
-    console.log('Login page')
     return <Page />
   }
 }

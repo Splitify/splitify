@@ -32,7 +32,7 @@ export default function (props: {
         textAlign='center'
         component={Paper}
         onClick={() => setSelectorOpen(true)}
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: 'pointer', userSelect: 'none' }}
       >
         <div>{props.text || 'Select a playlist'}</div>
         <Icon component={AddCircleOutlineIcon} />

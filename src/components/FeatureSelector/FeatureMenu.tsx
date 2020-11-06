@@ -28,7 +28,7 @@ export default function FeatureMenu(props: {
           open={!!anchorEl}
           onClose={handleClose}
         >
-          {Options.filter(o => !props.hidden.includes(o.name)).map(o => (<MenuItem onClick={() => props.onSelect(o)}>{o.name}</MenuItem>))}
+          {Options.filter(o => !props.hidden.includes(o.name)).map((o, index) => (<MenuItem key={index} onClick={() => props.onSelect(o)}>{o.name}</MenuItem>))}
         </Menu>
       </div>
     );

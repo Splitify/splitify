@@ -1,5 +1,4 @@
 export const isAuth = (): boolean => {
-    console.log(localStorage.getItem("token"));
     return localStorage.getItem("token") !== null && localStorage.getItem("token") !== "undefined";
 }
 

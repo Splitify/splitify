@@ -5,6 +5,7 @@ import {
   IconButton,
   Button,
   Dialog,
+  ListItemSecondaryAction
   // makeStyles
 } from '@material-ui/core'
 
@@ -171,10 +172,9 @@ export default function Subplaylist (props: {
           <IconButton onClick={() => setEditDialogOpen(true)}>
             <EditIcon />
           </IconButton>
-          <ListItem>
+          <Divider orientation="vertical" flexItem />
             <SortSelector onSort={handleSortAction} />
-          </ListItem>
-          <ListItem>
+          <ListItemSecondaryAction>
             <Button
               variant='contained'
               color='secondary'
@@ -183,9 +183,9 @@ export default function Subplaylist (props: {
             >
               Delete
             </Button>
-          </ListItem>
+          </ListItemSecondaryAction>
         </ListItem>
-        <ListItem divider={true}>
+        <ListItem divider={true} >
           <GenreSelector
             genres={props.genres}
             onSelect={values => setSelectedGenres(values)}
