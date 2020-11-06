@@ -24,7 +24,6 @@ async function fetchLFM(
 ): Promise<any> {
   const response = await fetch(request);
   const res = await response.json();
-  // console.log(res);
   return res;
 }
 
@@ -120,7 +119,7 @@ export function parseGenres(
   }
 
   if (genres.length === 0) {
-    genres = artists.map((a: Artist) => a.genres).flat();
+    genres = Array.from(new Set(artists.map((a: Artist) => a.genres).flat()))
   }
 
   // convert the date into a decade
