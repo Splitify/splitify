@@ -112,7 +112,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
               if (sourcePlaylist !== destPlaylist) {
                 // Move between playlists, also updating the destination playlist
                 const dest_newTracks = [...destPlaylist.tracks];
-                dest_newTracks.splice(destIdx, 0, removed);
+                dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
                 destPlaylist.tracks = dest_newTracks
               } else {
                 source_newTracks.splice(destIdx, 0, removed);
