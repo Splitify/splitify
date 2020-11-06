@@ -50,7 +50,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   const createPlaylist = (): PlaylistObj => {
     return {
       id: 'temp:' + uuid(),
-      name: 'Playlist',
+      name: 'Sub-playlist',
       description: '',
       image: '',
       owner: { id: 'owner', display_name: 'Owner' },
@@ -79,6 +79,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     let targetTrackID = filterList[fIDX].id
     return playlist.tracks.findIndex(t => t.id === targetTrackID)
   }
+  
+  const usedTracks = Array.from(new Set(playlists.map((p: PlaylistObj) => p.tracks).flat()));
 
   return (
     <div className={classes.root}>
@@ -118,6 +120,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         <Grid item xs={4}>
           <PlaylistWrapper
             component={MasterPlaylist}
+            usedTracks={usedTracks}
             onSelect={p => loadPlaylist(p)}
           />
         </Grid>

@@ -119,7 +119,7 @@ export function parseGenres(
   }
 
   if (genres.length === 0) {
-    genres = artists.map((a: Artist) => a.genres).flat();
+    genres = Array.from(new Set(artists.map((a: Artist) => a.genres).flat()))
   }
 
   // convert the date into a decade
