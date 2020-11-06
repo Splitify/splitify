@@ -8,7 +8,8 @@ export default function Track (props: {
   isDragging?: boolean
 }): JSX.Element {
   const [popupAnchor, setPopupAnchor] = React.useState(null)
-  var audio = new Audio(props.track.preview_url)
+  // eslint-disable-next-line
+  const [audio, setAudio] = React.useState(new Audio(props.track.preview_url));
   const[playing, setPlaying] = React.useState(false)
 
   const handlePopoverOpen = (event: any) => {
