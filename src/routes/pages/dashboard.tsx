@@ -76,7 +76,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   // Resolves filter index to track source index
   const getPlaylistIndexFromFilterIndex = (playlist: PlaylistObj, fIDX: number) => {
     let filterList = filteredLists[playlist.id]
-    let targetTrackID = filterList[fIDX].id
+    let targetTrackID = filterList[fIDX]?.id
     return playlist.tracks.findIndex(t => t.id === targetTrackID)
   }
   
@@ -98,22 +98,29 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       <Grid style={{ padding: '5%' }} container spacing={5}>
       <DragDropContext
             onDragEnd={evt => {
+              console.info(evt)
               if (!evt.destination) return
 
               let sourcePlaylist = findPlaylist(evt?.source?.droppableId)
               let destPlaylist   = findPlaylist(evt?.destination?.droppableId)
 
               if (!sourcePlaylist || !destPlaylist) throw new Error("Failed to find filtered playlist view")
-              if (sourcePlaylist !== destPlaylist) return; // TODO: Move between playlists
 
               let sourceIdx = getPlaylistIndexFromFilterIndex(sourcePlaylist, evt.source.index)
               let destIdx = getPlaylistIndexFromFilterIndex(destPlaylist, evt.destination.index)
+              
+              const source_newTracks = [...sourcePlaylist.tracks];
+              const [removed] = source_newTracks.splice(sourceIdx, 1);
+              if (sourcePlaylist !== destPlaylist) {
+                // Move between playlists, also updating the destination playlist
+                const dest_newTracks = [...destPlaylist.tracks];
+                dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
+                destPlaylist.tracks = dest_newTracks
+              } else {
+                source_newTracks.splice(destIdx, 0, removed);
+              }
 
-              let tracks = sourcePlaylist.tracks
-              const newTracks = [...tracks];
-              const [removed] = newTracks.splice(sourceIdx, 1);
-              newTracks.splice(destIdx, 0, removed);
-              sourcePlaylist.tracks = newTracks
+              sourcePlaylist.tracks = source_newTracks
               setPlaylists([...playlists])
             }}
           >
