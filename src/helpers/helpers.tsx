@@ -76,3 +76,62 @@ export function allGenresFromPlaylist(playlist: Playlist): string[] {
     )
   ).sort()
 }
+
+class _PlaylistTrackGroup implements PlaylistTrackGroup {
+  tracks: Track[]
+
+  constructor (...tracks: Track[]) {
+    if (tracks.length > 0) {
+      throw new Error('Empty track group')
+    }
+    this.tracks = tracks
+  }
+
+  get id () {
+    return 'group'
+  }
+  get name () {
+    return 'GROUP'
+  }
+  get popularity () {
+    return this.tracks[0].popularity
+  }
+  get track_number () {
+    return this.tracks[0].track_number
+  }
+  get uri () {
+    return this.tracks[0].uri
+  }
+  get preview_url () {
+    return this.tracks[0].preview_url
+  }
+  get type () {
+    return this.tracks[0].type
+  }
+  get album () {
+    return this.tracks[0].album
+  }
+  get features () {
+    return this.tracks[0].features
+  }
+  get genres () {
+    return this.tracks[0].genres
+  }
+  get explicit () {
+    return this.tracks[0].explicit
+  }
+  get duration_ms () {
+    return this.tracks[0].duration_ms
+  }
+  get artists () {
+    return this.tracks[0].artists
+  }
+
+  async expand () {
+    return this
+  }
+}
+
+export function createTrackGroup(...tracks: Track[]) {
+  return new _PlaylistTrackGroup(...tracks)
+}
