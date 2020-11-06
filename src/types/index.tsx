@@ -1,5 +1,6 @@
 export * from "./Playlist"
 export * from "./Track"
+export * from "./PlaylistTrack"
 export * from "./PlaylistTrackGroup"
 export * from "./User"
 export * from "./Album"
