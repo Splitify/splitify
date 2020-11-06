@@ -15,25 +15,21 @@ export default function Track (props: {
   const handlePopoverOpen = (event: any) => {
     props.isDragging || setPopupAnchor(event.currentTarget)
   }
-
+  const handlePlaying = () =>{
+    audio.pause()
+    setPlaying(false)
+  }
+  const handlePaused = () =>{
+    audio.play()
+    setPlaying(true)
+  }
   const handlePopoverClose = () => {
-    if (playing === true){
-      audio.pause()
-      setPlaying(false)
-      console.log('its pausing !')
-    }
+    if (playing) handlePlaying()
     setPopupAnchor(null)
   }
+
   const handlePreviewClick = () => {
-      if (playing === false){
-        audio.play()
-        setPlaying(true)
-        console.log('its playing !')
-      }else{
-        audio.pause()
-        setPlaying(false)
-        console.log('its pausing !')
-      }
+      playing?handlePlaying():handlePaused()
   }
   
   return (
