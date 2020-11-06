@@ -1,5 +1,5 @@
 import { parsePlaylistJSON, parseUserJSON } from './parsers'
-import { Playlist, Track, User } from '../types'
+import { Playlist, Track, PlaylistTrackGroup, User } from '../types'
 import { api } from '../auth'
 
 // Get all playlists
