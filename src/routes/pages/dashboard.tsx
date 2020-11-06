@@ -76,7 +76,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   // Resolves filter index to track source index
   const getPlaylistIndexFromFilterIndex = (playlist: PlaylistObj, fIDX: number) => {
     let filterList = filteredLists[playlist.id]
-    let targetTrackID = filterList[fIDX].id
+    let targetTrackID = filterList[fIDX]?.id
     return playlist.tracks.findIndex(t => t.id === targetTrackID)
   }
 
@@ -96,6 +96,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       <Grid style={{ padding: '5%' }} container spacing={5}>
       <DragDropContext
             onDragEnd={evt => {
+              console.info(evt)
               if (!evt.destination) return
 
               let sourcePlaylist = findPlaylist(evt?.source?.droppableId)
