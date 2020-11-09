@@ -18,18 +18,17 @@ export default function Track (props: {
   }
 
   return (
-    <React.Fragment>
-      <ListItemText>
+      <ListItemText disableTypography={true}>
         <Typography
           aria-haspopup='true'
           onMouseEnter={handlePopoverOpen}
           onMouseLeave={handlePopoverClose}
           align='center'
+          style={{'userSelect': 'none'}}
         >
           {props.track.name}
         </Typography>
+        <TrackPopup track={props.track} anchor={popupAnchor} />
       </ListItemText>
-      <TrackPopup track={props.track} anchor={popupAnchor} />
-    </React.Fragment>
   )
 }

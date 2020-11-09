@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from 'react'
 
-import { makeStyles } from '@material-ui/core/styles'
-
 import {
   Fade,
   List,
@@ -17,7 +15,8 @@ import {
   CardActions,
   Paper,
   TextField,
-  InputAdornment
+  InputAdornment,
+  makeStyles
 } from '@material-ui/core'
 
 import SearchIcon from '@material-ui/icons/Search'

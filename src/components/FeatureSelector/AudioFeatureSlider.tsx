@@ -1,14 +1,14 @@
 import React from 'react'
-import Slider from '@material-ui/core/Slider'
-import Typography from '@material-ui/core/Typography'
-import { makeStyles } from '@material-ui/core'
+import { Slider, Typography, makeStyles } from '@material-ui/core'
 import { FeatureSliderData } from './FeatureSliderData'
 
-const useStylesSlider = makeStyles({
+const useStylesSlider = makeStyles((theme) => ({
   root: {
-    width: 280
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(2),
+    width: '100%'
   }
-})
+}))
 
 export default function (props: {
   feature: FeatureSliderData
@@ -25,7 +25,7 @@ export default function (props: {
         onChangeCommitted={(evt, val) =>
           props.onFeatureUpdate(props.feature.name, [val].flat())
         }
-        aria-label={props.feature.name}
+        getAriaLabel={() => props.feature.name}
         orientation='horizontal'
         valueLabelDisplay='auto'
         //valueLabelFormat = {(x) => x.toString().concat(props.featureLabel)}

@@ -6,13 +6,14 @@ import { Track as TrackObj } from '../types'
 import Track from './Track'
 
 import DragHandleIcon from '@material-ui/icons/DragHandle'
-import { ListItem, ListItemIcon } from '@material-ui/core'
+import { ListItem, ListItemSecondaryAction, ListItemIcon } from '@material-ui/core'
 
 export default function (props: {
   track: TrackObj
   parent?: string
   index?: number
   isDragDisabled?: boolean
+  style?: any
 }) {
   let [track, setTrack] = useState<TrackObj>()
 
@@ -35,6 +36,7 @@ export default function (props: {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           style={{
+            ...props.style,
             ...provided.draggableProps.style,
             cursor: 'pointer',
             ...(snapshot.isDragging
@@ -47,9 +49,11 @@ export default function (props: {
             <>
               <Track track={track} isDragging={snapshot.isDragging} />
               {props.isDragDisabled ?? (
-                <ListItemIcon>
-                  <DragHandleIcon />
-                </ListItemIcon>
+                <ListItemSecondaryAction>
+                  <ListItemIcon>
+                    <DragHandleIcon />
+                  </ListItemIcon>
+                </ListItemSecondaryAction>
               )}
             </>
           ) : (

@@ -12,18 +12,19 @@ import {
   Dialog,
   CircularProgress,
   makeStyles,
-  Tooltip
+  Tooltip,
+  ListItemSecondaryAction
 } from '@material-ui/core';
 import EditPlaylistNameDialog from './EditPlaylistNameDialog';
 import { createOrUpdatePlaylist, getUserProfile } from '../helpers/helpers';
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import Divider from '@material-ui/core/Divider'
 import {
   Playlist as PlaylistObj,
   Track as TrackObj,
   TrackFilter
 } from '../types'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import Divider from '@material-ui/core/Divider'
 import GenreSelector from './GenreSelector'
 import SortSelector from './SortSelector'
 import MultiFilter from './MultiFilter'
@@ -112,6 +113,7 @@ export default function Subplaylist (props: {
   const [success, setSuccess] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("Save")
   const [filterIsActive, setFilterIsActive] = useState(false);
+  const [filterSelectorIsActive, setFilterSelectorIsActive] = useState(false);
 
   const buttonClassname = clsx({
     [classes.button]: true,
@@ -148,7 +150,7 @@ export default function Subplaylist (props: {
   const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
   const checkedIcon = <CheckBoxIcon fontSize='small' />
 
-  const [tracks, setTracks] = useState<TrackObj[]>(props.source.tracks)
+  const [tracks, setTracks] = useState<TrackObj[]>([])
 
   // eslint-disable-next-line
   const [includedTracks, setIncludedTracks] = useState<TrackObj[]>([])
@@ -167,14 +169,7 @@ export default function Subplaylist (props: {
   // TODO: Maybe put genres in each track
   const TrackCorrectGenre = (track: TrackObj): boolean => {
     if (selectedGenres.length === 0) return true
-    for (let artist of track.artists) {
-      for (let genre of artist.genres) {
-        if (selectedGenres.includes(genre)) {
-          return true
-        }
-      }
-    }
-    return false
+    return selectedGenres.some((g: string) => track.genres.includes(g));
   }
 
   function handleSortAction (type: string) {
@@ -269,10 +264,9 @@ export default function Subplaylist (props: {
           <IconButton onClick={() => setEditDialogOpen(true)}>
             <EditIcon />
           </IconButton>
-          <ListItem>
+          <Divider orientation="vertical" flexItem />
             <SortSelector onSort={handleSortAction} />
-          </ListItem>
-          <ListItem>
+          <ListItemSecondaryAction>
             <Button
               variant='contained'
               color='secondary'
@@ -281,12 +275,12 @@ export default function Subplaylist (props: {
             >
               Delete
             </Button>
-          </ListItem>
+          </ListItemSecondaryAction>
           <ListItem>
             {loading ? (
               <CircularProgress size={24} className={classes.buttonProgress} />
             ) : (
-              filterIsActive ? (
+              filterIsActive || filterSelectorIsActive ? (
                 <Tooltip title="Saving is disabled while filter is active.">
                   <span>
                     <Button 
@@ -302,7 +296,7 @@ export default function Subplaylist (props: {
                 </Tooltip>
               ) : (
                 saveDisabled ? (
-                  <Tooltip title="No change detected since last save.">
+                  <Tooltip title="No change since last save.">
                     <span>
                       <Button 
                         variant="contained" 
@@ -330,7 +324,7 @@ export default function Subplaylist (props: {
             )}
           </ListItem>
         </ListItem>
-        <ListItem divider={true}>
+        <ListItem divider={true} >
           <GenreSelector
             genres={props.genres}
             onSelect={values => setSelectedGenres(values)}
@@ -340,10 +334,14 @@ export default function Subplaylist (props: {
           onUpdateFilterFunction={f => setFeatureFilter(() => f)}
           component={List}
           childComponent={ListItem}
+          filterIsActive={f => setFilterSelectorIsActive(f)}
         />
         <Divider />
         <ListItem divider={true}>
-          <MultiFilter callback={f => setTrackFilter(() => f)} />
+          <MultiFilter
+            callback={f => setTrackFilter(() => f)} 
+            filterIsActive={f => setFilterIsActive(f)}
+          />
         </ListItem>
         <TrackList
           id={props.playlist.id}

@@ -51,9 +51,7 @@ export default function (props: {
 
   let colourIndex = -1
   const artistEnglish = strArrayToEnglish(props.track.artists.map(a => a.name))
-  const genresEnglish = strArrayToEnglish(
-    Array.from(new Set(props.track.artists.map(a => a.genres).flat()))
-  )
+  const genresEnglish = strArrayToEnglish(props.track.genres)
   const lengthEnglish = numToNaturalTime(props.track.duration_ms)
 
   const data = Object.entries(props.track.features ?? {})

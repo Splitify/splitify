@@ -1,14 +1,11 @@
 import React, { useState } from 'react'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button'
-import Menu from '@material-ui/core/Menu'
-import MenuItem from '@material-ui/core/MenuItem'
+import { Button, Menu, MenuItem, makeStyles } from '@material-ui/core'
 
 export default function Subplaylist (props: {
   onSort: (type: string) => void
 }) {
-  const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
+  const useStyles = makeStyles(theme =>
+    ({
       formControl: {
         margin: theme.spacing(1),
         minWidth: 120

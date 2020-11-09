@@ -6,6 +6,7 @@ export interface Track {
   id: string
   album?: Album
   artists: Array<Artist>
+  genres: string[]
   // available_markets: Array<string>
   // disc_number: Number
   duration_ms: Number

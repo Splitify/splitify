@@ -5,7 +5,31 @@ import { CachingAccumulumatorinator } from './Accumulumatorinator'
 import { getPaginationRawGen } from './helpers'
 
 import Queue from 'queue'
+import { WHITELIST as GENRE_WHITELIST } from './genreWhitelist'
 
+
+
+const ToURLParam = (track: string, artist: string) => {
+  let params = new URLSearchParams();
+  params.append("artist", artist);
+  params.append("track", track);
+  params.append("api_key", "f21088bf9097b49ad4e7f487abab981e");
+  params.append("format", "json");
+  params.append("method", "track.gettoptags");
+  return params.toString();
+}
+
+async function fetchLFM(
+  request: RequestInfo
+): Promise<any> {
+  const response = await fetch(request);
+  const res = await response.json();
+  return res;
+}
+
+const GenreAccumulator = new CachingAccumulumatorinator<
+  any
+>('genres', 1, async id => ([await fetchLFM("https://ws.audioscrobbler.com/2.0/?" + id)]))
 const TrackAccumulator = new CachingAccumulumatorinator<
   SpotifyApi.TrackObjectFull
 >('tracks', 50, async ids => (await api.getTracks(ids))['tracks'])
@@ -23,13 +47,14 @@ const ArtistAccumulator = new CachingAccumulumatorinator<
   SpotifyApi.ArtistObjectFull
 >('artists', 50, async ids => (await api.getArtists(ids))['artists'])
 
-export async function parseTrackJSON (
+export async function parseTrackJSON(
   json: SpotifyApi.TrackObjectFull,
   expand?: boolean
 ): Promise<Track> {
   let track: Track = {
     features: undefined,
     album: undefined,
+    genres: [],
     artists: [],
     duration_ms: json.duration_ms,
     explicit: json.explicit,
@@ -59,6 +84,11 @@ export async function parseTrackJSON (
           await AlbumAccumulator.request(json.album.id)
         )
 
+        this.genres = await parseGenres(
+          await GenreAccumulator.requestCustom(this.id, ToURLParam(json.name, json.artists[0].name), true),
+          this.artists,
+          this.album,
+        )
         resolve(this)
       })
 
@@ -68,7 +98,40 @@ export async function parseTrackJSON (
   return expand ? await track.expand() : track
 }
 
-export function parseFeaturesJSON (
+export function parseGenres(
+  lm: any,
+  artists: Artist[],
+  album?: Album,
+) {
+  const artistNames = artists.map((a: Artist) => a.name.toLowerCase());
+  let genres = lm.toptags?.tag
+    .filter((t: any) => t.count > 50 && t.name.length < 20)
+    .map((t: any) => t.name.toLowerCase())
+    .filter((s: string) => {
+      return s.split(" ").some((g: string) => GENRE_WHITELIST.includes(g))
+        || s.split("-").some((g: string) => GENRE_WHITELIST.includes(g))
+    }) ?? [];
+  genres.splice(3, 99); // Only keep the first three. The quality goes down quick on some songs
+  genres = genres.filter((g: string) => !artistNames.includes(g));
+
+  if (genres.length === 0) {
+    genres = album?.genres ?? [];
+  }
+
+  if (genres.length === 0) {
+    genres = Array.from(new Set(artists.map((a: Artist) => a.genres).flat()))
+  }
+
+  // convert the date into a decade
+  // e.g. 2011 -> 2010s and 1963 -> 1960s
+  const year = Math.floor((album?.release_date.getFullYear() ?? 0) / 10) * 10
+  if (year > 1920) {
+    genres.push(`${year}s`);
+  }
+  return genres;
+}
+
+export function parseFeaturesJSON(
   json: SpotifyApi.AudioFeaturesResponse
 ): Features {
   return {
@@ -88,7 +151,7 @@ export function parseFeaturesJSON (
   }
 }
 
-export function parseArtistJSON (json: SpotifyApi.ArtistObjectFull): Artist {
+export function parseArtistJSON(json: SpotifyApi.ArtistObjectFull): Artist {
   return {
     followers: json.followers.total,
     genres: json.genres,
@@ -101,7 +164,7 @@ export function parseArtistJSON (json: SpotifyApi.ArtistObjectFull): Artist {
   }
 }
 
-export async function parseAlbumJSON (
+export async function parseAlbumJSON(
   json: SpotifyApi.AlbumObjectFull,
   expand?: boolean
 ): Promise<Album> {
@@ -136,7 +199,7 @@ export function parseUserJSON({ id, display_name, images }: any): User {
   }
 }
 
-export async function parsePlaylistJSON (
+export async function parsePlaylistJSON(
   json: SpotifyApi.PlaylistObjectFull,
   expand?: boolean,
   expandTrack?: boolean

@@ -1,9 +1,9 @@
 import { parsePlaylistJSON, parseUserJSON } from './parsers'
-import { Artist, Playlist, Track, User } from '../types'
+import { Playlist, Track, User } from '../types'
 import { api } from '../auth'
 
 // Get all playlists
-export async function getPlaylists (
+export async function getPlaylists(
   user?: string,
   expand: boolean = false
 ): Promise<Array<Playlist>> {
@@ -17,7 +17,7 @@ export async function getPlaylists (
   return res
 }
 
-export async function * getPlaylistsGen (
+export async function* getPlaylistsGen(
   user?: string,
   expand: boolean = false
 ) {
@@ -29,7 +29,7 @@ export async function * getPlaylistsGen (
   }
 }
 
-export async function getPaginationRaw (func: Function, ...args: any) {
+export async function getPaginationRaw(func: Function, ...args: any) {
   let resp = []
   for await (let obj of getPaginationRawGen(func, ...args)) {
     resp.push(obj)
@@ -37,7 +37,7 @@ export async function getPaginationRaw (func: Function, ...args: any) {
   return resp
 }
 
-export async function * getPaginationRawGen (
+export async function* getPaginationRawGen(
   func: Function,
   opts?: {},
   ...args: any
@@ -47,12 +47,12 @@ export async function * getPaginationRawGen (
   do {
     let page = await func(...args, { ...opts, /* limit: 50,*/ offset })
     total = page.total
-    yield * page.items
+    yield* page.items
     offset += page.items.length
   } while (offset < total)
 }
 
-export async function getPlaylist (
+export async function getPlaylist(
   playlistId: string,
   expand: boolean = false
 ): Promise<Playlist> {
@@ -64,19 +64,15 @@ export async function getPlaylist (
   )
 }
 
-export async function getUserProfile (): Promise<User> {
+export async function getUserProfile(): Promise<User> {
   return await api.getMe().then(parseUserJSON)
 }
 
-export function allGenresFromPlaylist (playlist: Playlist): string[] {
+export function allGenresFromPlaylist(playlist: Playlist): string[] {
   return Array.from(
     new Set(
       playlist.tracks
-        .map((track: Track) =>
-          track.artists.map((artist: Artist) => artist.genres)
-        )
-        .flat()
-        .flat()
+        .map((track: Track) => track.genres).flat()
     )
   ).sort()
 }
