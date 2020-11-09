@@ -53,6 +53,8 @@ export default function Subplaylist (props: {
   genres: string[]
   onFilterUpdate?: (tracks: TrackObj[]) => any
   onDelete?: (playlist: PlaylistObj) => any
+  onBlacklist: (tracks: TrackObj[]) => any
+
 }) {
   // const classes = useStyles()
 
@@ -60,15 +62,16 @@ export default function Subplaylist (props: {
 
   const [tracks, setTracks] = useState<TrackObj[]>(props.source.tracks)
 
-  const [blackList, setBlackList] = useState<TrackObj[]>([])
-
   // eslint-disable-next-line
   const [includedTracks, setIncludedTracks] = useState<TrackObj[]>([])
   // eslint-disable-next-line
   const [excludedTracks, setExcludedTracks] = useState<TrackObj[]>([])
 
+  const [blacklist, setBlacklist] = useState<TrackObj[]>([])
+  const [checked, setChecked] = useState<TrackObj[]>([])
   // Track selector
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  const [filteredView, setFilteredView] = useState<TrackObj[]>([])
   const [featureFilter, setFeatureFilter] = useState<TrackFilter>(() => () =>
     true
   )
@@ -90,13 +93,27 @@ export default function Subplaylist (props: {
     return false
   }
 
-  const handleDelete = (tracks: TrackObj[]): void => {
-    setBlackList(tracks)
+  const updateBlacklist = () => {
+    const blacklistedTracks = blacklist;
+    checked.map((track) => {if (!blacklistedTracks.includes(track)) {
+      blacklistedTracks.push(track)
+    }})
+    setBlacklist(blacklistedTracks);
+    setChecked([])
   }
 
-  const filterByBlacklist = (track: TrackObj): boolean => {
-    return !blackList.includes(track)
-  }
+  const toggleChecked = (track: TrackObj) => () => {
+    const currentIndex = checked.indexOf(track);
+    const newChecked = [...checked];
+
+    if (currentIndex === -1) {
+      newChecked.push(track);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+    setChecked(newChecked);
+    console.log(checked)
+  };
 
   const handleSortAction  = (type: string) => {
     const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
@@ -156,11 +173,9 @@ export default function Subplaylist (props: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.playlist.tracks])
 
-  let [filterView, updateFilteredView] = useState<TrackObj[]>([])
-
   const updateView = useCallback(() => {
     let view = tracks.filter(trackFilter)
-    updateFilteredView(view)
+    setFilteredView(view)
     props.onFilterUpdate && props.onFilterUpdate(view)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks, trackFilter, props.onFilterUpdate])
@@ -174,6 +189,13 @@ export default function Subplaylist (props: {
 
   return (
     <div>
+      <Button
+        variant='contained'
+        color='primary'
+        onClick={updateBlacklist}
+      >
+        Remove Selected Songs
+      </Button>
       <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
         <EditPlaylistNameDialog
           name={props.playlist.name}
@@ -218,18 +240,11 @@ export default function Subplaylist (props: {
         <ListItem divider={true}>
           <MultiFilter callback={f => setTrackFilter(() => f)} />
         </ListItem>
-        <Button
-              variant='contained'
-              color='secondary'
-              onClick={() => setTracks([...tracks].filter(filterByBlacklist))}
-              startIcon={<DeleteIcon />}
-            >
-              Remove Selected Tracks
-            </Button>
         <TrackList
-          handleDelete={handleDelete}
+          toggleChecked={toggleChecked}
+          checked={checked}
           id={props.playlist.id}
-          tracks={filterView}
+          tracks={filteredView.filter(track => !blacklist.includes(track))}
           component={List}
           childComponent={ListItem}
         />

@@ -27,8 +27,10 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   const classes = useStyles()
 
   const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>()
+  const [subPlaylist, setSubplaylist] = useState<PlaylistObj>()
   const [genres, setGenres] = useState<string[]>([])
-
+  const [blacklist, setBlacklist] = useState<TrackObj[]>([])
+  const [checked, setChecked] = useState<TrackObj[]>([])
   const [filteredLists, setFilteredLists] = useState<{[id: string]: TrackObj[]}>({})
 
 
@@ -36,6 +38,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     playlist.expand().then(p => {
       Promise.all(p.tracks.map(t => t.expand())).then(() => {
         setMasterPlaylist(p)
+        setSubplaylist(p)
         setGenres(allGenresFromPlaylist(p))
       })
     })
@@ -80,6 +83,22 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     return playlist.tracks.findIndex(t => t.id === targetTrackID)
   }
 
+  const applyBlacklist = () => {
+    const allTracks = subPlaylist;
+    if (allTracks) {
+      blacklist.map((track) => (allTracks.tracks.splice(allTracks.tracks.indexOf(track), 1)))
+    }
+    setSubplaylist(allTracks)
+  }
+
+  const onBlacklist = (tracks: TrackObj[]) => {
+    const blacklistedTracks = blacklist;
+    tracks.map((track) => {if (!blacklistedTracks.includes(track)) {
+      blacklistedTracks.push(track)
+    }})
+    setBlacklist(blacklistedTracks)
+  }
+
   return (
     <div className={classes.root}>
       <Button
@@ -93,6 +112,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       >
         Logout
       </Button>
+      
       <Grid style={{ padding: '10%' }} container spacing={5}>
       <DragDropContext
             onDragEnd={evt => {
@@ -122,15 +142,16 @@ const Dashboard: React.FC<IDashboardProps> = () => {
           />
         </Grid>
 
-        {masterPlaylist ? (
+        {masterPlaylist ? (subPlaylist ? (
           <>
             {playlists.map(p => (
               <Grid item xs={4} key={p.id}>
                 <Subplaylist
                   genres={genres}
-                  source={masterPlaylist}
+                  source={subPlaylist}
                   playlist={p}
                   onDelete={() => deletePlaylist(p)}
+                  onBlacklist={onBlacklist}
                   onFilterUpdate={tracks => setFilteredLists(list => ({...list, [p.id]: tracks}))}
                 />
               </Grid>
@@ -146,7 +167,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
               </Button>
             </Grid>
           </>
-        ) : null}
+        ) : null) : null}
         </DragDropContext>
       </Grid>
     </div>

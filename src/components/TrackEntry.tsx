@@ -13,13 +13,10 @@ export default function (props: {
   parent?: string
   index?: number
   isDragDisabled?: boolean
+  checked?: boolean
+  toggleChecked?: (track: TrackObj) => any
 }) {
   let [track, setTrack] = useState<TrackObj>()
-  let [checked, setChecked] = useState<string[]>([])
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.id)
-  };
 
   useEffect(() => {
     ;(async () => {
@@ -48,14 +45,14 @@ export default function (props: {
           }}
           divider={true}
         >
-          
-          {track ? (
+
+          {track && props.toggleChecked ? (
             <>
               <Checkbox
-                  checked={checked.indexOf(track) !== -1}
+                  checked={props.checked}
                   tabIndex={-1}
                   disableRipple
-                  inputProps={{ 'aria-labelledby': labelId }}
+                  onClick={props.toggleChecked(track)}
                 />
               <Track track={track} isDragging={snapshot.isDragging} />
               {props.isDragDisabled ?? (
