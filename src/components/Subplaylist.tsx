@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import clsx from 'clsx';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import SaveIcon from '@material-ui/icons/Save';
 import { green } from '@material-ui/core/colors';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@material-ui/icons'
@@ -145,11 +143,6 @@ export default function Subplaylist (props: {
   };
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [sortType, setSortType] = useState("")
-
-  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
-  const checkedIcon = <CheckBoxIcon fontSize='small' />
-
   const [tracks, setTracks] = useState<TrackObj[]>([])
 
   // eslint-disable-next-line
