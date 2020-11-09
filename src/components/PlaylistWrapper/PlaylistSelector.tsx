@@ -23,6 +23,8 @@ import SearchIcon from '@material-ui/icons/Search'
 
 import { Playlist } from '../../types'
 import { getPlaylist, getPlaylists } from '../../helpers/helpers'
+import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon'
+import Checkbox from '@material-ui/core/Checkbox/Checkbox'
 
 const useStyles = makeStyles({
   root: {
@@ -38,12 +40,29 @@ let playlistCache: Playlist[] = [];
 export default function (props: { onSelect: (playlist: Playlist) => void }) {
   const classes = useStyles()
 
-  async function handleRefresh () {
+  async function handleRefresh() {
     setLoading(true)
     setPlaylists((playlistCache = await getPlaylists()))
     setLoading(false)
   }
   
+  const [checked, setChecked] = React.useState([""]);
+
+  const handleToggle = (value: string) => () => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
+
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setChecked(newChecked);
+  };
+  
+  // props.onSelect(await getPlaylist(playlist.id))
+
   let [playlists, setPlaylists] = useState<Playlist[]>(playlistCache)
   let [loading, setLoading] = useState(false)
   let [search, setSearch] = useState('')
@@ -79,27 +98,35 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
           <List>
             {playlists.filter(p =>
               p.name.toLowerCase().includes(search.toLowerCase())
+              || checked.includes(p.id)
             ).length > 0 ? (
-              playlists.map(playlist => (
-                <ListItem
-                  button
-                  disabled={loading}
-                  key={playlist.id}
-                  onClick={async () =>
-                    props.onSelect(await getPlaylist(playlist.id))
-                  }
-                >
-                  <ListItemText primary={playlist.name} />
+                playlists.map(playlist => (
+                  <ListItem
+                    button
+                    disabled={loading}
+                    key={playlist.id}
+                    dense
+                    onClick={handleToggle(playlist.id)}
+                  >
+                    <ListItemIcon>
+                      <Checkbox
+                        edge="start"
+                        checked={checked.indexOf(playlist.id) !== -1}
+                        tabIndex={-1}
+                        disableRipple
+                      />
+                    </ListItemIcon>
+                    <ListItemText primary={playlist.name} />
+                  </ListItem>
+                ))
+              ) : (
+                <ListItem>
+                  <ListItemText
+                    primary={'No playlists exist!'}
+                    secondary={search ? 'Try a different search term' : ''}
+                  />
                 </ListItem>
-              ))
-            ) : (
-              <ListItem>
-                <ListItemText
-                  primary={'No playlists exist!'}
-                  secondary={search ? 'Try a different search term' : ''}
-                />
-              </ListItem>
-            )}
+              )}
           </List>
         </Paper>
       </CardContent>

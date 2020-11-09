@@ -35,7 +35,7 @@ export default function (props: {
         onClick={() => setSelectorOpen(true)}
         style={{ cursor: 'pointer', userSelect: 'none' }}
       >
-        <div>{props.text || 'Select a playlist'}</div>
+        <div>{props.text || 'Select playlists'}</div>
         <Icon component={AddCircleOutlineIcon} />
       </Box>
 
