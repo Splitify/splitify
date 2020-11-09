@@ -21,7 +21,7 @@ export default function FormDialog(props: { name: string, onSave: (newName?: str
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => props.onSave(undefined)} color="primary">
+        <Button onClick={() => props.onSave()} color="primary">
           Cancel
       </Button>
         <Button onClick={() => props.onSave(newName)} color="primary">

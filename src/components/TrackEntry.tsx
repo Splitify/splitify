@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react'
+import { Draggable } from 'react-beautiful-dnd'
 import Skeleton from '@material-ui/lab/Skeleton'
+
 import { Track as TrackObj } from '../types'
-import TableCell from '@material-ui/core/TableCell'
-import TableRow from '@material-ui/core/TableRow'
 import Track from './Track'
-// import Track from './Track'
 
-// let id: number = 0
+import DragHandleIcon from '@material-ui/icons/DragHandle'
+import { ListItem, ListItemIcon } from '@material-ui/core'
 
-export default function (props: { track: TrackObj }) {
+export default function (props: {
+  track: TrackObj
+  parent?: string
+  index?: number
+  isDragDisabled?: boolean
+}) {
   let [track, setTrack] = useState<TrackObj>()
 
   useEffect(() => {
@@ -19,14 +24,39 @@ export default function (props: { track: TrackObj }) {
   }, [])
 
   return (
-    <TableRow /* key={track?.id || id++} */>
-      <TableCell component='th' scope='row'>
-        {track ? (
-          <Track track={track} />
-        ) : (
-          <Skeleton variant='rect' />
-        )}
-      </TableCell>
-    </TableRow>
+    <Draggable
+      draggableId={`${props.parent}:${props.track.id}`}
+      index={props.index ?? -1}
+      isDragDisabled={props.isDragDisabled}
+    >
+      {(provided, snapshot) => (
+        <ListItem
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          style={{
+            ...provided.draggableProps.style,
+            cursor: 'pointer',
+            ...(snapshot.isDragging
+              ? { backgroundColor: '#E6E6E6' }
+              : undefined)
+          }}
+          divider={true}
+        >
+          {track ? (
+            <>
+              <Track track={track} isDragging={snapshot.isDragging} />
+              {props.isDragDisabled ?? (
+                <ListItemIcon>
+                  <DragHandleIcon />
+                </ListItemIcon>
+              )}
+            </>
+          ) : (
+            <Skeleton variant='rect' />
+          )}
+        </ListItem>
+      )}
+    </Draggable>
   )
 }
