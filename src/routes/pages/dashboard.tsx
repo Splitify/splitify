@@ -121,34 +121,35 @@ const Dashboard: React.FC<IDashboardProps> = () => {
               dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, trackCopy);
               destPlaylist.tracks = dest_newTracks
             } else {
-            const source_newTracks = [...sourcePlaylist.tracks];
+              const source_newTracks = [...sourcePlaylist.tracks];
 
-            let removed = source_newTracks.splice(sourceIdx, 1)[0];
+              let removed = source_newTracks.splice(sourceIdx, 1)[0];
 
-            if (sourcePlaylist !== destPlaylist) {
-              // Move between playlists, also updating the destination playlist
-              const dest_newTracks = [...destPlaylist.tracks];
-              if (isTrackCustom(removed)) {
-                if (asPlaylistTrack(removed).sourceID === destPlaylist.id) {
-                  // Dragged back to the original playlist
+              if (sourcePlaylist !== destPlaylist) {
+                // Move between playlists, also updating the destination playlist
+                const dest_newTracks = [...destPlaylist.tracks];
+                if (isTrackCustom(removed)) {
+                  if (asPlaylistTrack(removed).sourceID === destPlaylist.id) {
+                    // Dragged back to the original playlist
+                    removed = touchTrack(removed, {
+                      isCustom: false
+                    })  
+                  }
+                } else {
+                  // Dragged from original to new playlist
                   removed = touchTrack(removed, {
-                    isCustom: false
-                  })  
+                    isCustom: true,
+                    sourceID: sourcePlaylist.id
+                  })
                 }
-              } else {
-                // Dragged from original to new playlist
-                removed = touchTrack(removed, {
-                  isCustom: true,
-                  sourceID: sourcePlaylist.id
-                })
-              }
 
-              dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
-              destPlaylist.tracks = dest_newTracks
-            } else {
-              source_newTracks.splice(destIdx, 0, removed);
-            }
-            sourcePlaylist.tracks = source_newTracks
+                dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
+                destPlaylist.tracks = dest_newTracks
+              } else {
+                source_newTracks.splice(destIdx, 0, removed);
+              }
+              
+              sourcePlaylist.tracks = source_newTracks
             }
 
             setPlaylists([...playlists])
