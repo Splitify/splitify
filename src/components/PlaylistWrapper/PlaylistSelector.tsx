@@ -16,7 +16,8 @@ import {
   Paper,
   TextField,
   InputAdornment,
-  makeStyles
+  makeStyles,
+  Typography
 } from '@material-ui/core'
 
 import SearchIcon from '@material-ui/icons/Search'
@@ -79,7 +80,7 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
       expand: playlists[0].expand, // TODO this doesn't make sense...
     })
   }
-  
+
   const restrictSearch = (p: Playlist) =>
     p.name.toLowerCase().includes(search.toLowerCase())
     || checked.includes(p.id);
@@ -96,10 +97,15 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
     <Card className={classes.root}>
       <CardContent className={classes.content}>
         <Box m={1}>
+          <Typography variant="h5" gutterBottom >
+            Select Playlists to Split from
+          </Typography>
+        </Box>
+        <Box m={1}>
           <TextField
             label='Search'
             fullWidth
-            variant='outlined'
+            // variant='outlined'
             margin='normal'
             onChange={evt => setSearch(evt.target.value)}
             InputProps={{
@@ -118,26 +124,26 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
         >
           <List>
             {playlists.filter(restrictSearch).length > 0 ? (
-                playlists.filter(restrictSearch).map(playlist => (
-                  <ListItem
-                    button
-                    disabled={loading}
-                    key={playlist.id}
-                    dense
-                    onClick={handleToggle(playlist.id)}
-                  >
-                    <ListItemIcon>
-                      <Checkbox
-                        edge="start"
-                        checked={checked.indexOf(playlist.id) !== -1}
-                        tabIndex={-1}
-                        disableRipple
-                      />
-                    </ListItemIcon>
-                    <ListItemText primary={playlist.name} />
-                  </ListItem>
-                ))
-              ) : (
+              playlists.filter(restrictSearch).map(playlist => (
+                <ListItem
+                  button
+                  disabled={loading}
+                  key={playlist.id}
+                  dense
+                  onClick={handleToggle(playlist.id)}
+                >
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={checked.indexOf(playlist.id) !== -1}
+                      tabIndex={-1}
+                      disableRipple
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary={playlist.name} />
+                </ListItem>
+              ))
+            ) : (
                 <ListItem>
                   <ListItemText
                     primary={'No playlists exist!'}

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import Auth from '../../auth'
-import MasterPlaylist from '../../components/MasterPlaylist'
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
 import { allGenresFromPlaylist } from "../../helpers/helpers";
@@ -124,7 +123,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
           >
         <Grid item xs={4}>
           <PlaylistWrapper
-            component={MasterPlaylist}
             usedTracks={usedTracks}
             onSelect={p => loadPlaylist(p)}
           />

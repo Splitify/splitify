@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Playlist as PlaylistObj, Track as TrackObj, TrackFilter } from '../types'
+import { Edit as EditIcon } from '@material-ui/icons'
 
 import { makeStyles, List, ListItem, Paper } from '@material-ui/core'
 
@@ -8,6 +9,7 @@ import TrackList from './TrackList'
 import ToggleButton from '@material-ui/lab/ToggleButton/ToggleButton'
 import Popover from '@material-ui/core/Popover/Popover'
 import InfoIcon from '@material-ui/icons/Info';
+import IconButton from '@material-ui/core/IconButton/IconButton'
 
 const useStyles = makeStyles(theme => ({
   popover: {
@@ -22,7 +24,12 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTracks: TrackObj[] }) {
+export default function MasterPlaylist(
+  props: {
+    playlist: PlaylistObj,
+    usedTracks: TrackObj[],
+    onOpenSelector: () => void,
+  }) {
   const classes = useStyles()
 
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => () => true)
@@ -82,7 +89,12 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTrack
   return (
     <div className={classes.root}>
       <List component={Paper}>
-        <ListItem>Master Playlist{props.playlist.name.includes('+') ? "s" : ""}: {props.playlist.name}</ListItem>
+        <ListItem>
+          Master Playlist{props.playlist.name.includes('+') ? "s" : ""}: {props.playlist.name}
+          <IconButton onClick={props.onOpenSelector}>
+            <EditIcon />
+          </IconButton>
+        </ListItem>
         <ListItem>
           <ToggleButton
             size="small"
