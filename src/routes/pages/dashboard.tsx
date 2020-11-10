@@ -28,9 +28,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>()
   const [genres, setGenres] = useState<string[]>([])
 
-  const [filteredLists, setFilteredLists] = useState<{ [id: string]: TrackObj[] }>({})
-
-
+  const filteredLists: { [id: string]: TrackObj[] } = {}; 
+  
   function loadPlaylist(playlist: PlaylistObj) {
     Promise.all(playlist.tracks.map(t => t.expand())).then(() => {
       setMasterPlaylist(playlist)
@@ -70,6 +69,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
   const deletePlaylist = (playlist: PlaylistObj) => {
     console.log('Deleting playlist', playlist.id)
+    delete filteredLists[playlist.id]
     setPlaylists(playlists.filter(p => p.id !== playlist.id))
   }
 
@@ -159,6 +159,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             <PlaylistWrapper
               usedTracks={usedTracks}
               onSelect={p => loadPlaylist(p)}
+              onFilterUpdate={tracks => masterPlaylist && (filteredLists[masterPlaylist.id] = tracks)}
             />
           </Grid>
 
@@ -171,7 +172,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                     source={p.sourcePool}
                     playlist={p}
                     onDelete={() => deletePlaylist(p)}
-                    onFilterUpdate={tracks => setFilteredLists(list => ({ ...list, [p.id]: tracks }))}
+                    onFilterUpdate={tracks => filteredLists[p.id] = tracks}
                   />
                 </Grid>
               ))}
