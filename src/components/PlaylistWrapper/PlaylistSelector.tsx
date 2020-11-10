@@ -64,13 +64,15 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
 
   const handleSelection = async () => {
     setLoading(true)
-    console.log(checked);
+    
     const playlists = await Promise.all(checked.map(async (s: string) => await getPlaylist(s, true)));
     const tracks = playlists.map((p: Playlist) => p.tracks).flat();
     const name = playlists.map((p: Playlist) => p.name).join(" + ");
-
+    const id = playlists.map(p => p.id).join('')
+    console.log(id);
+    
     await props.onSelect({
-      id: playlists[0].id,
+      id: id,
       name: name,
       description: playlists[0].description,
       image: playlists[0].image,
