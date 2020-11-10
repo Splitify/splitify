@@ -78,7 +78,9 @@ export default function Subplaylist (props: {
   // TODO: Maybe put genres in each track
   const TrackCorrectGenre = (track: TrackObj): boolean => {
     if (selectedGenres.length === 0) return true
-    return selectedGenres.some((g: string) => track.genres.includes(g));
+    const intersection = selectedGenres.filter(g => track.genres.includes(g));
+    track.inclusion_reason = track.inclusion_reason.concat(intersection);
+    return intersection.length !== 0;
   }
 
   function handleSortAction (type: string) {
@@ -118,6 +120,7 @@ export default function Subplaylist (props: {
     // FIXME: Ordering property isn't persisted between updates to genre and features
 
     // Update the list of track in the playlist when the genre / features filter is changed
+    props.source.tracks.forEach(t => t.inclusion_reason = []);
     setTracks(
       props.source.tracks
         .filter(TrackCorrectGenre)

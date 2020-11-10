@@ -66,6 +66,7 @@ export async function parseTrackJSON(
     track_number: json.track_number,
     type: json.type,
     uri: json.uri,
+    inclusion_reason: [],
     expand: async function (): Promise<Track> {
       let promise = new Promise<Track>(async (resolve, reject) => {
         this.expand = async () => promise
