@@ -112,6 +112,15 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             let sourceIdx = getPlaylistIndexFromFilterIndex(sourcePlaylist, evt.source.index)
             let destIdx = getPlaylistIndexFromFilterIndex(destPlaylist, evt.destination.index)
 
+            if (sourcePlaylist === masterPlaylist) {
+              let trackCopy = touchTrack(masterPlaylist.tracks[sourceIdx], {
+                isCustom: true,
+                sourceID: masterPlaylist.id
+              })
+              const dest_newTracks = [...destPlaylist.tracks];
+              dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, trackCopy);
+              destPlaylist.tracks = dest_newTracks
+            } else {
             const source_newTracks = [...sourcePlaylist.tracks];
 
             let removed = source_newTracks.splice(sourceIdx, 1)[0];
@@ -139,8 +148,9 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             } else {
               source_newTracks.splice(destIdx, 0, removed);
             }
-
             sourcePlaylist.tracks = source_newTracks
+            }
+
             setPlaylists([...playlists])
           }}
         >
