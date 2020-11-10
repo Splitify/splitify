@@ -157,7 +157,7 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
           size='small'
           color='primary'
           onClick={handleSelection}
-          disabled={loading}
+          disabled={loading || checked.length == 0}
         >
           Load
         </Button>
