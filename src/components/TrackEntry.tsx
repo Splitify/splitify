@@ -39,9 +39,7 @@ export default function (props: {
             ...props.style,
             ...provided.draggableProps.style,
             cursor: 'pointer',
-            ...(snapshot.isDragging
-              ? { backgroundColor: '#E6E6E6' }
-              : undefined)
+            ...(snapshot.isDragging && { backgroundColor: '#E6E6E6' })
           }}
           divider={true}
         >
