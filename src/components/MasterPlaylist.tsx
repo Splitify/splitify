@@ -54,7 +54,7 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTrack
   const calRecommendedGenres = () => {
     let map = new Map<string, number>();
     let filter = (t: TrackObj) => !props.usedTracks.some((m: TrackObj) => m.id === t.id);
-    
+
     if (props.usedTracks.length === props.playlist.tracks.length) {
       filter = (t: TrackObj) => true;
     }
@@ -63,17 +63,17 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTrack
       .map((t: TrackObj) => t.genres)
       .flat()
       .forEach((g: string) => map.set(g, (map.get(g) ?? 0) + 1));
-      
+
     var mapAsc = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
     mapAsc.splice(3, 99999);
     const suggestions = mapAsc.map(a => a[0]);
-    
+
     if (suggestions.length === 0) {
       return "No suggestions"
     } else if (suggestions.length === 1) {
       return "Try " + suggestions[0];
     }
-    
+
     const re = /(.*), (\w+)/
     const english = suggestions.join(', ').replace(re, 'Try $1 or $2')
     return english;
@@ -82,7 +82,7 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTrack
   return (
     <div className={classes.root}>
       <List component={Paper}>
-        <ListItem>Master Playlist: {props.playlist.name}</ListItem>
+        <ListItem>Master Playlist{props.playlist.name.includes('+') ? "s" : ""}: {props.playlist.name}</ListItem>
         <ListItem>
           <ToggleButton
             size="small"
