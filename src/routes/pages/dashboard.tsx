@@ -4,8 +4,8 @@ import Auth from '../../auth'
 import MasterPlaylist from '../../components/MasterPlaylist'
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
-import { allGenresFromPlaylist } from "../../helpers/helpers";
-import { Playlist as PlaylistObj, Track as TrackObj } from "../../types";
+import { allGenresFromPlaylist, touchTrack } from "../../helpers/helpers";
+import { Playlist as PlaylistObj, Track as TrackObj, PlaylistTrack as PlaylistTrackObj } from "../../types";
 import { Grid, Button, makeStyles} from '@material-ui/core';
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
@@ -110,10 +110,19 @@ const Dashboard: React.FC<IDashboardProps> = () => {
               let destIdx = getPlaylistIndexFromFilterIndex(destPlaylist, evt.destination.index)
               
               const source_newTracks = [...sourcePlaylist.tracks];
-              const [removed] = source_newTracks.splice(sourceIdx, 1);
+
+              let removed = source_newTracks.splice(sourceIdx, 1)[0];
+              
               if (sourcePlaylist !== destPlaylist) {
                 // Move between playlists, also updating the destination playlist
                 const dest_newTracks = [...destPlaylist.tracks];
+                if (!(removed as PlaylistTrackObj).isCustom) {
+                  // FIXME: If moved back into a playlist which has the right genre selector, then set `isCustom` to false?
+                  removed = touchTrack(removed, {
+                    isCustom: true
+                  })
+                }
+
                 dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
                 destPlaylist.tracks = dest_newTracks
               } else {
