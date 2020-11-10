@@ -136,7 +136,7 @@ export default function MasterPlaylist(
         <TrackList
           id={props.playlist.id}
           tracks={props.playlist.tracks.filter(trackFilter).filter(usedFilter)}
-          isDragDisabled={true}
+          isDragDisabled={false}
           isDropDisabled={true}
           component={List}
           childComponent={ListItem}
