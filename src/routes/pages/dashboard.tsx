@@ -32,12 +32,10 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   const [filteredLists, setFilteredLists] = useState<{[id: string]: TrackObj[]}>({})
 
 
-  function loadPlaylist (playlist: PlaylistObj) {
-    playlist.expand().then(p => {
-      Promise.all(p.tracks.map(t => t.expand())).then(() => {
-        setMasterPlaylist(p)
-        setGenres(allGenresFromPlaylist(p))
-      })
+  function loadPlaylist(playlist: PlaylistObj) {
+    Promise.all(playlist.tracks.map(t => t.expand())).then(() => {
+      setMasterPlaylist(playlist)
+      setGenres(allGenresFromPlaylist(playlist))
     })
   }
 
