@@ -16,13 +16,16 @@ import {
   Paper,
   TextField,
   InputAdornment,
-  makeStyles
+  makeStyles,
+  Typography
 } from '@material-ui/core'
 
 import SearchIcon from '@material-ui/icons/Search'
 
 import { Playlist } from '../../types'
 import { getPlaylist, getPlaylists } from '../../helpers/helpers'
+import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon'
+import Checkbox from '@material-ui/core/Checkbox/Checkbox'
 
 const useStyles = makeStyles({
   root: {
@@ -38,12 +41,54 @@ let playlistCache: Playlist[] = [];
 export default function (props: { onSelect: (playlist: Playlist) => void }) {
   const classes = useStyles()
 
-  async function handleRefresh () {
+  async function handleRefresh() {
     setLoading(true)
     setPlaylists((playlistCache = await getPlaylists()))
     setLoading(false)
   }
-  
+
+  const [checked, setChecked] = React.useState<string[]>([]);
+
+  const handleToggle = (value: string) => () => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
+
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setChecked(newChecked);
+  };
+
+  const handleSelection = async () => {
+    setLoading(true)
+    
+    const playlists = await Promise.all(checked.map(async (s: string) => await getPlaylist(s, true)));
+    const tracks = playlists.map((p: Playlist) => p.tracks).flat();
+    const name = playlists.map((p: Playlist) => p.name).join(" + ");
+    const id = playlists.map(p => p.id).join('')
+    console.log(id);
+    
+    await props.onSelect({
+      id: id,
+      name: name,
+      description: playlists[0].description,
+      image: playlists[0].image,
+      owner: playlists[0].owner,
+      snapshot_id: playlists[0].snapshot_id,
+      tracks: tracks,
+      uri: playlists[0].uri,
+      expand: playlists[0].expand, // TODO this doesn't make sense...
+    })
+    setLoading(false)
+  }
+
+  const restrictSearch = (p: Playlist) =>
+    p.name.toLowerCase().includes(search.toLowerCase())
+    || checked.includes(p.id);
+
   let [playlists, setPlaylists] = useState<Playlist[]>(playlistCache)
   let [loading, setLoading] = useState(false)
   let [search, setSearch] = useState('')
@@ -56,11 +101,17 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
     <Card className={classes.root}>
       <CardContent className={classes.content}>
         <Box m={1}>
+          <Typography variant="h5" gutterBottom >
+            Select Playlists to Split from
+          </Typography>
+        </Box>
+        <Box m={1}>
           <TextField
             label='Search'
             fullWidth
-            variant='outlined'
+            // variant='outlined'
             margin='normal'
+            disabled={loading}
             onChange={evt => setSearch(evt.target.value)}
             InputProps={{
               startAdornment: (
@@ -77,29 +128,34 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
           style={{ maxHeight: 500, overflow: 'auto' }}
         >
           <List>
-            {playlists.filter(p =>
-              p.name.toLowerCase().includes(search.toLowerCase())
-            ).length > 0 ? (
-              playlists.map(playlist => (
+            {playlists.filter(restrictSearch).length > 0 ? (
+              playlists.filter(restrictSearch).map(playlist => (
                 <ListItem
                   button
                   disabled={loading}
                   key={playlist.id}
-                  onClick={async () =>
-                    props.onSelect(await getPlaylist(playlist.id))
-                  }
+                  dense
+                  onClick={handleToggle(playlist.id)}
                 >
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={checked.indexOf(playlist.id) !== -1}
+                      tabIndex={-1}
+                      disableRipple
+                    />
+                  </ListItemIcon>
                   <ListItemText primary={playlist.name} />
                 </ListItem>
               ))
             ) : (
-              <ListItem>
-                <ListItemText
-                  primary={'No playlists exist!'}
-                  secondary={search ? 'Try a different search term' : ''}
-                />
-              </ListItem>
-            )}
+                <ListItem>
+                  <ListItemText
+                    primary={'No playlists exist!'}
+                    secondary={search ? 'Try a different search term' : ''}
+                  />
+                </ListItem>
+              )}
           </List>
         </Paper>
       </CardContent>
@@ -108,6 +164,14 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
       </Fade>
 
       <CardActions>
+        <Button
+          size='small'
+          color='primary'
+          onClick={handleSelection}
+          disabled={loading || checked.length === 0}
+        >
+          Load
+        </Button>
         <Button
           size='small'
           color='primary'

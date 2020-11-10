@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import Auth from '../../auth'
-import MasterPlaylist from '../../components/MasterPlaylist'
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
-import { allGenresFromPlaylist } from "../../helpers/helpers";
-import { Playlist as PlaylistObj, Track as TrackObj } from "../../types";
+import { allGenresFromPlaylist, touchTrack } from "../../helpers/helpers";
+import { Playlist as PlaylistObj, Track as TrackObj, PlaylistTrack as PlaylistTrackObj } from "../../types";
 import { Grid, Button, makeStyles} from '@material-ui/core';
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
@@ -20,7 +19,7 @@ export const useStyles = makeStyles(theme => ({
   }
 }))
 
-interface IDashboardProps extends RouteComponentProps {}
+interface IDashboardProps extends RouteComponentProps { }
 
 const Dashboard: React.FC<IDashboardProps> = () => {
   //The width of the grids have to be dynamic, not a fixed width
@@ -29,25 +28,22 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>()
   const [genres, setGenres] = useState<string[]>([])
 
-  const [filteredLists, setFilteredLists] = useState<{[id: string]: TrackObj[]}>({})
+  const [filteredLists, setFilteredLists] = useState<{ [id: string]: TrackObj[] }>({})
 
 
-  function loadPlaylist (playlist: PlaylistObj) {
-    playlist.expand().then(p => {
-      Promise.all(p.tracks.map(t => t.expand())).then(() => {
-        setMasterPlaylist(p)
-        setGenres(allGenresFromPlaylist(p))
-      })
+  function loadPlaylist(playlist: PlaylistObj) {
+    Promise.all(playlist.tracks.map(t => t.expand())).then(() => {
+      setMasterPlaylist(playlist)
+      setPlaylists([])
+      setGenres(allGenresFromPlaylist(playlist))
     })
   }
 
-  const addPlaylist = () => {
-    const playlist = createPlaylist()
-    console.log('Adding playlist', playlist.id)
-    setPlaylists([...playlists, playlist])
+  interface PlaylistObjectPP extends PlaylistObj {
+    sourcePool: TrackObj[]
   }
 
-  const createPlaylist = (): PlaylistObj => {
+  const createPlaylist = (): PlaylistObjectPP => {
     return {
       id: 'temp:' + uuid(),
       name: 'Sub-playlist',
@@ -57,13 +53,20 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       snapshot_id: '',
       tracks: [],
       uri: '',
+      sourcePool: [...masterPlaylist!.tracks],
       expand: async function () {
         return this
       }
     }
   }
 
-  const [playlists, setPlaylists] = useState<PlaylistObj[]>([createPlaylist()])
+  const [playlists, setPlaylists] = useState<PlaylistObjectPP[]>([])
+
+  const addPlaylist = () => {
+    const playlist = createPlaylist()
+    console.log('Adding playlist', playlist.id)
+    setPlaylists([...playlists, playlist])
+  }
 
   const deletePlaylist = (playlist: PlaylistObj) => {
     console.log('Deleting playlist', playlist.id)
@@ -72,14 +75,14 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
   // Find playlist object given its ID
   const findPlaylist = (id: string) => playlists.find(p => p.id === id)
-    
+
   // Resolves filter index to track source index
   const getPlaylistIndexFromFilterIndex = (playlist: PlaylistObj, fIDX: number) => {
     let filterList = filteredLists[playlist.id]
     let targetTrackID = filterList[fIDX]?.id
     return playlist.tracks.findIndex(t => t.id === targetTrackID)
   }
-  
+
   const usedTracks = Array.from(new Set(playlists.map((p: PlaylistObj) => p.tracks).flat()));
 
   return (
@@ -96,67 +99,75 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         Logout
       </Button>
       <Grid style={{ padding: '5%' }} container spacing={5}>
-      <DragDropContext
-            onDragEnd={evt => {
-              console.info(evt)
-              if (!evt.destination) return
+        <DragDropContext
+          onDragEnd={evt => {
+            console.info(evt)
+            if (!evt.destination) return
 
-              let sourcePlaylist = findPlaylist(evt?.source?.droppableId)
-              let destPlaylist   = findPlaylist(evt?.destination?.droppableId)
+            let sourcePlaylist = findPlaylist(evt?.source?.droppableId)
+            let destPlaylist = findPlaylist(evt?.destination?.droppableId)
 
-              if (!sourcePlaylist || !destPlaylist) throw new Error("Failed to find filtered playlist view")
+            if (!sourcePlaylist || !destPlaylist) throw new Error("Failed to find filtered playlist view")
 
-              let sourceIdx = getPlaylistIndexFromFilterIndex(sourcePlaylist, evt.source.index)
-              let destIdx = getPlaylistIndexFromFilterIndex(destPlaylist, evt.destination.index)
-              
-              const source_newTracks = [...sourcePlaylist.tracks];
-              const [removed] = source_newTracks.splice(sourceIdx, 1);
-              if (sourcePlaylist !== destPlaylist) {
-                // Move between playlists, also updating the destination playlist
-                const dest_newTracks = [...destPlaylist.tracks];
-                dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
-                destPlaylist.tracks = dest_newTracks
-              } else {
-                source_newTracks.splice(destIdx, 0, removed);
+            let sourceIdx = getPlaylistIndexFromFilterIndex(sourcePlaylist, evt.source.index)
+            let destIdx = getPlaylistIndexFromFilterIndex(destPlaylist, evt.destination.index)
+
+            const source_newTracks = [...sourcePlaylist.tracks];
+
+            let removed = source_newTracks.splice(sourceIdx, 1)[0];
+
+            if (sourcePlaylist !== destPlaylist) {
+              // Move between playlists, also updating the destination playlist
+              const dest_newTracks = [...destPlaylist.tracks];
+              if (!(removed as PlaylistTrackObj).isCustom) {
+                // FIXME: If moved back into a playlist which has the right genre selector, then set `isCustom` to false?
+                removed = touchTrack(removed, {
+                  isCustom: true
+                })
               }
 
-              sourcePlaylist.tracks = source_newTracks
-              setPlaylists([...playlists])
-            }}
-          >
-        <Grid item xs={4}>
-          <PlaylistWrapper
-            component={MasterPlaylist}
-            usedTracks={usedTracks}
-            onSelect={p => loadPlaylist(p)}
-          />
-        </Grid>
+              dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
+              destPlaylist.tracks = dest_newTracks
+            } else {
+              source_newTracks.splice(destIdx, 0, removed);
+            }
 
-        {masterPlaylist ? (
-          <>
-            {playlists.map(p => (
-              <Grid item xs={4} key={p.id}>
-                <Subplaylist
-                  genres={genres}
-                  source={masterPlaylist}
-                  playlist={p}
-                  onDelete={() => deletePlaylist(p)}
-                  onFilterUpdate={tracks => setFilteredLists(list => ({...list, [p.id]: tracks}))}
-                />
-              </Grid>
-            ))}
-            <Grid item xs={2}>
-              <Button
-                variant='contained'
-                color='primary'
-                onClick={() => addPlaylist()}
-                startIcon={<AddIcon />}
-              >
-                Add
+            sourcePlaylist.tracks = source_newTracks
+            setPlaylists([...playlists])
+          }}
+        >
+          <Grid item xs={4}>
+            <PlaylistWrapper
+              usedTracks={usedTracks}
+              onSelect={p => loadPlaylist(p)}
+            />
+          </Grid>
+
+          {masterPlaylist ? (
+            <>
+              {playlists.map(p => (
+                <Grid item xs={4} key={p.id}>
+                  <Subplaylist
+                    genres={genres}
+                    source={p.sourcePool}
+                    playlist={p}
+                    onDelete={() => deletePlaylist(p)}
+                    onFilterUpdate={tracks => setFilteredLists(list => ({ ...list, [p.id]: tracks }))}
+                  />
+                </Grid>
+              ))}
+              <Grid item xs={2}>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  onClick={() => addPlaylist()}
+                  startIcon={<AddIcon />}
+                >
+                  Add
               </Button>
-            </Grid>
-          </>
-        ) : null}
+              </Grid>
+            </>
+          ) : null}
         </DragDropContext>
       </Grid>
     </div>
