@@ -5,6 +5,7 @@ import {
   IconButton,
   Button,
   Dialog,
+  ListItemSecondaryAction
   // makeStyles
 } from '@material-ui/core'
 
@@ -83,14 +84,7 @@ export default function Subplaylist (props: {
   // TODO: Maybe put genres in each track
   const TrackCorrectGenre = (track: TrackObj): boolean => {
     if (selectedGenres.length === 0) return true
-    for (let artist of track.artists) {
-      for (let genre of artist.genres) {
-        if (selectedGenres.includes(genre)) {
-          return true
-        }
-      }
-    }
-    return false
+    return selectedGenres.some((g: string) => track.genres.includes(g));
   }
 
   const updateBlacklist = () => {
@@ -210,10 +204,9 @@ export default function Subplaylist (props: {
           <IconButton onClick={() => setEditDialogOpen(true)}>
             <EditIcon />
           </IconButton>
-          <ListItem>
+          <Divider orientation="vertical" flexItem />
             <SortSelector onSort={handleSortAction} />
-          </ListItem>
-          <ListItem>
+          <ListItemSecondaryAction>
             <Button
               variant='contained'
               color='secondary'
@@ -222,9 +215,9 @@ export default function Subplaylist (props: {
             >
               Delete
             </Button>
-          </ListItem>
+          </ListItemSecondaryAction>
         </ListItem>
-        <ListItem divider={true}>
+        <ListItem divider={true} >
           <GenreSelector
             genres={props.genres}
             onSelect={values => setSelectedGenres(values)}

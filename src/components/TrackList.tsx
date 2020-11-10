@@ -1,33 +1,65 @@
 import React, { useState } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
-import { Track } from '../types'
+import { Track as TrackObj } from '../types'
 import TrackEntry from './TrackEntry'
+import Track from './Track'
+import { VariableSizeList as List } from 'react-window'
 
 export default function (props: {
-   id?: string; 
-   tracks: Track[], 
-   isDropDisabled?: boolean, 
-   isDragDisabled?: boolean, 
-   isDragClone?: boolean,
-   checked?: Track[]
-   component: React.ElementType, 
-   childComponent: React.ElementType, 
-   handleDelete?: (tracks: Track[]) => void,
-   toggleChecked?: (track: Track) => void
-  }) {
+  id?: string; 
+  tracks: Track[], 
+  isDropDisabled?: boolean, 
+  isDragDisabled?: boolean, 
+  isDragClone?: boolean,
+  checked?: Track[]
+  component: React.ElementType, 
+  childComponent: React.ElementType, 
+  handleDelete?: (tracks: Track[]) => void,
+  toggleChecked?: (track: Track) => void
+ }) {
   const Wrapper = props.component;
 
+  const EntryInvariant = React.memo(({ data, index, style }: any) => (
+    data[index] && <TrackEntry
+      key={data[index].id}
+      parent={props.id}
+      track={data[index]}
+      index={index}
+      isDragDisabled={props.isDragDisabled}
+      style={style}
+    />
+  ))
+
+  const TrackInvariant = (provided: any, snapshot: any, rubric: any) => (
+    <div
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+      ref={provided.innerRef}
+    >
+      <Track track={props.tracks[rubric.source.index]} />
+    </div>
+  )
+
   return (
-    <Droppable droppableId={props.id || 'unknown'} isDropDisabled={props.isDropDisabled} >
+    <Droppable
+      droppableId={props.id || 'unknown'}
+      mode='virtual'
+      isDropDisabled={props.isDropDisabled}
+      renderClone={TrackInvariant}
+    >
       {(provided, snapshot) => (
-        <Wrapper ref={provided.innerRef} {...provided.droppableProps}>
-          {props.tracks.map((track, idx) => (props.checked && props.toggleChecked ? (
-            <TrackEntry key={track.id} parent={props.id} track={track} index={idx} isDragDisabled={props.isDragDisabled} checked={props.checked.includes(track)} toggleChecked={props.toggleChecked}/>
-          ): (
-            <TrackEntry key={track.id} parent={props.id} track={track} index={idx} isDragDisabled={props.isDragDisabled}/>
-          )))}
-          {provided.placeholder}
-        </Wrapper>
+        <List
+          outerRef={provided.innerRef}
+          {...provided.droppableProps}
+          innerElementType={Wrapper}
+          height={800}
+          itemCount={props.tracks.length + (snapshot.isUsingPlaceholder ? 1 : 0)}
+          itemData={props.tracks}
+          itemSize={() => 60}
+          width='100%'
+        >
+          {EntryInvariant}
+        </List>
       )}
     </Droppable>
   )

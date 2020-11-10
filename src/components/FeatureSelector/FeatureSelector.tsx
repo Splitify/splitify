@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Button } from '@material-ui/core'
-import DeleteIcon from '@material-ui/icons/Delete'
+import { IconButton, ListItemSecondaryAction  } from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close'
 
 import { TrackFilter } from '../../types'
 
@@ -66,24 +66,18 @@ export default function (props: {
       <ChildWrapper>
         <FeatureMenu onSelect={addSlider} hidden={sliders.map(el => el.name)} />
       </ChildWrapper>
-      {sliders.map(p => (
-        <ChildWrapper>
-          <ChildWrapper>
-            <AudioFeatureSlider
-              feature={p}
-              delete={() => deleteSlider(p.name)}
-              onFeatureUpdate={updateSlider}
-            />
-          </ChildWrapper>
-          <ChildWrapper>
-            <Button
-              variant='contained'
-              color='secondary'
-              onClick={() => deleteSlider(p.name)}
-              size={'small'}
-              startIcon={<DeleteIcon />}
-            />
-          </ChildWrapper>
+      {sliders.map((p, index) => (
+        <ChildWrapper key={index}>
+          <AudioFeatureSlider
+            feature={p}
+            delete={() => deleteSlider(p.name)}
+            onFeatureUpdate={updateSlider}
+          />
+          <ListItemSecondaryAction >
+            <IconButton onClick={() => deleteSlider(p.name)}>
+              <CloseIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
         </ChildWrapper>
       ))}
     </Wrapper>
