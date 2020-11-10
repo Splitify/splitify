@@ -156,19 +156,21 @@ class _PlaylistTrackGroup extends TrackExtensible implements PlaylistTrackGroup 
   }
 }
 
-export function touchTrack(track: Track, apply: PlaylistTrackBase): Track {
+export function asPlaylistTrack(track: Track) : PlaylistTrack {
   if ((track as PlaylistTrack).track) {
-    return Object.assign(track, apply)
+    return track as PlaylistTrack
   }
-  return new _PlaylistTrack(track, apply)
+  return new _PlaylistTrack(track, {})
+}
+
+export function touchTrack(track: Track, apply: PlaylistTrackBase): Track {
+  return Object.assign(asPlaylistTrack(track), apply)
+}
+
+export function isTrackCustom(track: Track) {
+    return !!(track as PlaylistTrack).isCustom
 }
 
 export function createTrackGroup(...tracks: PlaylistTrack[]) {
   return new _PlaylistTrackGroup(...tracks)
-}
-
-
-export function isTrackCustom(track: Track) {
-  return !!(track as PlaylistTrack).isCustom
-
 }
