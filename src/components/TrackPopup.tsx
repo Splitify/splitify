@@ -20,7 +20,26 @@ const numToNaturalTime = (n: Number) => {
   return `${date.getMinutes()} min ${date.getSeconds()} sec`
 }
 
-const COLOURS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
+
+const COLOUR_FROM = '#4dc088'
+const COLOUR_TO = '#699fd5'
+const rf = parseInt(COLOUR_FROM.slice(1, 3), 16)
+const gf = parseInt(COLOUR_FROM.slice(3, 5), 16)
+const bf = parseInt(COLOUR_FROM.slice(5, 7), 16)
+const rt = parseInt(COLOUR_TO.slice(1, 3), 16)
+const gt = parseInt(COLOUR_TO.slice(3, 5), 16)
+const bt = parseInt(COLOUR_TO.slice(5, 7), 16)
+
+const interpolate = (a: number, b: number, perc: number): number => {
+  return Math.floor(a + (b - a) * perc)
+}
+
+const COLOURS = options.map((v, i) => {
+  const perc = i/(options.length-1)
+  return "#" + interpolate(rf, rt, perc).toString(16)
+             + interpolate(bf, bt, perc).toString(16)
+             + interpolate(gf, gt, perc).toString(16)
+})
 
 const useStyles = makeStyles(theme => ({
   popover: {
@@ -50,7 +69,6 @@ export default function (props: {
   const data = Object.entries(props.track.features ?? {})
     .filter(([k]) => INCLUDED_FEATURES.includes(k))
     .map(([k, v]) => {
-      console.log(k);
       const option = options.find(o => o.id === k);
       const min = option?.min ?? 0;
       const max = option?.max ?? 1;
@@ -92,7 +110,7 @@ export default function (props: {
               <Grid item xs={6}>
                 <Typography gutterBottom variant='h4' style={{ fontSize: 30 }}>
                   {props.track.name}
-                  {props.track.explicit && <ExplicitIcon /> }
+                  {props.track.explicit && <ExplicitIcon />}
                 </Typography>
                 <Typography gutterBottom variant='h6'>
                   {props.track.album?.name}
