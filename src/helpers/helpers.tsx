@@ -166,3 +166,9 @@ export function touchTrack(track: Track, apply: PlaylistTrackBase): Track {
 export function createTrackGroup(...tracks: PlaylistTrack[]) {
   return new _PlaylistTrackGroup(...tracks)
 }
+
+
+export function isTrackCustom(track: Track) {
+  return !!(track as PlaylistTrack).isCustom
+
+}

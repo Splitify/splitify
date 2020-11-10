@@ -25,6 +25,7 @@ import SortSelector from './SortSelector'
 import MultiFilter from './MultiFilter'
 import { FeatureSelector } from './FeatureSelector'
 import TrackList from './TrackList'
+import { isTrackCustom } from '../helpers/helpers'
 
 // const useStyles = makeStyles(theme => ({
 //   table: {
@@ -49,7 +50,7 @@ import TrackList from './TrackList'
 // }))
 
 export default function Subplaylist (props: {
-  source: PlaylistObj
+  source: TrackObj[]
   playlist: PlaylistObj
   genres: string[]
   onFilterUpdate?: (tracks: TrackObj[]) => any
@@ -59,12 +60,8 @@ export default function Subplaylist (props: {
 
   const [editDialogOpen, setEditDialogOpen] = useState(false)
 
-  const [tracks, setTracks] = useState<TrackObj[]>(props.source.tracks)
-
-  // eslint-disable-next-line
-  const [includedTracks, setIncludedTracks] = useState<TrackObj[]>([])
-  // eslint-disable-next-line
-  const [excludedTracks, setExcludedTracks] = useState<TrackObj[]>([])
+  // to be displayed (after filter)
+  const [tracks, setTracks] = useState<TrackObj[]>(props.source)
 
   // Track selector
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
@@ -118,14 +115,14 @@ export default function Subplaylist (props: {
 
     // Update the list of track in the playlist when the genre / features filter is changed
     setTracks(
-      props.source.tracks
+      props.source
+        .filter(t => !isTrackCustom(t))
         .filter(TrackCorrectGenre)
         .filter(featureFilter)
-        .filter(t => !excludedTracks.includes(t))
-        .concat(includedTracks) // Add items after concat
+      .concat(props.source.filter(t => isTrackCustom(t)))
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedGenres, featureFilter, excludedTracks, includedTracks])
+  }, [selectedGenres, featureFilter, props.source])
 
   // Save tracks to playlist when updated
   useEffect(() => {
@@ -152,7 +149,7 @@ export default function Subplaylist (props: {
     updateView()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tracks, trackFilter, excludedTracks])
+  }, [tracks, trackFilter])
 
   return (
     <div>
