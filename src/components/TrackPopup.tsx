@@ -6,16 +6,9 @@ import { Grid, Popover, Typography, makeStyles } from '@material-ui/core'
 import ExplicitIcon from '@material-ui/icons/Explicit'
 
 import { Track as TrackObj } from '../types'
+import options from './FeatureSelector/Defaults'
 
-const EXCLUDED_FEATURES = [
-  // TODO: This should be shared with Zach's feature code
-  'duration_ms',
-  'tempo',
-  'mode',
-  'time_signature',
-  'loudness',
-  'key'
-]
+const INCLUDED_FEATURES = options.map(o => o.id as string)
 
 const strArrayToEnglish = (arr: string[]) => {
   const re = /(.*), (\w+)/
@@ -55,9 +48,14 @@ export default function (props: {
   const lengthEnglish = numToNaturalTime(props.track.duration_ms)
 
   const data = Object.entries(props.track.features ?? {})
-    .filter(([k]) => !EXCLUDED_FEATURES.includes(k))
+    .filter(([k]) => INCLUDED_FEATURES.includes(k))
     .map(([k, v]) => {
-      return { name: k, value: v }
+      console.log(k);
+      const option = options.find(o => o.id === k);
+      const min = option?.min ?? 0;
+      const max = option?.max ?? 1;
+      const scale = (k === 'loudness' || k === 'tempo') ? 1 : 100;
+      return { name: option?.name ?? "undefined", value: Math.max((v - min) / (max - min) * scale, 0.05) }
     })
 
   return (
