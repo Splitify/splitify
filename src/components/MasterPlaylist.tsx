@@ -29,6 +29,7 @@ export default function MasterPlaylist(
     playlist: PlaylistObj,
     usedTracks: TrackObj[],
     onOpenSelector: () => void,
+    onFilterUpdate?: (tracks: TrackObj[]) => any
   }) {
   const classes = useStyles()
 
@@ -57,6 +58,14 @@ export default function MasterPlaylist(
   const usedFilter = (t: TrackObj) => {
     return !filterUsedTracks || !props.usedTracks.some((m: TrackObj) => m.id === t.id);
   }
+  const [filteredTracks, setFilteredTracks] = useState<TrackObj[]>([])
+  useEffect(() => {
+    let tracks = props.playlist.tracks.filter(trackFilter).filter(usedFilter)
+    setFilteredTracks(tracks)
+    props.onFilterUpdate && props.onFilterUpdate(tracks)
+    
+    // eslint-disable-next-line
+  }, [trackFilter, usedFilter])
 
   const calRecommendedGenres = () => {
     let map = new Map<string, number>();
@@ -135,7 +144,7 @@ export default function MasterPlaylist(
 
         <TrackList
           id={props.playlist.id}
-          tracks={props.playlist.tracks.filter(trackFilter).filter(usedFilter)}
+          tracks={filteredTracks}
           isDragDisabled={false}
           isDropDisabled={true}
           component={List}

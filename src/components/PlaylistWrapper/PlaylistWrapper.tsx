@@ -11,6 +11,7 @@ export default function (props: {
   playlist?: Playlist
   usedTracks: TrackObj[],
   onSelect?: (playlist: Playlist) => any
+  onFilterUpdate?: (tracks: TrackObj[]) => any
 }) {
   let [playlist, setPlaylist] = useState(props.playlist)
   let [selectorOpen, setSelectorOpen] = useState(false)
@@ -29,7 +30,7 @@ export default function (props: {
         <PlaylistSelector onSelect={handleSelect} />
       </Dialog>
       {playlist ? (
-        <MasterPlaylist playlist={playlist} usedTracks={props.usedTracks} onOpenSelector={() => setSelectorOpen(true)} />
+        <MasterPlaylist playlist={playlist} usedTracks={props.usedTracks} onOpenSelector={() => setSelectorOpen(true)} onFilterUpdate={props.onFilterUpdate} />
       ) : (
           <Box
             textAlign='center'
