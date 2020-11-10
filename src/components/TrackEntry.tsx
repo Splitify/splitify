@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Draggable } from 'react-beautiful-dnd'
 import Skeleton from '@material-ui/lab/Skeleton'
 
-import { Track as TrackObj, PlaylistTrack as PlaylistTrackObj } from '../types'
+import { Track as TrackObj } from '../types'
 import Track from './Track'
 
 import DragHandleIcon from '@material-ui/icons/DragHandle'
@@ -39,9 +39,6 @@ export default function (props: {
             ...props.style,
             ...provided.draggableProps.style,
             cursor: 'pointer',
-            ...(track && (track as PlaylistTrackObj).isCustom ? {
-              color: 'red'
-            } : undefined),
             ...(snapshot.isDragging
               ? { backgroundColor: '#E6E6E6' }
               : undefined)
