@@ -87,6 +87,7 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTrack
           <ToggleButton
             size="small"
             selected={!filterUsedTracks}
+            value={!filterUsedTracks}
             onChange={() => setFilterUsedTracks(!filterUsedTracks)}
           >
             Show All

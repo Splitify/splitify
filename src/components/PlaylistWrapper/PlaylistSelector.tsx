@@ -45,8 +45,8 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
     setPlaylists((playlistCache = await getPlaylists()))
     setLoading(false)
   }
-  
-  const [checked, setChecked] = React.useState([""]);
+
+  const [checked, setChecked] = React.useState<string[]>([]);
 
   const handleToggle = (value: string) => () => {
     const currentIndex = checked.indexOf(value);
@@ -60,8 +60,25 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
 
     setChecked(newChecked);
   };
-  
-  // props.onSelect(await getPlaylist(playlist.id))
+
+  const handleSelection = async () => {
+    console.log(checked);
+    const playlists = await Promise.all(checked.map(async (s: string) => await getPlaylist(s, true)));
+    const tracks = playlists.map((p: Playlist) => p.tracks).flat();
+    const name = playlists.map((p: Playlist) => p.name).join(" + ");
+
+    await props.onSelect({
+      id: playlists[0].id,
+      name: name,
+      description: playlists[0].description,
+      image: playlists[0].image,
+      owner: playlists[0].owner,
+      snapshot_id: playlists[0].snapshot_id,
+      tracks: tracks,
+      uri: playlists[0].uri,
+      expand: playlists[0].expand, // TODO this doesn't make sense...
+    })
+  }
 
   let [playlists, setPlaylists] = useState<Playlist[]>(playlistCache)
   let [loading, setLoading] = useState(false)
@@ -135,6 +152,14 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
       </Fade>
 
       <CardActions>
+        <Button
+          size='small'
+          color='primary'
+          onClick={handleSelection}
+          disabled={loading}
+        >
+          Load
+        </Button>
         <Button
           size='small'
           color='primary'
