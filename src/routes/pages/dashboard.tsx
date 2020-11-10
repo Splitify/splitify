@@ -74,7 +74,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   }
 
   // Find playlist object given its ID
-  const findPlaylist = (id: string) => playlists.find(p => p.id === id)
+  const findPlaylist = (id: string) => (id === masterPlaylist?.id && masterPlaylist) || playlists.find(p => p.id === id)
 
   // Resolves filter index to track source index
   const getPlaylistIndexFromFilterIndex = (playlist: PlaylistObj, fIDX: number) => {
@@ -104,53 +104,60 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             console.info(evt)
             if (!evt.destination) return
 
-            let sourcePlaylist = findPlaylist(evt?.source?.droppableId)
-            let destPlaylist = findPlaylist(evt?.destination?.droppableId)
-
-            if (!sourcePlaylist || !destPlaylist) throw new Error("Failed to find filtered playlist view")
+            let sourcePlaylist = findPlaylist(evt.source.droppableId)
+            let destPlaylist = findPlaylist(evt.destination.droppableId)
+            if (!sourcePlaylist || !destPlaylist) throw new Error("Failed to find playlist")
 
             let sourceIdx = getPlaylistIndexFromFilterIndex(sourcePlaylist, evt.source.index)
             let destIdx = getPlaylistIndexFromFilterIndex(destPlaylist, evt.destination.index)
 
             if (sourcePlaylist === masterPlaylist) {
-              let trackCopy = touchTrack(masterPlaylist.tracks[sourceIdx], {
-                isCustom: true,
-                sourceID: masterPlaylist.id
-              })
+
+                console.log('drag from master');
+  
+                let trackCopy = touchTrack(masterPlaylist.tracks[sourceIdx], {
+                  isCustom: true,
+                  sourceID: masterPlaylist.id
+                })
+
+                const dest_newTracks = [...destPlaylist.tracks];
+                dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, trackCopy);
+                destPlaylist.tracks = dest_newTracks
+
+                setPlaylists([...playlists]) 
+
+                return
+            }
+
+           
+            const source_newTracks = [...sourcePlaylist.tracks];
+            let removed = source_newTracks.splice(sourceIdx, 1)[0];
+
+            if (sourcePlaylist !== destPlaylist) {
+              // Move between playlists, also updating the destination playlist
               const dest_newTracks = [...destPlaylist.tracks];
-              dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, trackCopy);
+              if (isTrackCustom(removed)) {
+                if (asPlaylistTrack(removed).sourceID === destPlaylist.id) {
+                  // Dragged back to the original playlist
+                  removed = touchTrack(removed, {
+                    isCustom: false
+                  })  
+                }
+              } else {
+                // Dragged from original to new playlist
+                removed = touchTrack(removed, {
+                  isCustom: true,
+                  sourceID: sourcePlaylist.id
+                })
+              }
+
+              dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
               destPlaylist.tracks = dest_newTracks
             } else {
-              const source_newTracks = [...sourcePlaylist.tracks];
-
-              let removed = source_newTracks.splice(sourceIdx, 1)[0];
-
-              if (sourcePlaylist !== destPlaylist) {
-                // Move between playlists, also updating the destination playlist
-                const dest_newTracks = [...destPlaylist.tracks];
-                if (isTrackCustom(removed)) {
-                  if (asPlaylistTrack(removed).sourceID === destPlaylist.id) {
-                    // Dragged back to the original playlist
-                    removed = touchTrack(removed, {
-                      isCustom: false
-                    })  
-                  }
-                } else {
-                  // Dragged from original to new playlist
-                  removed = touchTrack(removed, {
-                    isCustom: true,
-                    sourceID: sourcePlaylist.id
-                  })
-                }
-
-                dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
-                destPlaylist.tracks = dest_newTracks
-              } else {
-                source_newTracks.splice(destIdx, 0, removed);
-              }
-              
-              sourcePlaylist.tracks = source_newTracks
+              source_newTracks.splice(destIdx, 0, removed);
             }
+            
+            sourcePlaylist.tracks = source_newTracks
 
             setPlaylists([...playlists])
           }}
