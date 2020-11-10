@@ -25,6 +25,7 @@ import SortSelector from './SortSelector'
 import MultiFilter from './MultiFilter'
 import { FeatureSelector } from './FeatureSelector'
 import TrackList from './TrackList'
+import { isTrackCustom } from '../helpers/helpers'
 
 // const useStyles = makeStyles(theme => ({
 //   table: {
@@ -71,7 +72,6 @@ export default function Subplaylist (props: {
   // Visual properties
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => () => true)
 
-  // TODO: Maybe put genres in each track
   const TrackCorrectGenre = (track: TrackObj): boolean => {
     if (selectedGenres.length === 0) return true
     return selectedGenres.some((g: string) => track.genres.includes(g));
@@ -116,8 +116,10 @@ export default function Subplaylist (props: {
     // Update the list of track in the playlist when the genre / features filter is changed
     setTracks(
       props.source
+        .filter(t => !isTrackCustom(t))
         .filter(TrackCorrectGenre)
         .filter(featureFilter)
+      .concat(props.source.filter(t => isTrackCustom(t)))
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedGenres, featureFilter, props.source])
