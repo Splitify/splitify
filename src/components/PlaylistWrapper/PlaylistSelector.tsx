@@ -79,6 +79,10 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
       expand: playlists[0].expand, // TODO this doesn't make sense...
     })
   }
+  
+  const restrictSearch = (p: Playlist) =>
+    p.name.toLowerCase().includes(search.toLowerCase())
+    || checked.includes(p.id);
 
   let [playlists, setPlaylists] = useState<Playlist[]>(playlistCache)
   let [loading, setLoading] = useState(false)
@@ -113,11 +117,8 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
           style={{ maxHeight: 500, overflow: 'auto' }}
         >
           <List>
-            {playlists.filter(p =>
-              p.name.toLowerCase().includes(search.toLowerCase())
-              || checked.includes(p.id)
-            ).length > 0 ? (
-                playlists.map(playlist => (
+            {playlists.filter(restrictSearch).length > 0 ? (
+                playlists.filter(restrictSearch).map(playlist => (
                   <ListItem
                     button
                     disabled={loading}
