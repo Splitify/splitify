@@ -55,9 +55,13 @@ export default function MasterPlaylist(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // TODO: Changing playlist? props.playlist
 
-  const usedFilter = (t: TrackObj) => {
-    return !filterUsedTracks || !props.usedTracks.some((m: TrackObj) => m.id === t.id);
-  }
+  const usedFilter = React.useCallback(
+    (t: TrackObj) => 
+      !filterUsedTracks
+      || !props.usedTracks.some((m: TrackObj) => m.id === t.id),
+    [props.usedTracks, filterUsedTracks]
+  )
+
   const [filteredTracks, setFilteredTracks] = useState<TrackObj[]>([])
   useEffect(() => {
     let tracks = props.playlist.tracks.filter(trackFilter).filter(usedFilter)
