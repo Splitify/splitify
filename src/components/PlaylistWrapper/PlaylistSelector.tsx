@@ -63,6 +63,7 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
   };
 
   const handleSelection = async () => {
+    setLoading(true)
     console.log(checked);
     const playlists = await Promise.all(checked.map(async (s: string) => await getPlaylist(s, true)));
     const tracks = playlists.map((p: Playlist) => p.tracks).flat();
@@ -79,6 +80,7 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
       uri: playlists[0].uri,
       expand: playlists[0].expand, // TODO this doesn't make sense...
     })
+    setLoading(false)
   }
 
   const restrictSearch = (p: Playlist) =>
@@ -107,6 +109,7 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
             fullWidth
             // variant='outlined'
             margin='normal'
+            disabled={loading}
             onChange={evt => setSearch(evt.target.value)}
             InputProps={{
               startAdornment: (
