@@ -191,7 +191,6 @@ export default function Subplaylist (props: {
     <div>
       <Button
         variant='contained'
-        color='primary'
         onClick={updateBlacklist}
       >
         Remove Selected Songs
