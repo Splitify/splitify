@@ -1,6 +1,7 @@
 import { Track } from './Track'
 
 export interface PlaylistTrackBase {
+  uuid?: string
   isCustom?: boolean
   sourceID?: string
 }

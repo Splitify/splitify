@@ -80,10 +80,10 @@ export function allGenresFromPlaylist(playlist: Playlist): string[] {
 
 abstract class TrackExtensible implements Track {
   abstract track: Track
-  private _uuid?: string
+  readonly uuid: string
 
-  get uuid() {
-    return (this._uuid || (this._uuid = uuid()))
+  constructor() {
+    this.uuid = uuid()
   }
 
   get id() {
@@ -162,8 +162,8 @@ class _PlaylistTrackGroup extends TrackExtensible implements PlaylistTrackGroup 
   }
 }
 
-export function asPlaylistTrack(track: Track) : PlaylistTrack {
-  if ((track as PlaylistTrack).track) {
+export function asPlaylistTrack(track: Track, unsafe: boolean = false) : PlaylistTrack {
+  if ((track as PlaylistTrack).track || unsafe) {
     return track as PlaylistTrack
   }
   return new _PlaylistTrack(track, {})
