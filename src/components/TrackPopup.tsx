@@ -148,7 +148,7 @@ export default function (props: {
               </Typography>
             </Grid>
           </Grid>
-          {props.track.inclusion_reason && (
+          {props.track.inclusion_reason.length > 0 && (
             <Grid item xs>
               <Typography gutterBottom variant='body1'>
                 Included for: {inclusionEnglish}
