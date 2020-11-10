@@ -1,6 +1,7 @@
 import React from 'react'
 import { Track as TrackObj } from '../types'
 import TrackPopup from './TrackPopup'
+import { isTrackCustom } from '../helpers/helpers'
 import { ListItemText, Typography } from '@material-ui/core'
 
 export default function Track (props: {
@@ -40,7 +41,7 @@ export default function Track (props: {
           onMouseLeave={handlePopoverClose}
           onClick = {handlePreviewClick}
           align='center'
-          style={{'userSelect': 'none'}}
+          style={{'userSelect': 'none', ...(isTrackCustom(props.track) && {color: 'red'})}}
         >
           {props.track.name}
         </Typography>
