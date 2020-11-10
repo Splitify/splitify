@@ -4,7 +4,7 @@ import Auth from '../../auth'
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
 import { allGenresFromPlaylist, asPlaylistTrack, isTrackCustom, touchTrack } from "../../helpers/helpers";
-import { Playlist as PlaylistObj, Track as TrackObj, PlaylistTrack as PlaylistTrackObj } from "../../types";
+import { Playlist as PlaylistObj, Track as TrackObj } from "../../types";
 import { Grid, Button, makeStyles} from '@material-ui/core';
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
