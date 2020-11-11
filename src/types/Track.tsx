@@ -23,5 +23,4 @@ export interface Track {
   uri: string
   features?: Features
   expand : () => Promise<Track>
-
 }
