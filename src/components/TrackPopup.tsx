@@ -7,6 +7,8 @@ import ExplicitIcon from '@material-ui/icons/Explicit'
 
 import { Track as TrackObj } from '../types'
 import options from './FeatureSelector/Defaults'
+import { asPlaylistTrack, isTrackCustom } from '../helpers/helpers'
+
 
 const INCLUDED_FEATURES = options.map(o => o.id as string)
 
@@ -65,7 +67,7 @@ export default function (props: {
   const artistEnglish = strArrayToEnglish(props.track.artists.map(a => a.name))
   const genresEnglish = strArrayToEnglish(props.track.genres)
   const lengthEnglish = numToNaturalTime(props.track.duration_ms)
-  const inclusionEnglish = strArrayToEnglish(props.track.inclusion_reason)
+  const inclusionEnglish = strArrayToEnglish(asPlaylistTrack(props.track)?.inclusion_reason ?? [])
 
   const data = Object.entries(props.track.features ?? {})
     .filter(([k]) => INCLUDED_FEATURES.includes(k))
@@ -148,7 +150,7 @@ export default function (props: {
               </Typography>
             </Grid>
           </Grid>
-          {props.track.inclusion_reason.length > 0 && (
+          {inclusionEnglish.length > 0 && (
             <Grid item xs>
               <Typography gutterBottom variant='body1'>
                 Included for: {inclusionEnglish}

@@ -125,9 +125,6 @@ abstract class TrackExtensible implements Track {
   get artists () {
     return this.track.artists
   }
-  get inclusion_reason() {
-    return this.track.inclusion_reason
-  }
 
   async expand () {
     return this.track.expand()

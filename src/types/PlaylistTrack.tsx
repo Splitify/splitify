@@ -4,6 +4,7 @@ export interface PlaylistTrackBase {
   uuid?: string
   isCustom?: boolean
   sourceID?: string
+  inclusion_reason?: string[]
 }
 
 export interface PlaylistTrack extends PlaylistTrackBase, Track {

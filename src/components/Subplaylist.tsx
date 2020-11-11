@@ -25,7 +25,7 @@ import SortSelector from './SortSelector'
 import MultiFilter from './MultiFilter'
 import { FeatureSelector } from './FeatureSelector'
 import TrackList from './TrackList'
-import { isTrackCustom } from '../helpers/helpers'
+import { asPlaylistTrack, isTrackCustom } from '../helpers/helpers'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 
 const useStyles = makeStyles(theme => ({
@@ -74,9 +74,9 @@ export default function Subplaylist(props: {
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => () => true)
 
   const TrackCorrectGenre = (track: TrackObj): boolean => {
-    if (selectedGenres.includes("ALL")) return true
     const intersection = selectedGenres.filter(g => track.genres.includes(g));
-    track.inclusion_reason = track.inclusion_reason.concat(intersection);
+    let t = asPlaylistTrack(track)
+    t.inclusion_reason = t?.inclusion_reason?.concat(intersection) ?? [];
     return intersection.length !== 0;
   }
 
@@ -124,7 +124,7 @@ export default function Subplaylist(props: {
     const filters = [TrackCorrectGenre, featureFilter]
 
     // Update the list of track in the playlist when the genre / features filter is changed
-    props.source.forEach(t => t.inclusion_reason = []);
+    props.source.map(t => asPlaylistTrack(t)).forEach(t => t.inclusion_reason = []);
     setTracks(
       doFilter(tracks, ...filters) // Existing current matches (to maintain ordering)
       .concat(doFilter(props.source, ...filters)) // New items from the source pool
