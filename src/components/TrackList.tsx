@@ -1,11 +1,11 @@
 import React from 'react'
 import { Droppable } from 'react-beautiful-dnd'
-import { Track as TrackObj } from '../types'
+import { Track as TrackObj, Blacklist } from '../types'
 import TrackEntry from './TrackEntry'
 import Track from './Track'
 import { VariableSizeList as List } from 'react-window'
 
-export default function (props: { id?: string; tracks: TrackObj[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDragClone?: boolean, component: React.ElementType, childComponent: React.ElementType}) {
+export default function (props: { id: string; tracks: TrackObj[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDeletable: boolean, isDragClone?: boolean, component: React.ElementType, childComponent: React.ElementType, checked: Blacklist[],  toggleChecked?: (id: string, track: TrackObj) => any}) {
   const Wrapper = props.component;
 
   const EntryInvariant = React.memo(({ data, index, style }: any) => (
@@ -13,8 +13,12 @@ export default function (props: { id?: string; tracks: TrackObj[], isDropDisable
       key={data[index].id}
       track={data[index]}
       index={index}
+      id={props.id}
       isDragDisabled={props.isDragDisabled}
+      isDeletable={props.isDeletable}
       style={style}
+      checked={props.checked}
+      toggleChecked={props.toggleChecked!}
     />
   ))
 

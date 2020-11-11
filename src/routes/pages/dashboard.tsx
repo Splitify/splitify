@@ -4,7 +4,7 @@ import Auth from '../../auth'
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
 import { allGenresFromPlaylist, asPlaylistTrack, isTrackCustom, touchTrack } from "../../helpers/helpers";
-import { Playlist as PlaylistObj, Track as TrackObj } from "../../types";
+import { Blacklist, Playlist as PlaylistObj, Track as TrackObj } from "../../types";
 import { Grid, Button, makeStyles} from '@material-ui/core';
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
@@ -27,6 +27,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
   const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>()
   const [genres, setGenres] = useState<string[]>([])
+  const [checked, setChecked] = useState<Blacklist[]>([{id: "", tracks: []}])
 
   const filteredLists: { [id: string]: TrackObj[] } = useState({})[0]; 
   
@@ -59,12 +60,20 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     }
   }
 
+  
+  
   const [playlists, setPlaylists] = useState<PlaylistObjectPP[]>([])
+  const [blacklists, setBlacklists] = useState<Blacklist[]>([{id: "", tracks: []}])
 
   const addPlaylist = () => {
     const playlist = createPlaylist()
     console.log('Adding playlist', playlist.id)
     setPlaylists([...playlists, playlist])
+    var blacklist = {
+      id: playlist.id,
+      tracks: []
+    }
+    setBlacklists([...blacklists, blacklist])
   }
 
   const deletePlaylist = (playlist: PlaylistObj) => {
@@ -75,6 +84,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
   // Find playlist object given its ID
   const findPlaylist = (id: string) => (id === masterPlaylist?.id && masterPlaylist) || playlists.find(p => p.id === id)
+  const findBlacklist = (id: string) => (blacklists.find(blacklist => blacklist.id === id))
+  const findChecked = (id: string) => (checked.find(playlist => playlist.id === id))
 
   // Resolves filter index to track source index
   const getPlaylistIndexFromFilterIndex = (playlist: PlaylistObj, fIDX: number) => {
@@ -82,6 +93,40 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     let key = asPlaylistTrack(filterList[fIDX])
     let targetTrackUUID = asPlaylistTrack(key).uuid
     return playlist.tracks.findIndex(t => asPlaylistTrack(t).uuid === targetTrackUUID)
+  }
+
+  const toggleChecked = (id: string, track: TrackObj) => () => {
+    let checkedPlaylist = findChecked(id)
+    if (!checkedPlaylist) throw new Error("Failed to find checked list")
+
+    const currentIndex = checkedPlaylist!.tracks.indexOf(track);
+
+    if (currentIndex === -1) {
+      checkedPlaylist.tracks.push(track);
+    } else {
+      checkedPlaylist.tracks.splice(currentIndex, 1);
+    }
+    setChecked([...checked]);
+    console.log(checked)
+  };
+
+  const updateBlacklist = () => {
+    let playlistID
+    let tracks: TrackObj[]
+    let sourceBlacklist: Blacklist | undefined
+    checked.map((playlist) => {
+      playlistID = playlist.id
+      tracks = playlist.tracks
+      sourceBlacklist = findBlacklist(playlistID)
+      if (!sourceBlacklist) throw new Error("Failed to find checked list")
+      tracks.map((track) => {if (!sourceBlacklist!.tracks.includes(track)) {
+        sourceBlacklist!.tracks.push(track)
+      }})
+    })
+    setBlacklists([...blacklists])
+    let allChecked = checked
+    allChecked.map((checkedPlaylist) => checkedPlaylist.tracks = [])
+    setChecked([...checked])
   }
 
   const usedTracks = Array.from(new Set(playlists.map((p: PlaylistObj) => p.tracks).flat()));
@@ -98,6 +143,12 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         }
       >
         Logout
+      </Button>
+      <Button
+        variant='contained'
+        onClick={updateBlacklist}
+      >
+        Remove Selected Songs
       </Button>
       <Grid style={{ padding: '5%' }} container spacing={5}>
         <DragDropContext
@@ -128,7 +179,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
                 return
             }
-
            
             const source_newTracks = [...sourcePlaylist.tracks];
             let removed = source_newTracks.splice(sourceIdx, 1)[0];
@@ -150,7 +200,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                   sourceID: sourcePlaylist.id
                 })
               }
-
               dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
               destPlaylist.tracks = dest_newTracks
             } else {
@@ -175,11 +224,13 @@ const Dashboard: React.FC<IDashboardProps> = () => {
               {playlists.map(p => (
                 <Grid item xs={4} key={p.id}>
                   <Subplaylist
+                    toggleChecked={toggleChecked}
                     genres={genres}
                     source={p.sourcePool}
                     playlist={p}
                     onDelete={() => deletePlaylist(p)}
                     onFilterUpdate={tracks => filteredLists[p.id] = tracks}
+                    checked = {checked}
                   />
                 </Grid>
               ))}
