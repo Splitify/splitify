@@ -73,7 +73,7 @@ export default function Subplaylist (props: {
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => () => true)
 
   const TrackCorrectGenre = (track: TrackObj): boolean => {
-    if (selectedGenres.includes("all")) return true
+    if (selectedGenres.includes("ALL")) return true
     return selectedGenres.some((g: string) => track.genres.includes(g));
   }
 
