@@ -102,7 +102,7 @@ export async function createOrUpdatePlaylist(
     })
 
     // add the to the playlist 100 tracks at a time
-    paginated_api_request(playlist.id, trackUris, api.addTracksToPlaylist);
+    await paginated_api_request(playlist.id, trackUris, api.addTracksToPlaylist);
   }else{
     console.log("Current playlist exists. Updating instead..");
     // get current playlist info and construct payload
@@ -123,30 +123,32 @@ export async function createOrUpdatePlaylist(
       return track.uri;
     })
 
-    paginated_api_request(playlist.id, trackUris, api.addTracksToPlaylist);
+    await paginated_api_request(playlist.id, trackUris, api.addTracksToPlaylist);
   }
 }
 
-function paginated_api_request(playlist_id: string, track_uris: string[], api_function: (playlistId: string, uris: string[]) => any) : void{
+async function paginated_api_request(playlist_id: string, track_uris: string[], api_function: (playlistId: string, uris: string[]) => any) {
 
   let remaining = track_uris.length;
-  let start = 0
-  setTimeout(() => {
-    while(remaining > 0){
-      console.log("start: ", start, "remaining: ", remaining);
-      if(remaining >= 100){
-        console.log("adding from: ", start, " to: ", start+100);
-        api_function(playlist_id, track_uris.slice(start, start+100));
-        remaining -= 100
-      }else{
-        console.log("adding from: ", start, " to: ", track_uris.length);
-        api_function(playlist_id, track_uris.slice(start));
-        remaining -= (track_uris.length - start);
-      }
-      start += 100;
+  let start = 0;
+
+  while(remaining > 0){
+    console.log("start: ", start, "remaining: ", remaining);
+    if(remaining >= 100){
+      console.log("adding from: ", start, " to: ", start+100);
+      api_function(playlist_id, track_uris.slice(start, start+100));
+      remaining -= 100
+    }else{
+      console.log("adding from: ", start, " to: ", track_uris.length);
+      api_function(playlist_id, track_uris.slice(start));
+      remaining -= (track_uris.length - start);
     }
-  }, 250)
+    start += 100;
+    await timer(250);
+  }
 }
+
+function timer(ms: any) { return new Promise(res => setTimeout(res, ms)); }
 
 abstract class TrackExtensible implements Track {
   abstract track: Track

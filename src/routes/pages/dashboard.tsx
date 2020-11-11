@@ -54,11 +54,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       uri: '',
       public: false,
       collaborative: false,
-<<<<<<< HEAD
       sourcePool: masterPlaylist!.tracks.map(t => asPlaylistTrack(t).clone!()),
-=======
-      sourcePool: [...masterPlaylist!.tracks],
->>>>>>> 40fec76aaa21510007ea159bee9497045efd4598
       expand: async function () {
         return this
       }
