@@ -69,7 +69,6 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
     const tracks = playlists.map((p: Playlist) => p.tracks).flat();
     const name = playlists.map((p: Playlist) => p.name).join(" + ");
     const id = playlists.map(p => p.id).join('')
-    console.log(id);
     
     await props.onSelect({
       id: id,
