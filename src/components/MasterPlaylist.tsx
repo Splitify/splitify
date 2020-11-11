@@ -62,9 +62,6 @@ export default function MasterPlaylist(
     let map = new Map<string, number>();
     let filter = (t: TrackObj) => !props.usedTracks.some((m: TrackObj) => m.id === t.id);
 
-    if (props.usedTracks.length === props.playlist.tracks.length) {
-      filter = (t: TrackObj) => true;
-    }
     props.playlist.tracks
       .filter(filter)
       .map((t: TrackObj) => t.genres)
