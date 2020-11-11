@@ -108,13 +108,13 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     let sourcePlaylist: PlaylistObj | undefined
     let source_newTracks: TrackObj[]
     let index: number
-    checked.map((checkedList) => {
+    checked.forEach((checkedList) => {
       console.log("id is " + checkedList.id)
       playlistID = checkedList.id
       sourcePlaylist = findPlaylist(playlistID)
       if (!sourcePlaylist) throw new Error("Failed to get playlist")
       source_newTracks = [...sourcePlaylist!.tracks];
-      checkedList.tracks.map((track) => {
+      checkedList.tracks.forEach((track) => {
         index = source_newTracks.map(function(e) { return e.id; }).indexOf(track.id);
         source_newTracks!.splice(index, 1);
       })

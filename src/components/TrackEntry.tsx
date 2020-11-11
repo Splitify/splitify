@@ -22,9 +22,6 @@ export default function (props: {
   let [track, setTrack] = useState<TrackObj>()
   let [checked, setChecked] = useState<boolean>(false)
 
-  
-  
-
   useEffect(() => {
     ;(async () => {
       setTrack(await props.track.expand())
@@ -38,7 +35,7 @@ export default function (props: {
     if (list) {
       isChecked = list.tracks.includes(track!)
     }
-    setChecked(isChecked)}, [track]
+    setChecked(isChecked)}, [track, props.checked, props.id]
     )
 
   function Checkboxes(props: {id: string, track: TrackObj, isDeletable: boolean, toggleChecked: (id: string, track: TrackObj) => any}) {
