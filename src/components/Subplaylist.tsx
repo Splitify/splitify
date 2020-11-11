@@ -5,7 +5,7 @@ import {
   IconButton,
   Button,
   Dialog,
-  ListItemSecondaryAction
+  Typography
   // makeStyles
 } from '@material-ui/core'
 
@@ -26,31 +26,32 @@ import SortSelector from './SortSelector'
 import MultiFilter from './MultiFilter'
 import { FeatureSelector } from './FeatureSelector'
 import TrackList from './TrackList'
-import { isTrackCustom } from '../helpers/helpers'
+import { asPlaylistTrack, isTrackCustom } from '../helpers/helpers'
+import makeStyles from '@material-ui/core/styles/makeStyles'
 
-// const useStyles = makeStyles(theme => ({
-//   table: {
-//     //Add styling for tables here
-//   },
-//   root: {
-//     display: 'flex',
-//     justifyContent: 'center',
-//     flexWrap: 'wrap',
-//     '& > *': {
-//       margin: theme.spacing(0.5)
-//     }
-//   },
-//   paper: {
-//     width: 200,
-//     height: 230,
-//     overflow: 'auto'
-//   },
-//   button: {
-//     margin: theme.spacing(0.5, 0)
-//   }
-// }))
+const useStyles = makeStyles(theme => ({
+  table: {
+    //Add styling for tables here
+  },
+  root: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    '& > *': {
+      margin: theme.spacing(0.5)
+    }
+  },
+  paper: {
+    width: 200,
+    height: 230,
+    overflow: 'auto'
+  },
+  button: {
+    margin: theme.spacing(1)
+  }
+}))
 
-export default function Subplaylist (props: {
+export default function Subplaylist(props: {
   source: TrackObj[]
   playlist: PlaylistObj
   genres: string[]
@@ -59,7 +60,7 @@ export default function Subplaylist (props: {
   onFilterUpdate?: (tracks: TrackObj[]) => any
   onDelete?: (playlist: PlaylistObj) => any
 }) {
-  // const classes = useStyles()
+  const classes = useStyles()
 
   const [editDialogOpen, setEditDialogOpen] = useState(false)
 
@@ -76,11 +77,13 @@ export default function Subplaylist (props: {
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => () => true)
 
   const TrackCorrectGenre = (track: TrackObj): boolean => {
-    if (selectedGenres.includes("ALL")) return true
-    return selectedGenres.some((g: string) => track.genres.includes(g));
+    const intersection = selectedGenres.filter(g => track.genres.includes(g));
+    let t = asPlaylistTrack(track)
+    t.included_genres = intersection
+    return intersection.length !== 0;
   }
 
-  function handleSortAction (type: string) {
+  function handleSortAction(type: string) {
     const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
       let var1: string = ''
       let var2: string = ''
@@ -113,17 +116,23 @@ export default function Subplaylist (props: {
     updateView()
   }
 
+  function doFilter(source: TrackObj[], ...filters: ((track: TrackObj) => boolean)[]) : TrackObj[] {
+    // Filter a track if either condition is met
+    // Condition A: Track is custom
+    // Condition B: Track meets all supplied filters
+    return source.filter(t => isTrackCustom(t) || filters.every(f => f(t)))
+  }
+
   useEffect(() => {
-    // FIXME: Ordering property isn't persisted between updates to genre and features
+    const filters = [TrackCorrectGenre, featureFilter]
 
     // Update the list of track in the playlist when the genre / features filter is changed
     setTracks(
-      props.source
-        .filter(t => !isTrackCustom(t))
-        .filter(TrackCorrectGenre)
-        .filter(featureFilter)
-      .concat(props.source.filter(t => isTrackCustom(t)))
+      doFilter(tracks, ...filters) // Existing current matches (to maintain ordering)
+      .concat(doFilter(props.source, ...filters)) // New items from the source pool
+      .filter((v,i,a) => a.indexOf(v) === i) // Dedup
     )
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedGenres, featureFilter, props.source])
 
@@ -166,25 +175,27 @@ export default function Subplaylist (props: {
         />
       </Dialog>
       <List component={Paper}>
-        <ListItem divider={true}>
-          {props.playlist.name}
+        <ListItem style={{justifyContent:"space-between"}}>
+          <Typography>
+            {props.playlist.name}
+          </Typography>
           <IconButton onClick={() => setEditDialogOpen(true)}>
             <EditIcon />
           </IconButton>
           <Divider orientation="vertical" flexItem />
-            <SortSelector onSort={handleSortAction} />
-          <ListItemSecondaryAction>
-            <Button
-              variant='contained'
-              color='secondary'
-              onClick={() => props.onDelete && props.onDelete(props.playlist)}
-              startIcon={<DeleteIcon />}
-            >
-              Delete
+          <SortSelector onSort={handleSortAction} />
+          <Divider orientation="vertical" flexItem />
+          <Button
+            variant='contained'
+            color='secondary'
+            className={classes.button}
+            onClick={() => props.onDelete && props.onDelete(props.playlist)}
+            startIcon={<DeleteIcon />}
+          >
+            Delete
             </Button>
-          </ListItemSecondaryAction>
         </ListItem>
-        <ListItem divider={true} >
+        <ListItem>
           <GenreSelector
             genres={props.genres}
             onSelect={values => setSelectedGenres(values)}
@@ -195,7 +206,6 @@ export default function Subplaylist (props: {
           component={List}
           childComponent={ListItem}
         />
-        <Divider />
         <ListItem divider={true}>
           <MultiFilter callback={f => setTrackFilter(() => f)} />
         </ListItem>

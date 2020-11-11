@@ -3,9 +3,9 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import Auth from '../../auth'
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
-import { allGenresFromPlaylist, asPlaylistTrack, isTrackCustom, touchTrack } from "../../helpers/helpers";
+import { allGenresFromPlaylist, asPlaylistTrack, touchTrack } from "../../helpers/helpers";
 import { CheckedList, Playlist as PlaylistObj, Track as TrackObj } from "../../types";
-import { Grid, Button, makeStyles} from '@material-ui/core';
+import { Grid, Button, makeStyles } from '@material-ui/core';
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
 import { DragDropContext } from 'react-beautiful-dnd';
@@ -82,6 +82,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   // Resolves filter index to track source index
   const getPlaylistIndexFromFilterIndex = (playlist: PlaylistObj, fIDX: number) => {
     let filterList = filteredLists[playlist.id]
+    if (fIDX === filterList.length) return -1 // Drag to the end
     let key = asPlaylistTrack(filterList[fIDX])
     let targetTrackUUID = asPlaylistTrack(key).uuid
     return playlist.tracks.findIndex(t => asPlaylistTrack(t).uuid === targetTrackUUID)
@@ -133,6 +134,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
               variant='contained'
               color='secondary'
               onClick={updateSourcePool}
+              style={{ float: 'left', margin: 5 }}
             >
               Delete Selected Tracks
             </Button>
@@ -149,6 +151,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       <Button
         variant='contained'
         color='primary'
+        style={{ float: 'right', margin: 5 }}
         onClick={() =>
           Auth.logout().then(() => {
             window.location.href = window.location.origin + '/'
@@ -158,7 +161,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         Logout
       </Button>
       <DeleteTracksButton/>
-      <Grid style={{ padding: '5%' }} container spacing={5}>
+      <Grid style={{ padding: '2%', width: '100%', paddingTop: 0 }} container spacing={5}>
         <DragDropContext
           onDragEnd={evt => {
             if (!evt.destination) return
@@ -176,7 +179,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   
                 let trackCopy = asPlaylistTrack(masterPlaylist.tracks[sourceIdx]).clone!({
                   isCustom: true,
-                  sourceID: masterPlaylist.id
+                  sourceID: masterPlaylist.id,
+                  sourceName: () => "Master Playlist"
                 })
 
                 const dest_newTracks = [...destPlaylist.tracks];
@@ -194,19 +198,29 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             if (sourcePlaylist !== destPlaylist) {
               // Move between playlists, also updating the destination playlist
               const dest_newTracks = [...destPlaylist.tracks];
-              if (isTrackCustom(removed)) {
-                if (asPlaylistTrack(removed).sourceID === destPlaylist.id) {
+
+              let removedPP = asPlaylistTrack(removed)
+              if (removedPP.isCustom) {
+                if (removedPP.sourceID === destPlaylist.id) {
                   // Dragged back to the original playlist
                   removed = touchTrack(removed, {
                     isCustom: false
-                  })  
+                  })
                 }
               } else {
                 // Dragged from original to new playlist
                 removed = touchTrack(removed, {
                   isCustom: true,
-                  sourceID: sourcePlaylist.id
+                  sourceID: sourcePlaylist.id,
+                  sourceName: () => sourcePlaylist?.name
                 })
+
+                // Remove item from source pool
+                let sourcePlaylistPP = sourcePlaylist as PlaylistObjectPP
+                let poolIdx = sourcePlaylistPP.sourcePool.findIndex(t => asPlaylistTrack(t).uuid === removedPP.uuid)
+                if (poolIdx > -1) {
+                  sourcePlaylistPP.sourcePool.splice(poolIdx, 1)
+                }
               }
               dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
               destPlaylist.tracks = dest_newTracks
@@ -242,7 +256,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                   />
                 </Grid>
               ))}
-              <Grid item xs={2}>
+              <Grid item xs={1}>
                 <Button
                   variant='contained'
                   color='primary'

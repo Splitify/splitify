@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Playlist as PlaylistObj, Track as TrackObj, TrackFilter } from '../types'
-import { Edit as EditIcon } from '@material-ui/icons'
 
-import { makeStyles, List, ListItem, Paper } from '@material-ui/core'
+import { makeStyles, List, ListItem, Paper, Popover, IconButton, Box, Divider } from '@material-ui/core'
+import { Info as InfoIcon, Replay as ReplayIcon } from '@material-ui/icons';
 
 import MultiFilter from './MultiFilter'
 import TrackList from './TrackList'
-import ToggleButton from '@material-ui/lab/ToggleButton/ToggleButton'
-import Popover from '@material-ui/core/Popover/Popover'
-import InfoIcon from '@material-ui/icons/Info';
-import IconButton from '@material-ui/core/IconButton/IconButton'
+
+import { ToggleButton } from '@material-ui/lab'
 
 const useStyles = makeStyles(theme => ({
   popover: {
@@ -17,10 +15,14 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     width: '100%',
-    maxWidth: 540
+    minWidth: 300
   },
   paper: {
     padding: theme.spacing(1)
+  },
+  button: {
+    margin: theme.spacing(1),
+    whiteSpace: "nowrap"
   }
 }))
 
@@ -99,25 +101,18 @@ export default function MasterPlaylist(
   return (
     <div className={classes.root}>
       <List component={Paper}>
-        <ListItem>
+        <ListItem style={{ justifyContent: "space-between" }} >
           Master Playlist{props.playlist.name.includes('+') ? "s" : ""}: {props.playlist.name}
           <IconButton onClick={props.onOpenSelector}>
-            <EditIcon />
+            <ReplayIcon />
           </IconButton>
-        </ListItem>
-        <ListItem>
-          <ToggleButton
-            size="small"
-            selected={!filterUsedTracks}
-            value={!filterUsedTracks}
-            onChange={() => setFilterUsedTracks(!filterUsedTracks)}
-          >
-            Show All
-          </ToggleButton>
-          <InfoIcon
-            onMouseEnter={(event: any) => setPopupAnchor(event.currentTarget)}
-            onMouseLeave={() => setPopupAnchor(null)}
-          />
+          <Divider orientation="vertical" flexItem />
+          <Box style={{ padding: 12 }}>
+            <InfoIcon
+              onMouseEnter={(event: any) => setPopupAnchor(event.currentTarget)}
+              onMouseLeave={() => setPopupAnchor(null)}
+            />
+          </Box>
           <Popover
             id='mouse-over-popover'
             className={classes.popover}
@@ -138,10 +133,20 @@ export default function MasterPlaylist(
           >
             {popupAnchor == null ? "" : calRecommendedGenres()}
           </Popover>
+          <Divider orientation="vertical" flexItem />
+          <ToggleButton
+            className={classes.button}
+            size="small"
+            selected={!filterUsedTracks}
+            value={!filterUsedTracks}
+            onChange={() => setFilterUsedTracks(!filterUsedTracks)}
+          >
+            Show All
+          </ToggleButton>
         </ListItem>
-        <ListItem>
+        <ListItem divider={true}>
           <MultiFilter callback={f => setTrackFilter(() => f)} />
-        </ListItem>
+        </ListItem >
 
         <TrackList
           id={props.playlist.id}
