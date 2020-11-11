@@ -131,19 +131,21 @@ function paginated_api_request(playlist_id: string, track_uris: string[], api_fu
 
   let remaining = track_uris.length;
   let start = 0
-  while(remaining > 0){
-    console.log("start: ", start, "remaining: ", remaining);
-    if(remaining >= 100){
-      console.log("adding from: ", start, " to: ", start+100);
-      api_function(playlist_id, track_uris.slice(start, start+100));
-      remaining -= 100
-    }else{
-      console.log("adding from: ", start, " to: ", track_uris.length);
-      api_function(playlist_id, track_uris.slice(start));
-      remaining -= (track_uris.length - start);
+  setTimeout(() => {
+    while(remaining > 0){
+      console.log("start: ", start, "remaining: ", remaining);
+      if(remaining >= 100){
+        console.log("adding from: ", start, " to: ", start+100);
+        api_function(playlist_id, track_uris.slice(start, start+100));
+        remaining -= 100
+      }else{
+        console.log("adding from: ", start, " to: ", track_uris.length);
+        api_function(playlist_id, track_uris.slice(start));
+        remaining -= (track_uris.length - start);
+      }
+      start += 100;
     }
-    start += 100
-  }
+  }, 250)
 }
 
 abstract class TrackExtensible implements Track {
