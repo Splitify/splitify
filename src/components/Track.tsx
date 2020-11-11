@@ -6,12 +6,12 @@ import { ListItemText, Typography } from '@material-ui/core'
 
 let globalAudioPlayers: HTMLAudioElement[] = []
 
-export default function Track (props: {
+export default function Track(props: {
   track: TrackObj
   isDragging?: boolean
 }): JSX.Element {
   const [popupAnchor, setPopupAnchor] = useState(null)
-  
+
   const audio = props.track.preview_url && new Audio(props.track.preview_url)
 
   const handlePopoverOpen = (event: any) => {
@@ -23,7 +23,7 @@ export default function Track (props: {
     setPopupAnchor(null)
   }
 
-  function stopAudio () {
+  function stopAudio() {
     if (!audio) return
     globalAudioPlayers.forEach(a => a.pause())
     globalAudioPlayers = []
@@ -31,7 +31,7 @@ export default function Track (props: {
     audio.currentTime = 0
   }
 
-  function startAudio () {
+  function startAudio() {
     if (!audio) return
     audio.currentTime = 0
     globalAudioPlayers.push(audio)
@@ -41,7 +41,7 @@ export default function Track (props: {
   const handlePreviewClick = () => {
     audio && ((!audio.paused || audio.currentTime) ? stopAudio : startAudio)()
   }
-  
+
   useEffect(() => {
     return () => {
       stopAudio()
@@ -50,18 +50,18 @@ export default function Track (props: {
   }, [])
 
   return (
-      <ListItemText disableTypography={true}>
-        <Typography
-          aria-haspopup='true'
-          onMouseEnter={handlePopoverOpen}
-          onMouseLeave={handlePopoverClose}
-          onClick = {handlePreviewClick}
-          align='center'
-          style={{'userSelect': 'none', ...(isTrackCustom(props.track) && {color: 'red'})}}
-        >
-          {props.track.name}
-        </Typography>
-        <TrackPopup track={props.track} anchor={popupAnchor} />
-      </ListItemText>
+    <ListItemText disableTypography={true}>
+      <Typography
+        aria-haspopup='true'
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+        onClick={handlePreviewClick}
+        align='center'
+        style={{ 'userSelect': 'none', ...(isTrackCustom(props.track) && { textDecoration: "underline" }) }}
+      >
+        {props.track.name}
+      </Typography>
+      <TrackPopup track={props.track} anchor={popupAnchor} />
+    </ListItemText>
   )
 }

@@ -23,6 +23,7 @@ export default function (props: {
     props.onUpdateFilterFunction(track => {
       // If track does not have features, pass it through
       if (!track.features) return true
+      
 
       return sliders.every(slider => {
         let value = track!.features![slider.id]

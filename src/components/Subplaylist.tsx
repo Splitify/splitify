@@ -25,7 +25,7 @@ import SortSelector from './SortSelector'
 import MultiFilter from './MultiFilter'
 import { FeatureSelector } from './FeatureSelector'
 import TrackList from './TrackList'
-import { isTrackCustom } from '../helpers/helpers'
+import { asPlaylistTrack, isTrackCustom } from '../helpers/helpers'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 
 const useStyles = makeStyles(theme => ({
@@ -74,8 +74,10 @@ export default function Subplaylist(props: {
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => () => true)
 
   const TrackCorrectGenre = (track: TrackObj): boolean => {
-    if (selectedGenres.includes("ALL")) return true
-    return selectedGenres.some((g: string) => track.genres.includes(g));
+    const intersection = selectedGenres.filter(g => track.genres.includes(g));
+    let t = asPlaylistTrack(track)
+    t.included_genres = intersection
+    return intersection.length !== 0;
   }
 
   function handleSortAction(type: string) {

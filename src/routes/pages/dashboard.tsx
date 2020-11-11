@@ -119,7 +119,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   
                 let trackCopy = asPlaylistTrack(masterPlaylist.tracks[sourceIdx]).clone!({
                   isCustom: true,
-                  sourceID: masterPlaylist.id
+                  sourceID: masterPlaylist.id,
+                  sourceName: () => "Master Playlist"
                 })
 
                 const dest_newTracks = [...destPlaylist.tracks];
@@ -151,7 +152,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                 // Dragged from original to new playlist
                 removed = touchTrack(removed, {
                   isCustom: true,
-                  sourceID: sourcePlaylist.id
+                  sourceID: sourcePlaylist.id,
+                  sourceName: () => sourcePlaylist?.name
                 })
 
                 // Remove item from source pool
