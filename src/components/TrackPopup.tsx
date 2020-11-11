@@ -62,8 +62,8 @@ function determineInclusion(track: TrackObj) {
   const sourceCB = ptrack?.sourceName
   const inclusionGenres = ptrack?.included_genres ?? []
   if (isTrackCustom(track)) return "Dragged by user from " + sourceCB?.call([])
-  if (inclusionGenres.length == 0) return ""
-  return "Included for the genre" + (inclusionGenres.length == 1 ? ": ": "s: ") + strArrayToEnglish(inclusionGenres)
+  if (inclusionGenres.length === 0) return ""
+  return "Included for the genre" + (inclusionGenres.length === 1 ? ": ": "s: ") + strArrayToEnglish(inclusionGenres)
   
 }
 
