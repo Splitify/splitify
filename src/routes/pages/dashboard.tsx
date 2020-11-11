@@ -3,7 +3,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import Auth from '../../auth'
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
-import { allGenresFromPlaylist, asPlaylistTrack, isTrackCustom, touchTrack } from "../../helpers/helpers";
+import { allGenresFromPlaylist, asPlaylistTrack, touchTrack } from "../../helpers/helpers";
 import { Playlist as PlaylistObj, Track as TrackObj } from "../../types";
 import { Grid, Button, makeStyles } from '@material-ui/core';
 import { v4 as uuid } from 'uuid';
@@ -137,8 +137,10 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             if (sourcePlaylist !== destPlaylist) {
               // Move between playlists, also updating the destination playlist
               const dest_newTracks = [...destPlaylist.tracks];
-              if (isTrackCustom(removed)) {
-                if (asPlaylistTrack(removed).sourceID === destPlaylist.id) {
+
+              let removedPP = asPlaylistTrack(removed)
+              if (removedPP.isCustom) {
+                if (removedPP.sourceID === destPlaylist.id) {
                   // Dragged back to the original playlist
                   removed = touchTrack(removed, {
                     isCustom: false
@@ -150,6 +152,13 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                   isCustom: true,
                   sourceID: sourcePlaylist.id
                 })
+
+                // Remove item from source pool
+                let sourcePlaylistPP = sourcePlaylist as PlaylistObjectPP
+                let poolIdx = sourcePlaylistPP.sourcePool.findIndex(t => asPlaylistTrack(t).uuid === removedPP.uuid)
+                if (poolIdx > -1) {
+                  sourcePlaylistPP.sourcePool.splice(poolIdx, 1)
+                }
               }
 
               dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
