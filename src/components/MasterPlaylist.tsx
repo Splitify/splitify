@@ -141,7 +141,6 @@ export default function MasterPlaylist(
           isDragDisabled={true}
           isDropDisabled={true}
           component={List}
-          childComponent={ListItem}
         />
       </List>
     </div>

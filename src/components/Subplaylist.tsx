@@ -200,7 +200,7 @@ export default function Subplaylist(props: {
           id={props.playlist.id}
           tracks={filterView}
           component={List}
-          childComponent={ListItem}
+          showActions={true}
         />
       </List>
     </div>
