@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
 import { Track as TrackObj } from '../types'
 import TrackEntry from './TrackEntry'
 import Track from './Track'
-import { VariableSizeList as List } from 'react-window'
 
+import { VariableSizeList as List } from 'react-window'
 export default function (props: { id?: string; tracks: TrackObj[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDragClone?: boolean, component: React.ElementType, childComponent: React.ElementType}) {
+
+  const [height, setHeight] = useState(0);
+
   const Wrapper = props.component;
 
   const EntryInvariant = React.memo(({ data, index, style }: any) => (
@@ -41,7 +44,13 @@ export default function (props: { id?: string; tracks: TrackObj[], isDropDisable
           outerRef={provided.innerRef}
           {...provided.droppableProps}
           innerElementType={Wrapper}
-          height={800}
+          ref={el => {
+            // FIXME: Refactor to make it nice
+            if (!el) return
+            let elem = (el as any)?._outerRef as HTMLElement
+            setHeight(window.innerHeight - elem.getBoundingClientRect().top - 50)
+          }}
+          height={height}
           itemCount={props.tracks.length + (snapshot.isUsingPlaceholder ? 1 : 0)}
           itemData={props.tracks}
           itemSize={() => 60}
