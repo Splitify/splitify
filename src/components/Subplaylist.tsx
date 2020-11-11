@@ -184,7 +184,7 @@ export default function Subplaylist(props: {
             Delete
             </Button>
         </ListItem>
-        <ListItem divider={true} >
+        <ListItem>
           <GenreSelector
             genres={props.genres}
             onSelect={values => setSelectedGenres(values)}
@@ -195,7 +195,6 @@ export default function Subplaylist(props: {
           component={List}
           childComponent={ListItem}
         />
-        <Divider />
         <ListItem divider={true}>
           <MultiFilter callback={f => setTrackFilter(() => f)} />
         </ListItem>

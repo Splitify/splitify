@@ -19,7 +19,6 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     width: '100%',
-    maxWidth: 540,
     minWidth: 300
   },
   paper: {

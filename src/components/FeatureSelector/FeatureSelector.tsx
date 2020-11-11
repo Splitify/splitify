@@ -67,7 +67,7 @@ export default function (props: {
         <FeatureMenu onSelect={addSlider} hidden={sliders.map(el => el.name)} />
       </ChildWrapper>
       {sliders.map((p, index) => (
-        <ChildWrapper key={index}>
+        <ChildWrapper key={index} style={{paddingTop: 0, paddingBottom: 0}}>
           <AudioFeatureSlider
             feature={p}
             delete={() => deleteSlider(p.name)}

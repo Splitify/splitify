@@ -5,8 +5,13 @@ import { FeatureSliderData } from './FeatureSliderData'
 const useStylesSlider = makeStyles((theme) => ({
   root: {
     marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(2),
-    width: '100%'
+    marginRight: theme.spacing(1),
+    paddingTop: 0,
+    paddingBottom: 0,
+    width: '100%',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between"
   }
 }))
 
@@ -18,7 +23,7 @@ export default function (props: {
   const classes = useStylesSlider()
   return (
     <div className={classes.root}>
-      <Typography id='range-slider' gutterBottom>
+      <Typography id='range-slider' gutterBottom style={{ minWidth: 130 }}>
         {props.feature.name}
       </Typography>
       <Slider
@@ -33,6 +38,10 @@ export default function (props: {
         min={props.feature.min}
         max={props.feature.max}
         defaultValue={[props.feature.min, props.feature.max]}
+        style={{
+          marginLeft: 25,
+          marginRight: 30
+        }}
         marks={[
           {
             value: props.feature.min,
