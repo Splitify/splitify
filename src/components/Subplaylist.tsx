@@ -82,7 +82,6 @@ export default function Subplaylist(props: {
   const [success, setSuccess] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("Save")
   const [filterIsActive, setFilterIsActive] = useState(false);
-  const [filterSelectorIsActive, setFilterSelectorIsActive] = useState(false);
 
   const buttonClassname = clsx({
     [classes.button]: true,
@@ -225,7 +224,10 @@ export default function Subplaylist(props: {
           name={props.playlist.name}
           onSave={(newName?: string) => {
             setEditDialogOpen(false)
-            if (newName) props.playlist.name = newName
+            if (newName){ 
+              props.playlist.name = newName
+              setsaveDisabled(false);
+            }
           }}
         />
       </Dialog>
@@ -253,7 +255,7 @@ export default function Subplaylist(props: {
             {loading ? (
               <CircularProgress size={24} className={classes.buttonProgress} />
             ) : (
-              filterIsActive || filterSelectorIsActive ? (
+              filterIsActive ? (
                 <Tooltip title="Saving is disabled while filter is active.">
                   <span>
                     <Button 
@@ -307,7 +309,6 @@ export default function Subplaylist(props: {
           onUpdateFilterFunction={f => setFeatureFilter(() => f)}
           component={List}
           childComponent={ListItem}
-          filterIsActive={f => setFilterSelectorIsActive(f)}
         />
         <ListItem divider={true}>
           <MultiFilter
