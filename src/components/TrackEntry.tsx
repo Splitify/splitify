@@ -11,7 +11,6 @@ import { asPlaylistTrack } from '../helpers/helpers'
 
 export default function (props: {
   track: TrackObj
-  parent?: string
   index?: number
   isDragDisabled?: boolean
   style?: any
