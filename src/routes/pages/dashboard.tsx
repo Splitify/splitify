@@ -79,8 +79,12 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   // Resolves filter index to track source index
   const getPlaylistIndexFromFilterIndex = (playlist: PlaylistObj, fIDX: number) => {
     let filterList = filteredLists[playlist.id]
-    let targetTrackID = filterList[fIDX]?.id
-    return playlist.tracks.findIndex(t => t.id === targetTrackID)
+    let key = asPlaylistTrack(filterList[fIDX], true)
+    let targetTrack = key.uuid || key.id
+    return playlist.tracks.findIndex(_t => {
+      let t = asPlaylistTrack(_t, true)
+      return [t.uuid, t.id].includes(targetTrack)
+    })
   }
 
   const usedTracks = Array.from(new Set(playlists.map((p: PlaylistObj) => p.tracks).flat()));
