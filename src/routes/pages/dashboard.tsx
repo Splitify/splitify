@@ -52,7 +52,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       snapshot_id: '',
       tracks: [],
       uri: '',
-      sourcePool: [...masterPlaylist!.tracks],
+      sourcePool: masterPlaylist!.tracks.map(t => asPlaylistTrack(t).clone!()),
       expand: async function () {
         return this
       }
@@ -79,12 +79,9 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   // Resolves filter index to track source index
   const getPlaylistIndexFromFilterIndex = (playlist: PlaylistObj, fIDX: number) => {
     let filterList = filteredLists[playlist.id]
-    let key = asPlaylistTrack(filterList[fIDX], true)
-    let targetTrack = key.uuid || key.id
-    return playlist.tracks.findIndex(_t => {
-      let t = asPlaylistTrack(_t, true)
-      return [t.uuid, t.id].includes(targetTrack)
-    })
+    let key = asPlaylistTrack(filterList[fIDX])
+    let targetTrackUUID = asPlaylistTrack(key).uuid
+    return playlist.tracks.findIndex(t => asPlaylistTrack(t).uuid === targetTrackUUID)
   }
 
   const usedTracks = Array.from(new Set(playlists.map((p: PlaylistObj) => p.tracks).flat()));
@@ -105,7 +102,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       <Grid style={{ padding: '5%' }} container spacing={5}>
         <DragDropContext
           onDragEnd={evt => {
-            console.info(evt)
             if (!evt.destination) return
 
             let sourcePlaylist = findPlaylist(evt.source.droppableId)
@@ -119,7 +115,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
                 console.log('drag from master');
   
-                let trackCopy = touchTrack(masterPlaylist.tracks[sourceIdx], {
+                let trackCopy = asPlaylistTrack(masterPlaylist.tracks[sourceIdx]).clone!({
                   isCustom: true,
                   sourceID: masterPlaylist.id
                 })
