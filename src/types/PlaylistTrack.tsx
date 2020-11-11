@@ -8,4 +8,5 @@ export interface PlaylistTrackBase {
 
 export interface PlaylistTrack extends PlaylistTrackBase, Track {
   track: Track
+  clone?(apply?: PlaylistTrackBase): PlaylistTrack
 }

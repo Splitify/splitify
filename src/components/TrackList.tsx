@@ -14,7 +14,6 @@ export default function (props: { id?: string; tracks: TrackObj[], isDropDisable
   const EntryInvariant = React.memo(({ data, index, style }: any) => (
     data[index] && <TrackEntry
       key={data[index].id}
-      parent={props.id}
       track={data[index]}
       index={index}
       isDragDisabled={props.isDragDisabled}
