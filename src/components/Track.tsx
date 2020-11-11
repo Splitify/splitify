@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Track as TrackObj } from '../types'
 import TrackPopup from './TrackPopup'
 import { isTrackCustom } from '../helpers/helpers'
@@ -8,29 +8,29 @@ export default function Track (props: {
   track: TrackObj
   isDragging?: boolean
 }): JSX.Element {
-  const [popupAnchor, setPopupAnchor] = React.useState(null)
-  // eslint-disable-next-line
-  const [audio, setAudio] = React.useState(new Audio(props.track.preview_url));
-  const[playing, setPlaying] = React.useState(false)
+  const [popupAnchor, setPopupAnchor] = useState(null)
+  
+  const audio = props.track.preview_url && new Audio(props.track.preview_url)
 
   const handlePopoverOpen = (event: any) => {
     props.isDragging || setPopupAnchor(event.currentTarget)
   }
-  const handlePlaying = () =>{
-    audio.pause()
-    setPlaying(false)
-  }
-  const handlePaused = () =>{
-    audio.play()
-    setPlaying(true)
-  }
+
   const handlePopoverClose = () => {
-    if (playing) handlePlaying()
+    audio && audio.pause()
     setPopupAnchor(null)
   }
 
   const handlePreviewClick = () => {
-      playing?handlePlaying():handlePaused()
+    if (audio) {
+      if (!audio.paused || audio.currentTime) {
+        audio.pause()
+        
+      } else {
+        audio.currentTime = 0
+        audio.play()
+      }
+    }
   }
   
   return (
