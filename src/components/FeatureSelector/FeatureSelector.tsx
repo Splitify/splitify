@@ -64,7 +64,7 @@ export default function (props: {
 
   return (
     <Wrapper>
-      {sliders.length == options.length ? "" : (
+      {sliders.length === options.length ? "" : (
         <ChildWrapper>
           <FeatureMenu onSelect={addSlider} hidden={sliders.map(el => el.name)} />
         </ChildWrapper>
