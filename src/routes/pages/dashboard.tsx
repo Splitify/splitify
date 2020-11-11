@@ -5,7 +5,7 @@ import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
 import { allGenresFromPlaylist, asPlaylistTrack, isTrackCustom, touchTrack } from "../../helpers/helpers";
 import { Playlist as PlaylistObj, Track as TrackObj } from "../../types";
-import { Grid, Button, makeStyles} from '@material-ui/core';
+import { Grid, Button, makeStyles } from '@material-ui/core';
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
 import { DragDropContext } from 'react-beautiful-dnd';
@@ -91,6 +91,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       <Button
         variant='contained'
         color='primary'
+        style={{ float: 'right', margin: 5 }}
         onClick={() =>
           Auth.logout().then(() => {
             window.location.href = window.location.origin + '/'
@@ -99,7 +100,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       >
         Logout
       </Button>
-      <Grid style={{ padding: '5%' }} container spacing={5}>
+      <Grid style={{ padding: '2%', width: '100%', paddingTop: 0 }} container spacing={5}>
         <DragDropContext
           onDragEnd={evt => {
             if (!evt.destination) return
@@ -141,7 +142,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                   // Dragged back to the original playlist
                   removed = touchTrack(removed, {
                     isCustom: false
-                  })  
+                  })
                 }
               } else {
                 // Dragged from original to new playlist
@@ -183,7 +184,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                   />
                 </Grid>
               ))}
-              <Grid item xs={2}>
+              <Grid item xs={1}>
                 <Button
                   variant='contained'
                   color='primary'
