@@ -12,5 +12,5 @@
 - [ ] I assigned the story to myself on Pivotal Tracker before I started working on this
 - [ ] Added a link to the user story context
 - [ ] Added a description of my changes
-- [ ] Assigned at least two reviewers
+- [ ] Assigned at least one reviewer
 <!-- Once you've checked all of these you can probably delete this checklist for brevity -->

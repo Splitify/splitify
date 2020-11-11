@@ -107,10 +107,8 @@ export function parseGenres(
   let genres = lm.toptags?.tag
     .filter((t: any) => t.count > 50 && t.name.length < 20)
     .map((t: any) => t.name.toLowerCase())
-    .filter((s: string) => {
-      return s.split(" ").some((g: string) => GENRE_WHITELIST.includes(g))
-        || s.split("-").some((g: string) => GENRE_WHITELIST.includes(g))
-    }) ?? [];
+    .filter((s: string) => s.replace('-', '').split(" ").some((g: string) => GENRE_WHITELIST.includes(g)))
+    ?? [];
   genres.splice(3, 99); // Only keep the first three. The quality goes down quick on some songs
   genres = genres.filter((g: string) => !artistNames.includes(g));
 

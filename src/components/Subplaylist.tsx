@@ -11,7 +11,7 @@ import {
   CircularProgress,
   makeStyles,
   Tooltip,
-  ListItemSecondaryAction
+  Typography
 } from '@material-ui/core';
 import EditPlaylistNameDialog from './EditPlaylistNameDialog';
 import { createOrUpdatePlaylist, getUserProfile } from '../helpers/helpers';
@@ -28,6 +28,7 @@ import SortSelector from './SortSelector'
 import MultiFilter from './MultiFilter'
 import { FeatureSelector } from './FeatureSelector'
 import TrackList from './TrackList'
+import { isTrackCustom } from '../helpers/helpers'
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -36,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     justifyContent: 'center',
-    flexWrap: 'nowrap',
+    flexWrap: 'wrap',
     '& > *': {
       margin: theme.spacing(0.5)
     }
@@ -45,10 +46,6 @@ const useStyles = makeStyles(theme => ({
     width: 200,
     height: 230,
     overflow: 'auto'
-  },
-  wrapper: {
-    margin: theme.spacing(1),
-    position: 'relative',
   },
   button: {
     margin: theme.spacing(0.5, 0),
@@ -69,41 +66,15 @@ const useStyles = makeStyles(theme => ({
     marginLeft: -8,
   },
 }))
-  // makeStyles
 
-
-
-// const useStyles = makeStyles(theme => ({
-//   table: {
-//     //Add styling for tables here
-//   },
-//   root: {
-//     display: 'flex',
-//     justifyContent: 'center',
-//     flexWrap: 'wrap',
-//     '& > *': {
-//       margin: theme.spacing(0.5)
-//     }
-//   },
-//   paper: {
-//     width: 200,
-//     height: 230,
-//     overflow: 'auto'
-//   },
-//   button: {
-//     margin: theme.spacing(0.5, 0)
-//   }
-// }))
-
-export default function Subplaylist (props: {
-  source: PlaylistObj
+export default function Subplaylist(props: {
+  source: TrackObj[]
   playlist: PlaylistObj
   genres: string[]
   onFilterUpdate?: (tracks: TrackObj[]) => any
   onDelete?: (playlist: PlaylistObj) => any
 }) {
-
-  const classes = useStyles();
+  const classes = useStyles()
 
   // SAVING ANIMATION STUFF
   const [saveDisabled, setsaveDisabled] = useState(true);
@@ -143,7 +114,7 @@ export default function Subplaylist (props: {
   };
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [tracks, setTracks] = useState<TrackObj[]>([])
+  const [tracks, setTracks] = useState<TrackObj[]>(props.source)
 
   // eslint-disable-next-line
   const [includedTracks, setIncludedTracks] = useState<TrackObj[]>([])
@@ -159,13 +130,12 @@ export default function Subplaylist (props: {
   // Visual properties
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => () => true)
 
-  // TODO: Maybe put genres in each track
   const TrackCorrectGenre = (track: TrackObj): boolean => {
-    if (selectedGenres.length === 0) return true
+    if (selectedGenres.includes("ALL")) return true
     return selectedGenres.some((g: string) => track.genres.includes(g));
   }
 
-  function handleSortAction (type: string) {
+  function handleSortAction(type: string) {
     const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
       let var1: string = ''
       let var2: string = ''
@@ -203,14 +173,14 @@ export default function Subplaylist (props: {
 
     // Update the list of track in the playlist when the genre / features filter is changed
     setTracks(
-      props.source.tracks
+      props.source
+        .filter(t => !isTrackCustom(t))
         .filter(TrackCorrectGenre)
         .filter(featureFilter)
-        .filter(t => !excludedTracks.includes(t))
-        .concat(includedTracks) // Add items after concat
+        .concat(props.source.filter(t => isTrackCustom(t)))
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedGenres, featureFilter, excludedTracks, includedTracks])
+  }, [selectedGenres, featureFilter, props.source])
 
   // Save tracks to playlist when updated
   useEffect(() => {
@@ -238,7 +208,7 @@ export default function Subplaylist (props: {
     updateView()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tracks, trackFilter, excludedTracks])
+  }, [tracks, trackFilter])
 
   return (
     <div>
@@ -252,23 +222,25 @@ export default function Subplaylist (props: {
         />
       </Dialog>
       <List component={Paper}>
-        <ListItem divider={true}>
-          {props.playlist.name}
+        <ListItem style={{justifyContent:"space-between"}}>
+          <Typography>
+            {props.playlist.name}
+          </Typography>
           <IconButton onClick={() => setEditDialogOpen(true)}>
             <EditIcon />
           </IconButton>
           <Divider orientation="vertical" flexItem />
-            <SortSelector onSort={handleSortAction} />
-          <ListItemSecondaryAction>
-            <Button
-              variant='contained'
-              color='secondary'
-              onClick={() => props.onDelete && props.onDelete(props.playlist)}
-              startIcon={<DeleteIcon />}
-            >
-              Delete
-            </Button>
-          </ListItemSecondaryAction>
+          <SortSelector onSort={handleSortAction} />
+          <Divider orientation="vertical" flexItem />
+          <Button
+            variant='contained'
+            color='secondary'
+            className={classes.button}
+            onClick={() => props.onDelete && props.onDelete(props.playlist)}
+            startIcon={<DeleteIcon />}
+          >
+            Delete
+          </Button>
           <ListItem>
             {loading ? (
               <CircularProgress size={24} className={classes.buttonProgress} />
@@ -317,7 +289,7 @@ export default function Subplaylist (props: {
             )}
           </ListItem>
         </ListItem>
-        <ListItem divider={true} >
+        <ListItem>
           <GenreSelector
             genres={props.genres}
             onSelect={values => setSelectedGenres(values)}
@@ -329,7 +301,6 @@ export default function Subplaylist (props: {
           childComponent={ListItem}
           filterIsActive={f => setFilterSelectorIsActive(f)}
         />
-        <Divider />
         <ListItem divider={true}>
           <MultiFilter
             callback={f => setTrackFilter(() => f)} 

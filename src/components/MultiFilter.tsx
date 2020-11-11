@@ -35,11 +35,10 @@ export default function MultiFilter(props: {
     <FormControl fullWidth={true}>
       <FormGroup aria-label="filter" row>
         <TextField
-          // style={{ width: '50%' }}
           variant='outlined'
           label='Filter'
           onChange={(e) => setFilterValue(e.target.value.toLowerCase())}
-          style={{flex: 1}}
+          style={{flex: 1, marginRight: "5px"}}
         />
         <RadioGroup value={filterCategory} onChange={handleFilterChange} row>
         {["Name", "Artist", "Album", "Genre"].map((k, index) => (

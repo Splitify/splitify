@@ -7,6 +7,7 @@ import Track from './Track'
 
 import DragHandleIcon from '@material-ui/icons/DragHandle'
 import { ListItem, ListItemSecondaryAction, ListItemIcon } from '@material-ui/core'
+import { asPlaylistTrack } from '../helpers/helpers'
 
 export default function (props: {
   track: TrackObj
@@ -26,7 +27,7 @@ export default function (props: {
 
   return (
     <Draggable
-      draggableId={`${props.parent}:${props.track.id}`}
+      draggableId={`${props.parent}:${asPlaylistTrack(props.track, true).uuid || props.track.id}`}
       index={props.index ?? -1}
       isDragDisabled={props.isDragDisabled}
     >
@@ -39,9 +40,7 @@ export default function (props: {
             ...props.style,
             ...provided.draggableProps.style,
             cursor: 'pointer',
-            ...(snapshot.isDragging
-              ? { backgroundColor: '#E6E6E6' }
-              : undefined)
+            ...(snapshot.isDragging && { backgroundColor: '#E6E6E6' })
           }}
           divider={true}
         >

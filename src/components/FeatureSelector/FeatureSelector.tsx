@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { IconButton, ListItemSecondaryAction  } from '@material-ui/core'
+import { IconButton, ListItemSecondaryAction } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 
 import { TrackFilter } from '../../types'
@@ -7,6 +7,7 @@ import { TrackFilter } from '../../types'
 import { FeatureSliderData } from './FeatureSliderData'
 import FeatureMenu from './FeatureMenu'
 import AudioFeatureSlider from './AudioFeatureSlider'
+import options from './Defaults'
 
 export default function (props: {
   onUpdateFilterFunction: (f: TrackFilter) => void
@@ -71,11 +72,13 @@ export default function (props: {
 
   return (
     <Wrapper>
-      <ChildWrapper>
-        <FeatureMenu onSelect={addSlider} hidden={sliders.map(el => el.name)} />
-      </ChildWrapper>
+      {sliders.length === options.length ? "" : (
+        <ChildWrapper>
+          <FeatureMenu onSelect={addSlider} hidden={sliders.map(el => el.name)} />
+        </ChildWrapper>
+      )}
       {sliders.map((p, index) => (
-        <ChildWrapper key={index}>
+        <ChildWrapper key={index} style={{ paddingTop: 0, paddingBottom: 0 }}>
           <AudioFeatureSlider
             feature={p}
             delete={() => deleteSlider(p.name)}

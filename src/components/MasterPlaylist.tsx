@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { Playlist as PlaylistObj, Track as TrackObj, TrackFilter } from '../types'
-
 import { makeStyles, List, ListItem, Paper } from '@material-ui/core'
 
 import MultiFilter from './MultiFilter'
 import TrackList from './TrackList'
 import ToggleButton from '@material-ui/lab/ToggleButton/ToggleButton'
 import Popover from '@material-ui/core/Popover/Popover'
-import InfoIcon from '@material-ui/icons/Info';
+import { Info as InfoIcon, Replay as ReplayIcon } from '@material-ui/icons';
+import IconButton from '@material-ui/core/IconButton/IconButton'
+import Box from '@material-ui/core/Box/Box'
+import Divider from '@material-ui/core/Divider/Divider'
 
 const useStyles = makeStyles(theme => ({
   popover: {
@@ -15,14 +17,23 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     width: '100%',
-    maxWidth: 540
+    minWidth: 300
   },
   paper: {
     padding: theme.spacing(1)
+  },
+  button: {
+    margin: theme.spacing(1),
+    whiteSpace: "nowrap"
   }
 }))
 
-export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTracks: TrackObj[] }) {
+export default function MasterPlaylist(
+  props: {
+    playlist: PlaylistObj,
+    usedTracks: TrackObj[],
+    onOpenSelector: () => void,
+  }) {
   const classes = useStyles()
 
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => () => true)
@@ -54,26 +65,23 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTrack
   const calRecommendedGenres = () => {
     let map = new Map<string, number>();
     let filter = (t: TrackObj) => !props.usedTracks.some((m: TrackObj) => m.id === t.id);
-    
-    if (props.usedTracks.length === props.playlist.tracks.length) {
-      filter = (t: TrackObj) => true;
-    }
+
     props.playlist.tracks
       .filter(filter)
       .map((t: TrackObj) => t.genres)
       .flat()
       .forEach((g: string) => map.set(g, (map.get(g) ?? 0) + 1));
-      
+
     var mapAsc = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
-    mapAsc.splice(3, 99999);
+    mapAsc.splice(3, Number.MAX_SAFE_INTEGER);
     const suggestions = mapAsc.map(a => a[0]);
-    
+
     if (suggestions.length === 0) {
       return "No suggestions"
     } else if (suggestions.length === 1) {
       return "Try " + suggestions[0];
     }
-    
+
     const re = /(.*), (\w+)/
     const english = suggestions.join(', ').replace(re, 'Try $1 or $2')
     return english;
@@ -82,19 +90,18 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTrack
   return (
     <div className={classes.root}>
       <List component={Paper}>
-        <ListItem>Master Playlist: {props.playlist.name}</ListItem>
-        <ListItem>
-          <ToggleButton
-            size="small"
-            selected={!filterUsedTracks}
-            onChange={() => setFilterUsedTracks(!filterUsedTracks)}
-          >
-            Show All
-          </ToggleButton>
-          <InfoIcon
-            onMouseEnter={(event: any) => setPopupAnchor(event.currentTarget)}
-            onMouseLeave={() => setPopupAnchor(null)}
-          />
+        <ListItem style={{ justifyContent: "space-between" }} >
+          Master Playlist{props.playlist.name.includes('+') ? "s" : ""}: {props.playlist.name}
+          <IconButton onClick={props.onOpenSelector}>
+            <ReplayIcon />
+          </IconButton>
+          <Divider orientation="vertical" flexItem />
+          <Box style={{ padding: 12 }}>
+            <InfoIcon
+              onMouseEnter={(event: any) => setPopupAnchor(event.currentTarget)}
+              onMouseLeave={() => setPopupAnchor(null)}
+            />
+          </Box>
           <Popover
             id='mouse-over-popover'
             className={classes.popover}
@@ -115,10 +122,20 @@ export default function MasterPlaylist(props: { playlist: PlaylistObj, usedTrack
           >
             {popupAnchor == null ? "" : calRecommendedGenres()}
           </Popover>
+          <Divider orientation="vertical" flexItem />
+          <ToggleButton
+            className={classes.button}
+            size="small"
+            selected={!filterUsedTracks}
+            value={!filterUsedTracks}
+            onChange={() => setFilterUsedTracks(!filterUsedTracks)}
+          >
+            Show All
+          </ToggleButton>
         </ListItem>
-        <ListItem>
+        <ListItem divider={true}>
           <MultiFilter callback={f => setTrackFilter(() => f)} />
-        </ListItem>
+        </ListItem >
 
         <TrackList
           id={props.playlist.id}
