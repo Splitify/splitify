@@ -28,7 +28,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>()
   const [genres, setGenres] = useState<string[]>([])
 
-  const filteredLists: { [id: string]: TrackObj[] } = {}; 
+  const filteredLists: { [id: string]: TrackObj[] } = useState({})[0]; 
   
   function loadPlaylist(playlist: PlaylistObj) {
     Promise.all(playlist.tracks.map(t => t.expand())).then(() => {
