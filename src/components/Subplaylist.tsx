@@ -17,7 +17,7 @@ import {
   Playlist as PlaylistObj,
   Track as TrackObj,
   TrackFilter,
-  Blacklist
+  CheckedList
 } from '../types'
 
 import GenreSelector from './GenreSelector'
@@ -54,7 +54,7 @@ export default function Subplaylist (props: {
   source: TrackObj[]
   playlist: PlaylistObj
   genres: string[]
-  checked: Blacklist[]
+  checked: CheckedList[]
   toggleChecked: (id: string, tracks: TrackObj) => any
   onFilterUpdate?: (tracks: TrackObj[]) => any
   onDelete?: (playlist: PlaylistObj) => any
