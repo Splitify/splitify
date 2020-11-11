@@ -76,7 +76,7 @@ export default function Subplaylist(props: {
   const TrackCorrectGenre = (track: TrackObj): boolean => {
     const intersection = selectedGenres.filter(g => track.genres.includes(g));
     let t = asPlaylistTrack(track)
-    t.included_genres = t?.included_genres?.concat(intersection) ?? [];
+    t.included_genres = intersection
     return intersection.length !== 0;
   }
 
@@ -124,7 +124,6 @@ export default function Subplaylist(props: {
     const filters = [TrackCorrectGenre, featureFilter]
 
     // Update the list of track in the playlist when the genre / features filter is changed
-    props.source.map(t => asPlaylistTrack(t)).forEach(t => t.included_genres = []);
     setTracks(
       doFilter(tracks, ...filters) // Existing current matches (to maintain ordering)
       .concat(doFilter(props.source, ...filters)) // New items from the source pool

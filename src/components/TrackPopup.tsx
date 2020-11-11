@@ -57,6 +57,14 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
+function determineInclusion(track: TrackObj) {
+  const ptrack = asPlaylistTrack(track)
+  const sourceCB = ptrack?.sourceName
+  const inclusionGenres = ptrack?.included_genres ?? []
+  if (isTrackCustom(track)) return "Dragged by user from " + sourceCB?.call([])
+  if (inclusionGenres.length > 0) return "Included for the genres: " + strArrayToEnglish(inclusionGenres)
+  return ""
+}
 
 export default function (props: {
   track: TrackObj
@@ -68,10 +76,7 @@ export default function (props: {
   const artistEnglish = strArrayToEnglish(props.track.artists.map(a => a.name))
   const genresEnglish = strArrayToEnglish(props.track.genres)
   const lengthEnglish = numToNaturalTime(props.track.duration_ms)
-  const ptrack = asPlaylistTrack(props.track)
-  const inclusionEnglish = isTrackCustom(props.track)
-    ? "Dragged by user from " + ptrack?.sourceName?.call([])
-    : "Included for: " + strArrayToEnglish(ptrack?.included_genres ?? [])
+  const inclusionEnglish = determineInclusion(props.track)
 
   const data = Object.entries(props.track.features ?? {})
     .filter(([k]) => INCLUDED_FEATURES.includes(k))
@@ -157,7 +162,7 @@ export default function (props: {
           {inclusionEnglish.length > 0 && (
             <Grid item xs>
               <Typography gutterBottom variant='body1'>
-                Included for: {inclusionEnglish}
+                {inclusionEnglish}
               </Typography>
             </Grid>
           )}
