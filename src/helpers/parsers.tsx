@@ -219,13 +219,12 @@ export async function parsePlaylistJSON(
 
         const Q = Queue({ autostart: true, concurrency: 1, timeout: 10 * 1000 })
 
-        // TODO: What if it's a local track?
-
         for await (let trackJSONBare of getPaginationRawGen(
           api.getPlaylistTracks,
           { fields: 'items.track.id,total' },
           this.id
         )) {
+          if (!trackJSONBare.track.id) continue;
           let track = TrackAccumulator.request(
             trackJSONBare['track']['id']
           ).then(async (data: SpotifyApi.TrackObjectFull) =>
