@@ -99,7 +99,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       >
         Logout
       </Button>
-      <Grid style={{ padding: '5%' }} container spacing={5}>
+      <Grid style={{  padding: '2%' }} container spacing={5}>
         <DragDropContext
           onDragEnd={evt => {
             console.info(evt)
@@ -165,7 +165,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                   />
                 </Grid>
               ))}
-              <Grid item xs={2}>
+              <Grid item xs={1}>
                 <Button
                   variant='contained'
                   color='primary'

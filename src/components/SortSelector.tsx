@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { Button, Menu, MenuItem, makeStyles } from '@material-ui/core'
+import SortIcon from '@material-ui/icons/Sort';
 
-export default function Subplaylist (props: {
+export default function Subplaylist(props: {
   onSort: (type: string) => void
 }) {
   const useStyles = makeStyles(theme =>
     ({
       formControl: {
         margin: theme.spacing(1),
-        minWidth: 120
       }
     })
   )
@@ -35,6 +35,8 @@ export default function Subplaylist (props: {
         className={classes.formControl}
         onClick={handleMenuClick}
         aria-haspopup='true'
+        variant='contained'
+        startIcon={<SortIcon />}
       >
         Sort
       </Button>

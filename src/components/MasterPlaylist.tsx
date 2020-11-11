@@ -10,6 +10,8 @@ import ToggleButton from '@material-ui/lab/ToggleButton/ToggleButton'
 import Popover from '@material-ui/core/Popover/Popover'
 import InfoIcon from '@material-ui/icons/Info';
 import IconButton from '@material-ui/core/IconButton/IconButton'
+import Box from '@material-ui/core/Box/Box'
+import Divider from '@material-ui/core/Divider/Divider'
 
 const useStyles = makeStyles(theme => ({
   popover: {
@@ -17,10 +19,15 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     width: '100%',
-    maxWidth: 540
+    maxWidth: 540,
+    minWidth: 300
   },
   paper: {
     padding: theme.spacing(1)
+  },
+  button: {
+    margin: theme.spacing(1),
+    whiteSpace: "nowrap"
   }
 }))
 
@@ -89,25 +96,18 @@ export default function MasterPlaylist(
   return (
     <div className={classes.root}>
       <List component={Paper}>
-        <ListItem>
+        <ListItem style={{justifyContent:"space-between"}} >
           Master Playlist{props.playlist.name.includes('+') ? "s" : ""}: {props.playlist.name}
           <IconButton onClick={props.onOpenSelector}>
             <EditIcon />
           </IconButton>
-        </ListItem>
-        <ListItem>
-          <ToggleButton
-            size="small"
-            selected={!filterUsedTracks}
-            value={!filterUsedTracks}
-            onChange={() => setFilterUsedTracks(!filterUsedTracks)}
-          >
-            Show All
-          </ToggleButton>
-          <InfoIcon
-            onMouseEnter={(event: any) => setPopupAnchor(event.currentTarget)}
-            onMouseLeave={() => setPopupAnchor(null)}
-          />
+          <Divider orientation="vertical" flexItem />
+          <Box style={{padding: 12}}>
+            <InfoIcon
+              onMouseEnter={(event: any) => setPopupAnchor(event.currentTarget)}
+              onMouseLeave={() => setPopupAnchor(null)}
+            />
+          </Box>
           <Popover
             id='mouse-over-popover'
             className={classes.popover}
@@ -128,10 +128,20 @@ export default function MasterPlaylist(
           >
             {popupAnchor == null ? "" : calRecommendedGenres()}
           </Popover>
+          <Divider orientation="vertical" flexItem />
+          <ToggleButton
+            className={classes.button}
+            size="small"
+            selected={!filterUsedTracks}
+            value={!filterUsedTracks}
+            onChange={() => setFilterUsedTracks(!filterUsedTracks)}
+          >
+            Show All
+          </ToggleButton>
         </ListItem>
-        <ListItem>
+        <ListItem divider={true}>
           <MultiFilter callback={f => setTrackFilter(() => f)} />
-        </ListItem>
+        </ListItem >
 
         <TrackList
           id={props.playlist.id}
