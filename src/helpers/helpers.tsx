@@ -1,6 +1,7 @@
 import { parsePlaylistJSON, parseUserJSON } from './parsers'
 import { Playlist, Track, PlaylistTrack, PlaylistTrackGroup, User, PlaylistTrackBase } from '../types'
 import { api } from '../auth'
+import { v4 as uuid } from 'uuid';
 
 // Get all playlists
 export async function getPlaylists(
@@ -79,6 +80,11 @@ export function allGenresFromPlaylist(playlist: Playlist): string[] {
 
 abstract class TrackExtensible implements Track {
   abstract track: Track
+  readonly uuid: string
+
+  constructor() {
+    this.uuid = uuid()
+  }
 
   get id() {
     return this.track.id
@@ -152,26 +158,28 @@ class _PlaylistTrackGroup extends TrackExtensible implements PlaylistTrackGroup 
     return this.tracks[0]
   }
   get id () {
-    return 'group'
+    return this.uuid
   }
   get name () {
     return 'GROUP'
   }
 }
 
-export function touchTrack(track: Track, apply: PlaylistTrackBase): Track {
-  if ((track as PlaylistTrack).track) {
-    return Object.assign(track, apply)
+export function asPlaylistTrack(track: Track, unsafe: boolean = false) : PlaylistTrack {
+  if ((track as PlaylistTrack).track || unsafe) {
+    return track as PlaylistTrack
   }
-  return new _PlaylistTrack(track, apply)
+  return new _PlaylistTrack(track, {})
+}
+
+export function touchTrack(track: Track, apply: PlaylistTrackBase): Track {
+  return Object.assign(asPlaylistTrack(track), apply)
+}
+
+export function isTrackCustom(track: Track) {
+    return !!(track as PlaylistTrack).isCustom
 }
 
 export function createTrackGroup(...tracks: PlaylistTrack[]) {
   return new _PlaylistTrackGroup(...tracks)
-}
-
-
-export function isTrackCustom(track: Track) {
-  return !!(track as PlaylistTrack).isCustom
-
 }

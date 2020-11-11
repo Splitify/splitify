@@ -17,7 +17,7 @@ export interface Track {
   // is_local: boolean
   name: string
   popularity: Number
-  preview_url: string | undefined
+  preview_url?: string
   track_number: Number
   type: string
   uri: string

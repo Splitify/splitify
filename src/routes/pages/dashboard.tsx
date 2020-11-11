@@ -3,8 +3,8 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import Auth from '../../auth'
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
-import { allGenresFromPlaylist, touchTrack } from "../../helpers/helpers";
-import { Playlist as PlaylistObj, Track as TrackObj, PlaylistTrack as PlaylistTrackObj } from "../../types";
+import { allGenresFromPlaylist, asPlaylistTrack, isTrackCustom, touchTrack } from "../../helpers/helpers";
+import { Playlist as PlaylistObj, Track as TrackObj } from "../../types";
 import { Grid, Button, makeStyles} from '@material-ui/core';
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
@@ -119,10 +119,18 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             if (sourcePlaylist !== destPlaylist) {
               // Move between playlists, also updating the destination playlist
               const dest_newTracks = [...destPlaylist.tracks];
-              if (!(removed as PlaylistTrackObj).isCustom) {
-                // FIXME: If moved back into a playlist which has the right genre selector, then set `isCustom` to false?
+              if (isTrackCustom(removed)) {
+                if (asPlaylistTrack(removed).sourceID === destPlaylist.id) {
+                  // Dragged back to the original playlist
+                  removed = touchTrack(removed, {
+                    isCustom: false
+                  })  
+                }
+              } else {
+                // Dragged from original to new playlist
                 removed = touchTrack(removed, {
-                  isCustom: true
+                  isCustom: true,
+                  sourceID: sourcePlaylist.id
                 })
               }
 
