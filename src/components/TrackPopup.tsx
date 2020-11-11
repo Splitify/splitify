@@ -57,6 +57,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
+
 export default function (props: {
   track: TrackObj
   anchor: Element | null
@@ -67,7 +68,8 @@ export default function (props: {
   const artistEnglish = strArrayToEnglish(props.track.artists.map(a => a.name))
   const genresEnglish = strArrayToEnglish(props.track.genres)
   const lengthEnglish = numToNaturalTime(props.track.duration_ms)
-  const inclusionEnglish = strArrayToEnglish(asPlaylistTrack(props.track)?.inclusion_reason ?? [])
+  const ptrack = asPlaylistTrack(props.track)
+  const inclusionEnglish = isTrackCustom(props.track) ? "Dragged by user" : "Included for: " + strArrayToEnglish(ptrack?.included_genres ?? [])
 
   const data = Object.entries(props.track.features ?? {})
     .filter(([k]) => INCLUDED_FEATURES.includes(k))
