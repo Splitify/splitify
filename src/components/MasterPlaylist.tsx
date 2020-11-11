@@ -8,7 +8,7 @@ import MultiFilter from './MultiFilter'
 import TrackList from './TrackList'
 import ToggleButton from '@material-ui/lab/ToggleButton/ToggleButton'
 import Popover from '@material-ui/core/Popover/Popover'
-import InfoIcon from '@material-ui/icons/Info';
+import { Info as InfoIcon, Replay as ReplayIcon } from '@material-ui/icons';
 import IconButton from '@material-ui/core/IconButton/IconButton'
 import Box from '@material-ui/core/Box/Box'
 import Divider from '@material-ui/core/Divider/Divider'
@@ -95,13 +95,13 @@ export default function MasterPlaylist(
   return (
     <div className={classes.root}>
       <List component={Paper}>
-        <ListItem style={{justifyContent:"space-between"}} >
+        <ListItem style={{ justifyContent: "space-between" }} >
           Master Playlist{props.playlist.name.includes('+') ? "s" : ""}: {props.playlist.name}
           <IconButton onClick={props.onOpenSelector}>
-            <EditIcon />
+            <ReplayIcon />
           </IconButton>
           <Divider orientation="vertical" flexItem />
-          <Box style={{padding: 12}}>
+          <Box style={{ padding: 12 }}>
             <InfoIcon
               onMouseEnter={(event: any) => setPopupAnchor(event.currentTarget)}
               onMouseLeave={() => setPopupAnchor(null)}
