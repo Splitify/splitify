@@ -5,7 +5,7 @@ import {
   IconButton,
   Button,
   Dialog,
-  ListItemSecondaryAction
+  Typography
   // makeStyles
 } from '@material-ui/core'
 
@@ -26,37 +26,38 @@ import MultiFilter from './MultiFilter'
 import { FeatureSelector } from './FeatureSelector'
 import TrackList from './TrackList'
 import { isTrackCustom } from '../helpers/helpers'
+import makeStyles from '@material-ui/core/styles/makeStyles'
 
-// const useStyles = makeStyles(theme => ({
-//   table: {
-//     //Add styling for tables here
-//   },
-//   root: {
-//     display: 'flex',
-//     justifyContent: 'center',
-//     flexWrap: 'wrap',
-//     '& > *': {
-//       margin: theme.spacing(0.5)
-//     }
-//   },
-//   paper: {
-//     width: 200,
-//     height: 230,
-//     overflow: 'auto'
-//   },
-//   button: {
-//     margin: theme.spacing(0.5, 0)
-//   }
-// }))
+const useStyles = makeStyles(theme => ({
+  table: {
+    //Add styling for tables here
+  },
+  root: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    '& > *': {
+      margin: theme.spacing(0.5)
+    }
+  },
+  paper: {
+    width: 200,
+    height: 230,
+    overflow: 'auto'
+  },
+  button: {
+    margin: theme.spacing(1)
+  }
+}))
 
-export default function Subplaylist (props: {
+export default function Subplaylist(props: {
   source: TrackObj[]
   playlist: PlaylistObj
   genres: string[]
   onFilterUpdate?: (tracks: TrackObj[]) => any
   onDelete?: (playlist: PlaylistObj) => any
 }) {
-  // const classes = useStyles()
+  const classes = useStyles()
 
   const [editDialogOpen, setEditDialogOpen] = useState(false)
 
@@ -77,7 +78,7 @@ export default function Subplaylist (props: {
     return selectedGenres.some((g: string) => track.genres.includes(g));
   }
 
-  function handleSortAction (type: string) {
+  function handleSortAction(type: string) {
     const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
       let var1: string = ''
       let var2: string = ''
@@ -119,7 +120,7 @@ export default function Subplaylist (props: {
         .filter(t => !isTrackCustom(t))
         .filter(TrackCorrectGenre)
         .filter(featureFilter)
-      .concat(props.source.filter(t => isTrackCustom(t)))
+        .concat(props.source.filter(t => isTrackCustom(t)))
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedGenres, featureFilter, props.source])
@@ -163,25 +164,27 @@ export default function Subplaylist (props: {
         />
       </Dialog>
       <List component={Paper}>
-        <ListItem divider={true}>
-          {props.playlist.name}
+        <ListItem style={{justifyContent:"space-between"}}>
+          <Typography>
+            {props.playlist.name}
+          </Typography>
           <IconButton onClick={() => setEditDialogOpen(true)}>
             <EditIcon />
           </IconButton>
           <Divider orientation="vertical" flexItem />
-            <SortSelector onSort={handleSortAction} />
-          <ListItemSecondaryAction>
-            <Button
-              variant='contained'
-              color='secondary'
-              onClick={() => props.onDelete && props.onDelete(props.playlist)}
-              startIcon={<DeleteIcon />}
-            >
-              Delete
+          <SortSelector onSort={handleSortAction} />
+          <Divider orientation="vertical" flexItem />
+          <Button
+            variant='contained'
+            color='secondary'
+            className={classes.button}
+            onClick={() => props.onDelete && props.onDelete(props.playlist)}
+            startIcon={<DeleteIcon />}
+          >
+            Delete
             </Button>
-          </ListItemSecondaryAction>
         </ListItem>
-        <ListItem divider={true} >
+        <ListItem>
           <GenreSelector
             genres={props.genres}
             onSelect={values => setSelectedGenres(values)}
@@ -192,7 +195,6 @@ export default function Subplaylist (props: {
           component={List}
           childComponent={ListItem}
         />
-        <Divider />
         <ListItem divider={true}>
           <MultiFilter callback={f => setTrackFilter(() => f)} />
         </ListItem>
