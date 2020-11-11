@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Track as TrackObj } from '../types'
 import TrackPopup from './TrackPopup'
 import { isTrackCustom } from '../helpers/helpers'
 import { ListItemText, Typography } from '@material-ui/core'
+
+let globalAudioPlayers: HTMLAudioElement[] = []
 
 export default function Track (props: {
   track: TrackObj
@@ -17,22 +19,36 @@ export default function Track (props: {
   }
 
   const handlePopoverClose = () => {
-    audio && audio.pause()
+    stopAudio()
     setPopupAnchor(null)
   }
 
+  function stopAudio () {
+    if (!audio) return
+    globalAudioPlayers.forEach(a => a.pause())
+    globalAudioPlayers = []
+    audio.pause()
+    audio.currentTime = 0
+  }
+
+  function startAudio () {
+    if (!audio) return
+    audio.currentTime = 0
+    globalAudioPlayers.push(audio)
+    audio.play()
+  }
+
   const handlePreviewClick = () => {
-    if (audio) {
-      if (!audio.paused || audio.currentTime) {
-        audio.pause()
-        
-      } else {
-        audio.currentTime = 0
-        audio.play()
-      }
-    }
+    audio && ((!audio.paused || audio.currentTime) ? stopAudio : startAudio)()
   }
   
+  useEffect(() => {
+    return () => {
+      stopAudio()
+    }
+    // eslint-disable-next-line
+  }, [])
+
   return (
       <ListItemText disableTypography={true}>
         <Typography

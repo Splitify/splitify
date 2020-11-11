@@ -2,7 +2,7 @@ import { Album, Artist, Features, User, Playlist, Track } from '../types'
 
 import { api } from '../auth'
 import { CachingAccumulumatorinator } from './Accumulumatorinator'
-import { getPaginationRawGen } from './helpers'
+import { asPlaylistTrack, getPaginationRawGen } from './helpers'
 
 import Queue from 'queue'
 import { WHITELIST as GENRE_WHITELIST } from './genreWhitelist'
@@ -108,10 +108,8 @@ export function parseGenres(
   let genres = lm.toptags?.tag
     .filter((t: any) => t.count > 50 && t.name.length < 20)
     .map((t: any) => t.name.toLowerCase())
-    .filter((s: string) => {
-      return s.split(" ").some((g: string) => GENRE_WHITELIST.includes(g))
-        || s.split("-").some((g: string) => GENRE_WHITELIST.includes(g))
-    }) ?? [];
+    .filter((s: string) => s.replace('-', '').split(" ").some((g: string) => GENRE_WHITELIST.includes(g)))
+    ?? [];
   genres.splice(3, 99); // Only keep the first three. The quality goes down quick on some songs
   genres = genres.filter((g: string) => !artistNames.includes(g));
 
@@ -222,18 +220,17 @@ export async function parsePlaylistJSON(
 
         const Q = Queue({ autostart: true, concurrency: 1, timeout: 10 * 1000 })
 
-        // TODO: What if it's a local track?
-
         for await (let trackJSONBare of getPaginationRawGen(
           api.getPlaylistTracks,
           { fields: 'items.track.id,total' },
           this.id
         )) {
+          if (!trackJSONBare.track.id) continue;
           let track = TrackAccumulator.request(
             trackJSONBare['track']['id']
           ).then(async (data: SpotifyApi.TrackObjectFull) =>
             // Add parsed track, optionally request track expansion
-            parseTrackJSON(await data, expandTrack)
+            asPlaylistTrack(await parseTrackJSON(await data, expandTrack))
           )
 
           Q.push(async cb => {

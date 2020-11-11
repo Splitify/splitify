@@ -33,6 +33,9 @@ const useStyles = makeStyles({
   },
   content: {
     padding: 0
+  },
+  actions: {
+    justifyContent: "space-evenly"
   }
 })
 
@@ -69,7 +72,6 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
     const tracks = playlists.map((p: Playlist) => p.tracks).flat();
     const name = playlists.map((p: Playlist) => p.name).join(" + ");
     const id = playlists.map(p => p.id).join('')
-    console.log(id);
     
     await props.onSelect({
       id: id,
@@ -101,11 +103,11 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
     <Card className={classes.root}>
       <CardContent className={classes.content}>
         <Box m={1}>
-          <Typography variant="h5" gutterBottom >
+          <Typography variant="h5" gutterBottom align="center" >
             Select Playlists to Split from
           </Typography>
         </Box>
-        <Box m={1}>
+        <Box m={2}>
           <TextField
             label='Search'
             fullWidth
@@ -163,7 +165,7 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
         <LinearProgress />
       </Fade>
 
-      <CardActions>
+      <CardActions className={classes.actions}>
         <Button
           size='small'
           color='primary'

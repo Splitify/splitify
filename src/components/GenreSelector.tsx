@@ -17,7 +17,8 @@ export default function (props: {
     <Autocomplete
       multiple
       fullWidth={true}
-      options={props.genres}
+      options={["ALL"].concat(props.genres)}
+      defaultValue={["ALL"]}
       disableCloseOnSelect
       getOptionLabel={option => option}
       onChange={(event: any, newValue: string[]) => {

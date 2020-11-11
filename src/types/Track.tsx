@@ -22,7 +22,5 @@ export interface Track {
   type: string
   uri: string
   features?: Features
-  inclusion_reason: string[]
-  expand : () => Promise<this>
-
+  expand : () => Promise<Track>
 }
