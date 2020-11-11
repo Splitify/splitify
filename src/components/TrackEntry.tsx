@@ -27,7 +27,7 @@ export default function (props: {
 
   return (
     <Draggable
-      draggableId={`${props.parent}:${asPlaylistTrack(props.track, true).uuid || props.track.id}`}
+      draggableId={asPlaylistTrack(props.track).uuid!}
       index={props.index ?? -1}
       isDragDisabled={props.isDragDisabled}
     >
