@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Playlist as PlaylistObj, Track as TrackObj, TrackFilter } from '../types'
-import { Edit as EditIcon } from '@material-ui/icons'
 
-import { makeStyles, List, ListItem, Paper } from '@material-ui/core'
+import { makeStyles, List, ListItem, Paper, Popover, IconButton, Box, Divider } from '@material-ui/core'
+import { Info as InfoIcon, Replay as ReplayIcon } from '@material-ui/icons';
 
 import MultiFilter from './MultiFilter'
 import TrackList from './TrackList'
-import ToggleButton from '@material-ui/lab/ToggleButton/ToggleButton'
-import Popover from '@material-ui/core/Popover/Popover'
-import { Info as InfoIcon, Replay as ReplayIcon } from '@material-ui/icons';
-import IconButton from '@material-ui/core/IconButton/IconButton'
-import Box from '@material-ui/core/Box/Box'
-import Divider from '@material-ui/core/Divider/Divider'
+
+import { ToggleButton } from '@material-ui/lab'
 
 const useStyles = makeStyles(theme => ({
   popover: {
