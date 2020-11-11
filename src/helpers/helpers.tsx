@@ -197,7 +197,7 @@ abstract class TrackExtensible implements Track {
   }
 
   async expand () {
-    return this
+    return this.track.expand()
   }
 }
 
@@ -206,8 +206,14 @@ class _PlaylistTrack extends TrackExtensible implements PlaylistTrack {
   constructor(track: Track, apply: PlaylistTrackBase ) {
       super()
       this.track = track
+      delete apply.uuid // Don't apply UUID
       Object.assign(this, apply)
   }
+  
+  clone(apply?: PlaylistTrackBase) {
+    return new _PlaylistTrack(this.track, {...(this as PlaylistTrackBase), ...apply})
+  }
+
 }
 
 class _PlaylistTrackGroup extends TrackExtensible implements PlaylistTrackGroup {
@@ -232,8 +238,8 @@ class _PlaylistTrackGroup extends TrackExtensible implements PlaylistTrackGroup 
   }
 }
 
-export function asPlaylistTrack(track: Track, unsafe: boolean = false) : PlaylistTrack {
-  if ((track as PlaylistTrack).track || unsafe) {
+export function asPlaylistTrack(track: Track) : PlaylistTrack {
+  if ((track as PlaylistTrack).track) {
     return track as PlaylistTrack
   }
   return new _PlaylistTrack(track, {})
@@ -244,7 +250,7 @@ export function touchTrack(track: Track, apply: PlaylistTrackBase): Track {
 }
 
 export function isTrackCustom(track: Track) {
-    return !!(track as PlaylistTrack).isCustom
+  return asPlaylistTrack(track).isCustom
 }
 
 export function createTrackGroup(...tracks: PlaylistTrack[]) {
