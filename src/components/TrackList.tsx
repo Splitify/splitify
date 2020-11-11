@@ -46,9 +46,13 @@ export default function (props: { id?: string; tracks: TrackObj[], isDropDisable
           innerElementType={props.component}
           ref={el => {
             // FIXME: Refactor to make it nice
-            if (!el) return
+            
+            if (!el || height) return
             let elem = (el as any)?._outerRef as HTMLElement
-            setHeight(window.innerHeight - elem.getBoundingClientRect().top - (props.showActions ? 40 : 0) - 50)
+            const wh = window.innerHeight
+            let h = wh - (elem.getBoundingClientRect().top + window.pageYOffset || document.documentElement.scrollTop)
+            h = ((h%wh)+wh)%wh - (props.showActions ? 40 : 0) - 50
+            setHeight(h)
           }}
           height={height}
           itemCount={props.tracks.length + (snapshot.isUsingPlaceholder ? 1 : 0)}
