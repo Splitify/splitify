@@ -5,13 +5,12 @@ import {
   IconButton,
   Button,
   Dialog,
-  Typography
+  Typography,
+  List,
+  ListItem,
+  Divider
   // makeStyles
 } from '@material-ui/core'
-
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import Divider from '@material-ui/core/Divider'
 
 import {
   Playlist as PlaylistObj,
