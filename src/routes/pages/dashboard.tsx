@@ -90,6 +90,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       <Button
         variant='contained'
         color='primary'
+        style={{float:'right', margin: 5}}
         onClick={() =>
           Auth.logout().then(() => {
             window.location.href = window.location.origin + '/'
