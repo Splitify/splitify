@@ -111,17 +111,23 @@ export default function Subplaylist(props: {
     updateView()
   }
 
+  function doFilter(source: TrackObj[], ...filters: ((track: TrackObj) => boolean)[]) : TrackObj[] {
+    // Filter a track if either condition is met
+    // Condition A: Track is custom
+    // Condition B: Track meets all supplied filters
+    return source.filter(t => isTrackCustom(t) || filters.every(f => f(t)))
+  }
+
   useEffect(() => {
-    // FIXME: Ordering property isn't persisted between updates to genre and features
+    const filters = [TrackCorrectGenre, featureFilter]
 
     // Update the list of track in the playlist when the genre / features filter is changed
     setTracks(
-      props.source
-        .filter(t => !isTrackCustom(t))
-        .filter(TrackCorrectGenre)
-        .filter(featureFilter)
-        .concat(props.source.filter(t => isTrackCustom(t)))
+      doFilter(tracks, ...filters) // Existing current matches (to maintain ordering)
+      .concat(doFilter(props.source, ...filters)) // New items from the source pool
+      .filter((v,i,a) => a.indexOf(v) === i) // Dedup
     )
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedGenres, featureFilter, props.source])
 

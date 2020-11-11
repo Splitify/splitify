@@ -2,7 +2,7 @@ import { Album, Artist, Features, User, Playlist, Track } from '../types'
 
 import { api } from '../auth'
 import { CachingAccumulumatorinator } from './Accumulumatorinator'
-import { getPaginationRawGen } from './helpers'
+import { asPlaylistTrack, getPaginationRawGen } from './helpers'
 
 import Queue from 'queue'
 import { WHITELIST as GENRE_WHITELIST } from './genreWhitelist'
@@ -229,7 +229,7 @@ export async function parsePlaylistJSON(
             trackJSONBare['track']['id']
           ).then(async (data: SpotifyApi.TrackObjectFull) =>
             // Add parsed track, optionally request track expansion
-            parseTrackJSON(await data, expandTrack)
+            asPlaylistTrack(await parseTrackJSON(await data, expandTrack))
           )
 
           Q.push(async cb => {

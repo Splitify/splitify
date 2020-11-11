@@ -3,7 +3,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import Auth from '../../auth'
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
-import { allGenresFromPlaylist, asPlaylistTrack, isTrackCustom, touchTrack } from "../../helpers/helpers";
+import { allGenresFromPlaylist, asPlaylistTrack, touchTrack } from "../../helpers/helpers";
 import { Playlist as PlaylistObj, Track as TrackObj } from "../../types";
 import { Grid, Button, makeStyles } from '@material-ui/core';
 import { v4 as uuid } from 'uuid';
@@ -28,9 +28,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>()
   const [genres, setGenres] = useState<string[]>([])
 
-  const [filteredLists, setFilteredLists] = useState<{ [id: string]: TrackObj[] }>({})
-
-
+  const filteredLists: { [id: string]: TrackObj[] } = useState({})[0]; 
+  
   function loadPlaylist(playlist: PlaylistObj) {
     Promise.all(playlist.tracks.map(t => t.expand())).then(() => {
       setMasterPlaylist(playlist)
@@ -53,7 +52,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       snapshot_id: '',
       tracks: [],
       uri: '',
-      sourcePool: [...masterPlaylist!.tracks],
+      sourcePool: masterPlaylist!.tracks.map(t => asPlaylistTrack(t).clone!()),
       expand: async function () {
         return this
       }
@@ -70,17 +69,20 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
   const deletePlaylist = (playlist: PlaylistObj) => {
     console.log('Deleting playlist', playlist.id)
+    delete filteredLists[playlist.id]
     setPlaylists(playlists.filter(p => p.id !== playlist.id))
   }
 
   // Find playlist object given its ID
-  const findPlaylist = (id: string) => playlists.find(p => p.id === id)
+  const findPlaylist = (id: string) => (id === masterPlaylist?.id && masterPlaylist) || playlists.find(p => p.id === id)
 
   // Resolves filter index to track source index
   const getPlaylistIndexFromFilterIndex = (playlist: PlaylistObj, fIDX: number) => {
     let filterList = filteredLists[playlist.id]
-    let targetTrackID = filterList[fIDX]?.id
-    return playlist.tracks.findIndex(t => t.id === targetTrackID)
+    if (fIDX === filterList.length) return -1 // Drag to the end
+    let key = asPlaylistTrack(filterList[fIDX])
+    let targetTrackUUID = asPlaylistTrack(key).uuid
+    return playlist.tracks.findIndex(t => asPlaylistTrack(t).uuid === targetTrackUUID)
   }
 
   const usedTracks = Array.from(new Set(playlists.map((p: PlaylistObj) => p.tracks).flat()));
@@ -102,26 +104,44 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       <Grid style={{ padding: '2%', width: '100%', paddingTop: 0 }} container spacing={5}>
         <DragDropContext
           onDragEnd={evt => {
-            console.info(evt)
             if (!evt.destination) return
 
-            let sourcePlaylist = findPlaylist(evt?.source?.droppableId)
-            let destPlaylist = findPlaylist(evt?.destination?.droppableId)
-
-            if (!sourcePlaylist || !destPlaylist) throw new Error("Failed to find filtered playlist view")
+            let sourcePlaylist = findPlaylist(evt.source.droppableId)
+            let destPlaylist = findPlaylist(evt.destination.droppableId)
+            if (!sourcePlaylist || !destPlaylist) throw new Error("Failed to find playlist")
 
             let sourceIdx = getPlaylistIndexFromFilterIndex(sourcePlaylist, evt.source.index)
             let destIdx = getPlaylistIndexFromFilterIndex(destPlaylist, evt.destination.index)
 
-            const source_newTracks = [...sourcePlaylist.tracks];
+            if (sourcePlaylist === masterPlaylist) {
 
+                console.log('drag from master');
+  
+                let trackCopy = asPlaylistTrack(masterPlaylist.tracks[sourceIdx]).clone!({
+                  isCustom: true,
+                  sourceID: masterPlaylist.id
+                })
+
+                const dest_newTracks = [...destPlaylist.tracks];
+                dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, trackCopy);
+                destPlaylist.tracks = dest_newTracks
+
+                setPlaylists([...playlists]) 
+
+                return
+            }
+
+           
+            const source_newTracks = [...sourcePlaylist.tracks];
             let removed = source_newTracks.splice(sourceIdx, 1)[0];
 
             if (sourcePlaylist !== destPlaylist) {
               // Move between playlists, also updating the destination playlist
               const dest_newTracks = [...destPlaylist.tracks];
-              if (isTrackCustom(removed)) {
-                if (asPlaylistTrack(removed).sourceID === destPlaylist.id) {
+
+              let removedPP = asPlaylistTrack(removed)
+              if (removedPP.isCustom) {
+                if (removedPP.sourceID === destPlaylist.id) {
                   // Dragged back to the original playlist
                   removed = touchTrack(removed, {
                     isCustom: false
@@ -133,6 +153,13 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                   isCustom: true,
                   sourceID: sourcePlaylist.id
                 })
+
+                // Remove item from source pool
+                let sourcePlaylistPP = sourcePlaylist as PlaylistObjectPP
+                let poolIdx = sourcePlaylistPP.sourcePool.findIndex(t => asPlaylistTrack(t).uuid === removedPP.uuid)
+                if (poolIdx > -1) {
+                  sourcePlaylistPP.sourcePool.splice(poolIdx, 1)
+                }
               }
 
               dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
@@ -140,8 +167,9 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             } else {
               source_newTracks.splice(destIdx, 0, removed);
             }
-
+            
             sourcePlaylist.tracks = source_newTracks
+
             setPlaylists([...playlists])
           }}
         >
@@ -149,6 +177,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             <PlaylistWrapper
               usedTracks={usedTracks}
               onSelect={p => loadPlaylist(p)}
+              onFilterUpdate={tracks => masterPlaylist && (filteredLists[masterPlaylist.id] = tracks)}
             />
           </Grid>
 
@@ -161,7 +190,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                     source={p.sourcePool}
                     playlist={p}
                     onDelete={() => deletePlaylist(p)}
-                    onFilterUpdate={tracks => setFilteredLists(list => ({ ...list, [p.id]: tracks }))}
+                    onFilterUpdate={tracks => filteredLists[p.id] = tracks}
                   />
                 </Grid>
               ))}

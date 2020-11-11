@@ -11,7 +11,6 @@ import { asPlaylistTrack } from '../helpers/helpers'
 
 export default function (props: {
   track: TrackObj
-  parent?: string
   index?: number
   isDragDisabled?: boolean
   style?: any
@@ -27,7 +26,7 @@ export default function (props: {
 
   return (
     <Draggable
-      draggableId={`${props.parent}:${asPlaylistTrack(props.track, true).uuid || props.track.id}`}
+      draggableId={asPlaylistTrack(props.track).uuid!}
       index={props.index ?? -1}
       isDragDisabled={props.isDragDisabled}
     >
@@ -46,7 +45,7 @@ export default function (props: {
         >
           {track ? (
             <>
-              <Track track={track} isDragging={snapshot.isDragging} />
+              <Track track={props.track} isDragging={snapshot.isDragging} />
               {props.isDragDisabled ?? (
                 <ListItemSecondaryAction>
                   <ListItemIcon>
