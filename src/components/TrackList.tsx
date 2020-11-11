@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Droppable } from 'react-beautiful-dnd'
 import { Track as TrackObj } from '../types'
 import TrackEntry from './TrackEntry'
@@ -7,15 +7,15 @@ import { VariableSizeList as List } from 'react-window'
 
 export default function (props: {
   id?: string; 
-  tracks: Track[], 
+  tracks: TrackObj[], 
   isDropDisabled?: boolean, 
   isDragDisabled?: boolean, 
   isDragClone?: boolean,
-  checked?: Track[]
+  checked?: TrackObj[]
   component: React.ElementType, 
   childComponent: React.ElementType, 
-  handleDelete?: (tracks: Track[]) => void,
-  toggleChecked?: (track: Track) => void
+  handleDelete?: (tracks: TrackObj[]) => void,
+  toggleChecked?: (track: TrackObj) => void
  }) {
   const Wrapper = props.component;
 
