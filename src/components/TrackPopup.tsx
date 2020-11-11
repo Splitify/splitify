@@ -69,7 +69,9 @@ export default function (props: {
   const genresEnglish = strArrayToEnglish(props.track.genres)
   const lengthEnglish = numToNaturalTime(props.track.duration_ms)
   const ptrack = asPlaylistTrack(props.track)
-  const inclusionEnglish = isTrackCustom(props.track) ? "Dragged by user" : "Included for: " + strArrayToEnglish(ptrack?.included_genres ?? [])
+  const inclusionEnglish = isTrackCustom(props.track)
+    ? "Dragged by user from " + ptrack?.sourceName?.call([])
+    : "Included for: " + strArrayToEnglish(ptrack?.included_genres ?? [])
 
   const data = Object.entries(props.track.features ?? {})
     .filter(([k]) => INCLUDED_FEATURES.includes(k))
