@@ -33,6 +33,9 @@ const useStyles = makeStyles({
   },
   content: {
     padding: 0
+  },
+  actions: {
+    justifyContent: "space-evenly"
   }
 })
 
@@ -101,11 +104,11 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
     <Card className={classes.root}>
       <CardContent className={classes.content}>
         <Box m={1}>
-          <Typography variant="h5" gutterBottom >
+          <Typography variant="h5" gutterBottom align="center" >
             Select Playlists to Split from
           </Typography>
         </Box>
-        <Box m={1}>
+        <Box m={2}>
           <TextField
             label='Search'
             fullWidth
@@ -163,7 +166,7 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
         <LinearProgress />
       </Fade>
 
-      <CardActions>
+      <CardActions className={classes.actions}>
         <Button
           size='small'
           color='primary'
