@@ -79,7 +79,7 @@ const options: FeatureSliderData[] = [
     currentMin: -60,
     currentMax: 0,
     units: 'dB',
-    description : 'The overall loudness of a track in decibels'
+    description : 'The average loudness of a track in decibels'
   },
   {
     id: 'tempo',
