@@ -74,7 +74,7 @@ export default function Subplaylist(props: {
   playlist: PlaylistObj
   genres: string[]
   checked: CheckedList[]
-  onTrackUpdate: () => void  
+  onTrackUpdate: () => void
   toggleChecked: (id: string, tracks: TrackObj) => any
   onFilterUpdate?: (tracks: TrackObj[]) => any
   onDelete?: (playlist: PlaylistObj) => any
@@ -106,12 +106,12 @@ export default function Subplaylist(props: {
         setButtonLabel("Saved");
         setSuccess(true);
         setLoading(false);
-      },2000);
+      }, 2000);
       // wait 4 seconds before reverting to normal save button
-      setTimeout(() => { 
+      setTimeout(() => {
         setButtonLabel("Save");
         setSuccess(false);
-      },4000);
+      }, 4000);
     }
 
     setsaveDisabled(true);
@@ -174,7 +174,7 @@ export default function Subplaylist(props: {
     updateView()
   }
 
-  function doFilter(source: TrackObj[], ...filters: ((track: TrackObj) => boolean)[]) : TrackObj[] {
+  function doFilter(source: TrackObj[], ...filters: ((track: TrackObj) => boolean)[]): TrackObj[] {
     // Filter a track if either condition is met
     // Condition A: Track is custom
     // Condition B: Track meets all supplied filters
@@ -187,8 +187,8 @@ export default function Subplaylist(props: {
     // Update the list of track in the playlist when the genre / features filter is changed
     setTracks(
       doFilter(tracks, ...filters) // Existing current matches (to maintain ordering)
-      .concat(doFilter(props.source, ...filters)) // New items from the source pool
-      .filter((v,i,a) => a.indexOf(v) === i) // Dedup
+        .concat(doFilter(props.source, ...filters)) // New items from the source pool
+        .filter((v, i, a) => a.indexOf(v) === i) // Dedup
     )
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -230,7 +230,7 @@ export default function Subplaylist(props: {
           name={props.playlist.name}
           onSave={(newName?: string) => {
             setEditDialogOpen(false)
-            if (newName){ 
+            if (newName) {
               props.playlist.name = newName
               setsaveDisabled(false);
             }
@@ -238,7 +238,7 @@ export default function Subplaylist(props: {
         />
       </Dialog>
       <List component={Paper}>
-        <ListItem style={{justifyContent:"space-between"}}>
+        <ListItem style={{ justifyContent: "space-between" }}>
           <Typography>
             {props.playlist.name}
           </Typography>
@@ -257,53 +257,52 @@ export default function Subplaylist(props: {
           >
             Delete
           </Button>
-          <ListItem>
-            {loading ? (
-              <CircularProgress size={24} className={classes.buttonProgress} />
-            ) : (
+          <Divider orientation="vertical" flexItem />
+          {loading ? (
+            <CircularProgress size={24} className={classes.buttonProgress} />
+          ) : (
               filterIsActive ? (
                 <Tooltip title="Saving is disabled while filter is active.">
                   <span>
-                    <Button 
-                      variant="contained" 
-                      color="primary" 
-                      className={buttonClassname} 
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      className={buttonClassname}
                       disabled={true}
-                      onClick={handleButtonClick} 
+                      onClick={handleButtonClick}
                       startIcon={<SaveIcon />}>
                       {buttonLabel}
                     </Button>
                   </span>
                 </Tooltip>
               ) : (
-                saveDisabled ? (
-                  <Tooltip title="No change since last save.">
-                    <span>
-                      <Button 
-                        variant="contained" 
-                        color="primary" 
-                        className={buttonClassname} 
-                        disabled={saveDisabled} 
-                        onClick={handleButtonClick} 
+                  saveDisabled ? (
+                    <Tooltip title="No change since last save.">
+                      <span>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          className={buttonClassname}
+                          disabled={saveDisabled}
+                          onClick={handleButtonClick}
+                          startIcon={<SaveIcon />}>
+                          {buttonLabel}
+                        </Button>
+                      </span>
+                    </Tooltip>
+                  ) : (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        className={buttonClassname}
+                        disabled={saveDisabled}
+                        onClick={handleButtonClick}
                         startIcon={<SaveIcon />}>
                         {buttonLabel}
                       </Button>
-                    </span>
-                  </Tooltip>
-                ) : (
-                  <Button 
-                    variant="contained" 
-                    color="primary" 
-                    className={buttonClassname} 
-                    disabled={saveDisabled} 
-                    onClick={handleButtonClick} 
-                    startIcon={<SaveIcon />}>
-                    {buttonLabel}
-                  </Button>
+                    )
                 )
-              )
             )}
-          </ListItem>
         </ListItem>
         <ListItem>
           <GenreSelector
@@ -318,7 +317,7 @@ export default function Subplaylist(props: {
         />
         <ListItem divider={true}>
           <MultiFilter
-            callback={f => setTrackFilter(() => f)} 
+            callback={f => setTrackFilter(() => f)}
             filterIsActive={f => setFilterIsActive(f)}
           />
         </ListItem>
