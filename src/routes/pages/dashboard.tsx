@@ -27,6 +27,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
   const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>()
   const [genres, setGenres] = useState<string[]>([])
+  const [usedTracks, setUsedTracks] = useState<TrackObj[]>([])
 
   const filteredLists: { [id: string]: TrackObj[] } = useState({})[0];
 
@@ -85,7 +86,11 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     return playlist.tracks.findIndex(t => asPlaylistTrack(t).uuid === targetTrackUUID)
   }
 
-  const usedTracks = Array.from(new Set(playlists.map((p: PlaylistObj) => p.tracks).flat()))
+  const updateTracks = () => {
+    setUsedTracks(Array.from(new Set(playlists.map((p: PlaylistObj) => p.tracks).flat())))
+  }
+
+
 
   return (
     <div className={classes.root}>
@@ -190,6 +195,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                   <Subplaylist
                     genres={genres}
                     source={p.sourcePool}
+                    onTrackUpdate={updateTracks}
                     playlist={p}
                     onDelete={() => deletePlaylist(p)}
                     onFilterUpdate={tracks => filteredLists[p.id] = tracks}

@@ -54,6 +54,7 @@ export default function Subplaylist(props: {
   source: TrackObj[]
   playlist: PlaylistObj
   genres: string[]
+  onTrackUpdate: () => void  
   onFilterUpdate?: (tracks: TrackObj[]) => any
   onDelete?: (playlist: PlaylistObj) => any
 }) {
@@ -136,6 +137,7 @@ export default function Subplaylist(props: {
   // Save tracks to playlist when updated
   useEffect(() => {
     props.playlist.tracks = tracks
+    props.onTrackUpdate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
 

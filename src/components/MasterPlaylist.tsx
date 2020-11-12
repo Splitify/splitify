@@ -140,7 +140,7 @@ export default function MasterPlaylist(
             variant='contained'
             onClick={() => setFilterUsedTracks(!filterUsedTracks)}
           >
-            {filterUsedTracks ? "show all" : "show unused"}
+            {filterUsedTracks ? "show all" : "hide used"}
           </Button>
         </ListItem>
         <ListItem divider={true}>
