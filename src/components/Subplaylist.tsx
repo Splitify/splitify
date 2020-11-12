@@ -74,6 +74,7 @@ export default function Subplaylist(props: {
   playlist: PlaylistObj
   genres: string[]
   checked: CheckedList[]
+  onTrackUpdate: () => void  
   toggleChecked: (id: string, tracks: TrackObj) => any
   onFilterUpdate?: (tracks: TrackObj[]) => any
   onDelete?: (playlist: PlaylistObj) => any
@@ -125,7 +126,7 @@ export default function Subplaylist(props: {
   const [excludedTracks, setExcludedTracks] = useState<TrackObj[]>([])
 
   // Track selector
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(["ALL"])
   const [featureFilter, setFeatureFilter] = useState<TrackFilter>(() => () =>
     true
   )
@@ -196,6 +197,7 @@ export default function Subplaylist(props: {
   // Save tracks to playlist when updated
   useEffect(() => {
     props.playlist.tracks = tracks;
+    props.onTrackUpdate()
     tracks.length === 0 ? setsaveDisabled(true) : setsaveDisabled(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
