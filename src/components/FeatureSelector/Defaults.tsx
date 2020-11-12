@@ -29,7 +29,7 @@ const options: FeatureSliderData[] = [
     currentMin: 0,
     currentMax: 100,
     units: '%',
-    description : 'Energy represents a perceptual measure of intensity and activity.'
+    description : 'Energy describes intensity and activity of a track.'
   },
   {
     id: 'instrumentalness',
@@ -59,7 +59,7 @@ const options: FeatureSliderData[] = [
     currentMin: 0,
     currentMax: 100,
     units: '%',
-    description : 'Speechiness detects the presence of spoken words in a track'
+    description : 'Speechiness detects the presence of spoken (not sung) words in a track'
   },
   {
     id: 'valence',
@@ -69,7 +69,7 @@ const options: FeatureSliderData[] = [
     currentMin: 0,
     currentMax: 100,
     units: '%',
-    description: 'Valence describes the musical positiveness conveyed by a track'
+    description: 'Valence describes the musical/emotional positiveness conveyed by a track'
   },
   {
     id: 'loudness',
@@ -79,7 +79,7 @@ const options: FeatureSliderData[] = [
     currentMin: -60,
     currentMax: 0,
     units: 'dB',
-    description : 'The overall loudness of a track in decibels'
+    description : 'The average loudness of a track in decibels'
   },
   {
     id: 'tempo',
