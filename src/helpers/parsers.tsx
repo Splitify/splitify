@@ -117,7 +117,9 @@ export function parseGenres(
   }
 
   if (genres.length === 0) {
-    genres = Array.from(new Set(artists.map((a: Artist) => a.genres).flat()))
+    // Take the genres of the first artist who has at least one genre
+    const artistGenres = artists.filter(a => a.genres.length > 0).map(a => a.genres)
+    genres = artistGenres.length > 0 ? artistGenres[0] : [];
   }
 
   // convert the date into a decade
