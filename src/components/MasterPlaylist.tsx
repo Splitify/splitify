@@ -151,7 +151,6 @@ export default function MasterPlaylist(
           isDropDisabled={true}
           isDeletable={false}
           component={List}
-          childComponent={ListItem}
           checked={[]}
         />
       </List>

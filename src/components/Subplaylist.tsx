@@ -1,35 +1,37 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import clsx from 'clsx';
-import SaveIcon from '@material-ui/icons/Save';
 import { green } from '@material-ui/core/colors';
-import { Edit as EditIcon, Delete as DeleteIcon } from '@material-ui/icons'
+import { Edit as EditIcon, Delete as DeleteIcon, Save as SaveIcon } from '@material-ui/icons'
 import {
-  Paper,
-  IconButton,
   Button,
-  Dialog,
   CircularProgress,
+  Dialog,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
   makeStyles,
+  Paper,
   Tooltip,
-  Typography
+  Typography,
 } from '@material-ui/core';
-import EditPlaylistNameDialog from './EditPlaylistNameDialog';
-import { createOrUpdatePlaylist, getUserProfile } from '../helpers/helpers';
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import Divider from '@material-ui/core/Divider'
+
+import EditPlaylistNameDialog from './EditPlaylistNameDialog'
+
+import { asPlaylistTrack, isTrackCustom, createOrUpdatePlaylist, getUserProfile } from '../helpers/helpers'
+
 import {
   Playlist as PlaylistObj,
   Track as TrackObj,
   TrackFilter,
   CheckedList
 } from '../types'
+
 import GenreSelector from './GenreSelector'
 import SortSelector from './SortSelector'
 import MultiFilter from './MultiFilter'
 import { FeatureSelector } from './FeatureSelector'
 import TrackList from './TrackList'
-import { asPlaylistTrack, isTrackCustom } from '../helpers/helpers'
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -45,7 +47,6 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     width: 200,
-    height: 230,
     overflow: 'auto'
   },
   button: {
@@ -325,7 +326,7 @@ export default function Subplaylist(props: {
           id={props.playlist.id}
           tracks={filterView}
           component={List}
-          childComponent={ListItem}
+          showActions={true}
           isDeletable={true}
           toggleChecked={props.toggleChecked}
           checked={props.checked}
