@@ -73,6 +73,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     console.log('Deleting playlist', playlist.id)
     delete filteredLists[playlist.id]
     setPlaylists(playlists.filter(p => p.id !== playlist.id))
+    setChecked(checked.filter(p => p.id !== playlist.id))
   }
 
   // Find playlist object given its ID
