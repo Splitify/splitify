@@ -41,7 +41,7 @@ export default function FeatureMenu(props: {
     
     return (
       <div className = {classes.root}>
-        <List component={Paper}>
+        <List component={Paper} disablePadding={true}>
             <ListItem style={{justifyContent:"space-between"}}> 
               <Button className={classes.button}  aria-controls="feature-menu" aria-haspopup="true" onClick={handleMenuOpen} >
                 Add Feature Filter
