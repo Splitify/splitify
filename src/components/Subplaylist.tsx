@@ -330,9 +330,6 @@ export default function Subplaylist(props: {
           toggleChecked={props.toggleChecked}
           checked={props.checked}
         />
-        <div style={{padding: 12}}>
-          Total Tracks: {tracks.length}
-        </div>
       </List>
     </div>
   )

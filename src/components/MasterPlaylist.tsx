@@ -154,9 +154,6 @@ export default function MasterPlaylist(
           childComponent={ListItem}
           checked={[]}
         />
-        <div style={{padding: 12}}>
-          Total Tracks: {filteredTracks.length}
-        </div>
       </List>
     </div>
   )
