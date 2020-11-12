@@ -2,20 +2,25 @@ import React, { useState, useEffect } from 'react'
 import { Draggable } from 'react-beautiful-dnd'
 import Skeleton from '@material-ui/lab/Skeleton'
 
-import { Track as TrackObj } from '../types'
+import { Track as TrackObj, CheckedList } from '../types'
 import Track from './Track'
 
 import DragHandleIcon from '@material-ui/icons/DragHandle'
-import { ListItem, ListItemSecondaryAction, ListItemIcon } from '@material-ui/core'
+import { ListItem, ListItemSecondaryAction, ListItemIcon, Checkbox } from '@material-ui/core'
 import { asPlaylistTrack } from '../helpers/helpers'
 
 export default function (props: {
+  id: string
   track: TrackObj
   index?: number
+  checked: CheckedList[]
   isDragDisabled?: boolean
+  isDeletable: boolean
   style?: any
+  toggleChecked: (id: string, track: TrackObj) => any
 }) {
   let [track, setTrack] = useState<TrackObj>()
+  let [checked, setChecked] = useState<boolean>(false)
 
   useEffect(() => {
     ;(async () => {
@@ -24,6 +29,29 @@ export default function (props: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    let list = props.checked.find((list) => list.id === props.id)
+    let isChecked = false
+    if (list) {
+      isChecked = list.tracks.includes(track!)
+    }
+    setChecked(isChecked)}, [track, props.checked, props.id]
+    )
+
+  function Checkboxes(props: {id: string, track: TrackObj, isDeletable: boolean, toggleChecked: (id: string, track: TrackObj) => any}) {
+    if (props.isDeletable) {
+      return (
+        <Checkbox
+          checked={checked}
+          tabIndex={-1}
+          disableRipple
+          onClick={props.toggleChecked(props.id, props.track)}
+        />
+      )
+    } else {
+      return <div></div>
+    }
+  }
   return (
     <Draggable
       draggableId={asPlaylistTrack(props.track).uuid!}
@@ -45,6 +73,7 @@ export default function (props: {
         >
           {track ? (
             <>
+              <Checkboxes id={props.id} toggleChecked={props.toggleChecked} isDeletable={props.isDeletable} track={track}/>
               <Track track={props.track} isDragging={snapshot.isDragging} />
               {props.isDragDisabled ?? (
                 <ListItemSecondaryAction>

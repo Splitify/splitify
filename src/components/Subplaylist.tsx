@@ -1,31 +1,37 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { Edit as EditIcon, Delete as DeleteIcon } from '@material-ui/icons'
+import clsx from 'clsx';
+import { green } from '@material-ui/core/colors';
+import { Edit as EditIcon, Delete as DeleteIcon, Save as SaveIcon } from '@material-ui/icons'
 import {
-  Paper,
-  IconButton,
   Button,
+  CircularProgress,
   Dialog,
-  Typography,
+  Divider,
+  IconButton,
   List,
   ListItem,
-  Divider
-  // makeStyles
-} from '@material-ui/core'
+  makeStyles,
+  Paper,
+  Tooltip,
+  Typography,
+} from '@material-ui/core';
+
+import EditPlaylistNameDialog from './EditPlaylistNameDialog'
+
+import { asPlaylistTrack, isTrackCustom, createOrUpdatePlaylist, getUserProfile } from '../helpers/helpers'
 
 import {
   Playlist as PlaylistObj,
   Track as TrackObj,
-  TrackFilter
+  TrackFilter,
+  CheckedList
 } from '../types'
 
 import GenreSelector from './GenreSelector'
-import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 import SortSelector from './SortSelector'
 import MultiFilter from './MultiFilter'
 import { FeatureSelector } from './FeatureSelector'
 import TrackList from './TrackList'
-import { isTrackCustom } from '../helpers/helpers'
-import makeStyles from '@material-ui/core/styles/makeStyles'
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -44,23 +50,79 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto'
   },
   button: {
-    margin: theme.spacing(1)
-  }
+    margin: theme.spacing(0.5, 0),
+    size: 'medium'
+  },
+  buttonSuccess: {
+    backgroundColor: green[500],
+    '&:hover': {
+      backgroundColor: green[700],
+    },
+  },
+  buttonProgress: {
+    color: green[500],
+    position: 'absolute',
+    top: '50%',
+    left: '40%',
+    marginTop: -12,
+    marginLeft: -8,
+  },
 }))
 
 export default function Subplaylist(props: {
   source: TrackObj[]
   playlist: PlaylistObj
   genres: string[]
+  checked: CheckedList[]
+  toggleChecked: (id: string, tracks: TrackObj) => any
   onFilterUpdate?: (tracks: TrackObj[]) => any
   onDelete?: (playlist: PlaylistObj) => any
 }) {
   const classes = useStyles()
 
-  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  // SAVING ANIMATION STUFF
+  const [saveDisabled, setsaveDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [buttonLabel, setButtonLabel] = useState("Save")
+  const [filterIsActive, setFilterIsActive] = useState(false);
 
-  // to be displayed (after filter)
+  const buttonClassname = clsx({
+    [classes.button]: true,
+    [classes.buttonSuccess]: success,
+  });
+
+  const handleButtonClick = async () => {
+
+    if (!loading) {
+      // Start loading animation while saving playlist
+      setSuccess(false);
+      setLoading(true);
+      const user = await getUserProfile();
+      await createOrUpdatePlaylist(user.id, props.playlist);
+      // wait 2 seconds before telling the user the playlist has saved
+      setTimeout(() => {
+        setButtonLabel("Saved");
+        setSuccess(true);
+        setLoading(false);
+      },2000);
+      // wait 4 seconds before reverting to normal save button
+      setTimeout(() => { 
+        setButtonLabel("Save");
+        setSuccess(false);
+      },4000);
+    }
+
+    setsaveDisabled(true);
+  };
+
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [tracks, setTracks] = useState<TrackObj[]>(props.source)
+
+  // eslint-disable-next-line
+  const [includedTracks, setIncludedTracks] = useState<TrackObj[]>([])
+  // eslint-disable-next-line
+  const [excludedTracks, setExcludedTracks] = useState<TrackObj[]>([])
 
   // Track selector
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
@@ -72,8 +134,10 @@ export default function Subplaylist(props: {
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => () => true)
 
   const TrackCorrectGenre = (track: TrackObj): boolean => {
-    if (selectedGenres.includes("ALL")) return true
-    return selectedGenres.some((g: string) => track.genres.includes(g));
+    const intersection = selectedGenres.filter(g => track.genres.includes(g));
+    let t = asPlaylistTrack(track)
+    t.included_genres = intersection
+    return intersection.length !== 0;
   }
 
   function handleSortAction(type: string) {
@@ -131,7 +195,8 @@ export default function Subplaylist(props: {
 
   // Save tracks to playlist when updated
   useEffect(() => {
-    props.playlist.tracks = tracks
+    props.playlist.tracks = tracks;
+    tracks.length === 0 ? setsaveDisabled(true) : setsaveDisabled(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
 
@@ -163,7 +228,10 @@ export default function Subplaylist(props: {
           name={props.playlist.name}
           onSave={(newName?: string) => {
             setEditDialogOpen(false)
-            if (newName) props.playlist.name = newName
+            if (newName){ 
+              props.playlist.name = newName
+              setsaveDisabled(false);
+            }
           }}
         />
       </Dialog>
@@ -186,7 +254,54 @@ export default function Subplaylist(props: {
             startIcon={<DeleteIcon />}
           >
             Delete
-            </Button>
+          </Button>
+          <ListItem>
+            {loading ? (
+              <CircularProgress size={24} className={classes.buttonProgress} />
+            ) : (
+              filterIsActive ? (
+                <Tooltip title="Saving is disabled while filter is active.">
+                  <span>
+                    <Button 
+                      variant="contained" 
+                      color="primary" 
+                      className={buttonClassname} 
+                      disabled={true}
+                      onClick={handleButtonClick} 
+                      startIcon={<SaveIcon />}>
+                      {buttonLabel}
+                    </Button>
+                  </span>
+                </Tooltip>
+              ) : (
+                saveDisabled ? (
+                  <Tooltip title="No change since last save.">
+                    <span>
+                      <Button 
+                        variant="contained" 
+                        color="primary" 
+                        className={buttonClassname} 
+                        disabled={saveDisabled} 
+                        onClick={handleButtonClick} 
+                        startIcon={<SaveIcon />}>
+                        {buttonLabel}
+                      </Button>
+                    </span>
+                  </Tooltip>
+                ) : (
+                  <Button 
+                    variant="contained" 
+                    color="primary" 
+                    className={buttonClassname} 
+                    disabled={saveDisabled} 
+                    onClick={handleButtonClick} 
+                    startIcon={<SaveIcon />}>
+                    {buttonLabel}
+                  </Button>
+                )
+              )
+            )}
+          </ListItem>
         </ListItem>
         <ListItem>
           <GenreSelector
@@ -200,13 +315,19 @@ export default function Subplaylist(props: {
           childComponent={ListItem}
         />
         <ListItem divider={true}>
-          <MultiFilter callback={f => setTrackFilter(() => f)} />
+          <MultiFilter
+            callback={f => setTrackFilter(() => f)} 
+            filterIsActive={f => setFilterIsActive(f)}
+          />
         </ListItem>
         <TrackList
           id={props.playlist.id}
           tracks={filterView}
           component={List}
           showActions={true}
+          isDeletable={true}
+          toggleChecked={props.toggleChecked}
+          checked={props.checked}
         />
       </List>
     </div>

@@ -1,6 +1,7 @@
-import React from 'react'
-import { Slider, Typography, makeStyles } from '@material-ui/core'
+import React, { useState } from 'react'
+import { Slider, Typography, makeStyles, Popover } from '@material-ui/core'
 import { FeatureSliderData } from './FeatureSliderData'
+
 
 const useStylesSlider = makeStyles((theme) => ({
   root: {
@@ -12,6 +13,12 @@ const useStylesSlider = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between"
+  },
+  popover: {
+    pointerEvents: 'none'
+  },
+  paper: {
+    padding: theme.spacing(1)
   }
 }))
 
@@ -21,11 +28,35 @@ export default function (props: {
   onFeatureUpdate: (name: string, feature: number[]) => void
 }) {
   const classes = useStylesSlider()
+  const [popupAnchor, setPopupAnchor] = useState(null)
+
   return (
     <div className={classes.root}>
-      <Typography id='range-slider' gutterBottom style={{ minWidth: 130 }}>
+      <Typography id='range-slider' gutterBottom style={{ minWidth: 130 }}  onMouseEnter={(event: any) => setPopupAnchor(event.currentTarget)}
+        onMouseLeave={() => setPopupAnchor(null)}>
         {props.feature.name}
+
       </Typography>
+      <Popover
+        id='mouse-over-popover'
+        className={classes.popover}
+        classes={{
+          paper: classes.paper
+        }}
+        open={!!popupAnchor}
+        anchorEl={popupAnchor}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }}
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+        disableRestoreFocus
+        >
+        {props.feature.description}
+      </Popover>
       <Slider
         onChangeCommitted={(evt, val) =>
           props.onFeatureUpdate(props.feature.name, [val].flat())

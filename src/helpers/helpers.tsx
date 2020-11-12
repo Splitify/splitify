@@ -78,6 +78,78 @@ export function allGenresFromPlaylist(playlist: Playlist): string[] {
   ).sort()
 }
 
+export async function createOrUpdatePlaylist(
+  userId: string,
+  playlist: Playlist,
+  expand: boolean = false
+){
+
+  if(playlist.id.substr(0, 4) === "temp"){
+    console.log("Current playlist doesnt exist. Creating now...");
+    // First create the new playlist
+    const newPlaylist = await parsePlaylistJSON(
+      await api.createPlaylist(userId, {
+        name: playlist.name,
+      }),
+      expand
+    )
+    // replace the current playlists id
+    playlist.id = newPlaylist.id;
+
+    // get all track uris to add
+    const trackUris = playlist.tracks.map(track => {
+      return track.uri;
+    })
+
+    // add the to the playlist 100 tracks at a time
+    await paginated_api_request(playlist.id, trackUris, api.addTracksToPlaylist);
+  }else{
+    console.log("Current playlist exists. Updating instead..");
+    // get current playlist info and construct payload
+    const curInfo = await getPlaylist(playlist.id)
+    let payload = {
+      name: playlist.name,
+      public: playlist.public,
+      collaborative: playlist.collaborative
+    }
+    // first update the basic playlist details
+    await api.changePlaylistDetails(curInfo.id, payload);
+
+    // remove all current tracks
+    await api.replaceTracksInPlaylist(playlist.id, []);
+
+    // then add the new tracks
+    const trackUris = playlist.tracks.map(track => {
+      return track.uri;
+    })
+
+    await paginated_api_request(playlist.id, trackUris, api.addTracksToPlaylist);
+  }
+}
+
+async function paginated_api_request(playlist_id: string, track_uris: string[], api_function: (playlistId: string, uris: string[]) => any) {
+
+  let remaining = track_uris.length;
+  let start = 0;
+
+  while(remaining > 0){
+    console.log("start: ", start, "remaining: ", remaining);
+    if(remaining >= 100){
+      console.log("adding from: ", start, " to: ", start+100);
+      api_function(playlist_id, track_uris.slice(start, start+100));
+      remaining -= 100
+    }else{
+      console.log("adding from: ", start, " to: ", track_uris.length);
+      api_function(playlist_id, track_uris.slice(start));
+      remaining -= (track_uris.length - start);
+    }
+    start += 100;
+    await timer(250);
+  }
+}
+
+function timer(ms: any) { return new Promise(res => setTimeout(res, ms)); }
+
 abstract class TrackExtensible implements Track {
   abstract track: Track
   readonly uuid: string

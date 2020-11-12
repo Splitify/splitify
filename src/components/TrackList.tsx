@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
-import { Track as TrackObj } from '../types'
+import { Track as TrackObj, CheckedList } from '../types'
 import TrackEntry from './TrackEntry'
 import Track from './Track'
 import { ListItem, Button } from '@material-ui/core'
 
 import { VariableSizeList as VirtualList } from 'react-window'
 
-export default function (props: { id?: string; tracks: TrackObj[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDragClone?: boolean, component: React.ElementType, showActions?: boolean}) {
+export default function (props: { id: string; tracks: TrackObj[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDeletable: boolean, isDragClone?: boolean, component: React.ElementType, showActions?: boolean, checked: CheckedList[],  toggleChecked?: (id: string, track: TrackObj) => any}) {
 
   const [height, setHeight] = useState(0);
 
@@ -16,8 +16,12 @@ export default function (props: { id?: string; tracks: TrackObj[], isDropDisable
       key={data[index].id}
       track={data[index]}
       index={index}
+      id={props.id}
       isDragDisabled={props.isDragDisabled}
+      isDeletable={props.isDeletable}
       style={style}
+      checked={props.checked}
+      toggleChecked={props.toggleChecked!}
     />
   ))
 

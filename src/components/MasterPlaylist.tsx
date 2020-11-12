@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Playlist as PlaylistObj, Track as TrackObj, TrackFilter } from '../types'
-
 import { makeStyles, List, ListItem, Paper, Popover, IconButton, Box, Divider } from '@material-ui/core'
 import { Info as InfoIcon, Replay as ReplayIcon } from '@material-ui/icons';
-
 import MultiFilter from './MultiFilter'
 import TrackList from './TrackList'
 
@@ -153,7 +151,9 @@ export default function MasterPlaylist(
           tracks={filteredTracks}
           isDragDisabled={false}
           isDropDisabled={true}
+          isDeletable={false}
           component={List}
+          checked={[]}
         />
       </List>
     </div>

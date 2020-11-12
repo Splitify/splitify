@@ -210,6 +210,8 @@ export async function parsePlaylistJSON(
     owner: parseUserJSON(json.owner),
     snapshot_id: json.snapshot_id,
     uri: json.uri,
+    public: json.public,
+    collaborative: json.collaborative,
     tracks: [],
     expand: async function (expandTrack = false): Promise<Playlist> {
       // Expand playlist to get tracks (Does not expand tracks)
@@ -249,4 +251,29 @@ export async function parsePlaylistJSON(
   }
 
   return expand ? await playlist.expand(expandTrack) : playlist
+}
+
+export async function getLikedSongs(expandTrack = false): Promise<Track[]> {
+  // Expand playlist to get tracks (Does not expand tracks)
+
+  let tracks: Track[] = []
+  const Q = Queue({ autostart: true, concurrency: 1, timeout: 10 * 1000 })
+
+  for await (let trackJSONBare of getPaginationRawGen(
+    api.getMySavedTracks
+  )) {
+    if (!trackJSONBare.track.id) continue;
+    let track = TrackAccumulator.request(
+      trackJSONBare['track']['id']
+    ).then(async (data: SpotifyApi.TrackObjectFull) =>
+      // Add parsed track, optionally request track expansion
+      asPlaylistTrack(await parseTrackJSON(await data, expandTrack))
+    )
+
+    Q.push(async cb => {
+      tracks.push(await track)
+      cb && cb()
+    })
+  }
+  return await tracks
 }
