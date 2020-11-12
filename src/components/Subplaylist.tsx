@@ -322,6 +322,9 @@ export default function Subplaylist(props: {
           component={List}
           childComponent={ListItem}
         />
+        <div style={{padding: 12}}>
+          Total Tracks: {tracks.length}
+        </div>
       </List>
     </div>
   )

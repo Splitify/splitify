@@ -154,6 +154,9 @@ export default function MasterPlaylist(
           component={List}
           childComponent={ListItem}
         />
+        <div style={{padding: 12}}>
+          Total Tracks: {filteredTracks.length}
+        </div>
       </List>
     </div>
   )
