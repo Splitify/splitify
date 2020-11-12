@@ -75,7 +75,7 @@ export default function (props: {
 
   let colourIndex = -1
   const artistEnglish = strArrayToEnglish(props.track.artists.map(a => a.name))
-  const genresEnglish = strArrayToEnglish(props.track.genres)
+  const genresEnglish = strArrayToEnglish(props.track.genres.filter(g => g !== "ALL"))
   const lengthEnglish = numToNaturalTime(props.track.duration_ms)
   const inclusionEnglish = determineInclusion(props.track)
 
