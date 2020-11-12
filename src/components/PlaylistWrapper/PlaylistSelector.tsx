@@ -23,9 +23,10 @@ import {
 import SearchIcon from '@material-ui/icons/Search'
 
 import { Playlist } from '../../types'
-import { getPlaylist, getPlaylists } from '../../helpers/helpers'
+import { getPlaylist, getPlaylists, getUserProfile } from '../../helpers/helpers'
 import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon'
 import Checkbox from '@material-ui/core/Checkbox/Checkbox'
+import { getLikedSongs } from '../../helpers/parsers'
 
 const useStyles = makeStyles({
   root: {
@@ -80,13 +81,23 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
   };
 
   const handleSelection = async () => {
-    setLoading(true)
+    setLoading(true);
+
+    let playlists = await Promise.all(
+      checked.filter(s => s !== likedPlaylistStub.id)
+        .map(async (s: string) => await getPlaylist(s, true))
+    );
     
-    const playlists = await Promise.all(checked.map(async (s: string) => await getPlaylist(s, true)));
+    if (checked.includes(likedPlaylistStub.id)) {
+      likedPlaylistStub.tracks = await getLikedSongs(true);
+      likedPlaylistStub.owner = await getUserProfile();
+      playlists = [likedPlaylistStub].concat(playlists)
+    }
+    
     const tracks = playlists.map((p: Playlist) => p.tracks).flat();
     const name = playlists.map((p: Playlist) => p.name).join(" + ");
     const id = playlists.map(p => p.id).join('')
-    
+
     await props.onSelect({
       id: id,
       name: name,
