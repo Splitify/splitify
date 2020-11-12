@@ -91,7 +91,7 @@ export default new (class {
       client_id: process.env.REACT_APP_CLIENT_ID,
       redirect_uri: `${window.location.protocol}//${window.location.host}/login`,
       response_type: 'token',
-      scope: 'playlist-read-private playlist-read-collaborative user-library-read'
+      scope: 'playlist-read-private playlist-read-collaborative playlist-modify-private playlist-read-collaborative playlist-read-private playlist-modify-public user-library-read'
     }
     return `${authEndpoint}?${new URLSearchParams(data as any).toString()}`
   }

@@ -13,6 +13,7 @@ export default function (props: {
   onUpdateFilterFunction: (f: TrackFilter) => void
   component: React.ElementType
   childComponent: React.ElementType
+  filterIsActive?: (v: boolean) => void
 }) {
   const Wrapper = props.component
   const ChildWrapper = props.childComponent
@@ -37,6 +38,13 @@ export default function (props: {
         )
       })
     })
+
+    if(props.filterIsActive && sliders.length === 0){
+      props.filterIsActive(false)
+    }else if(props.filterIsActive){
+      props.filterIsActive(true)
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sliders])
 

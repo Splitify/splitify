@@ -210,6 +210,8 @@ export async function parsePlaylistJSON(
     owner: parseUserJSON(json.owner),
     snapshot_id: json.snapshot_id,
     uri: json.uri,
+    public: json.public,
+    collaborative: json.collaborative,
     tracks: [],
     expand: async function (expandTrack = false): Promise<Playlist> {
       // Expand playlist to get tracks (Does not expand tracks)

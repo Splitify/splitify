@@ -49,6 +49,8 @@ const likedPlaylistStub: Playlist = {
   snapshot_id: "",
   tracks: [],
   uri: "",
+  public: false,
+  collaborative: false,
   expand: async function () {
     return this
   }
@@ -104,6 +106,8 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
       description: playlists[0].description,
       image: playlists[0].image,
       owner: playlists[0].owner,
+      public: false,
+      collaborative: false,
       snapshot_id: playlists[0].snapshot_id,
       tracks: tracks,
       uri: playlists[0].uri,
