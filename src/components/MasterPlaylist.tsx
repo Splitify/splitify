@@ -7,8 +7,6 @@ import { Info as InfoIcon, Replay as ReplayIcon } from '@material-ui/icons';
 import MultiFilter from './MultiFilter'
 import TrackList from './TrackList'
 
-import { ToggleButton } from '@material-ui/lab'
-
 const useStyles = makeStyles(theme => ({
   popover: {
     pointerEvents: 'none'
