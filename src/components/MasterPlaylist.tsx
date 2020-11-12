@@ -151,8 +151,10 @@ export default function MasterPlaylist(
           tracks={filteredTracks}
           isDragDisabled={false}
           isDropDisabled={true}
+          isDeletable={false}
           component={List}
           childComponent={ListItem}
+          checked={[]}
         />
       </List>
     </div>
