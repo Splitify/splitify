@@ -58,7 +58,11 @@ const likedPlaylistStub: Playlist = {
 
 let playlistCache: Playlist[] = [];
 
-export default function (props: { onSelect: (playlist: Playlist) => void }) {
+export default function (
+  props: {
+    onSelect: (playlist: Playlist) => void,
+    onLoading: () => void
+  }) {
   const classes = useStyles()
 
   async function handleRefresh() {
@@ -84,18 +88,19 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
 
   const handleSelection = async () => {
     setLoading(true);
+    props.onLoading();
 
     let playlists = await Promise.all(
       checked.filter(s => s !== likedPlaylistStub.id)
         .map(async (s: string) => await getPlaylist(s, true))
     );
-    
+
     if (checked.includes(likedPlaylistStub.id)) {
       likedPlaylistStub.tracks = await getLikedSongs(true);
       likedPlaylistStub.owner = await getUserProfile();
       playlists = [likedPlaylistStub].concat(playlists)
     }
-    
+
     const tracks = playlists.map((p: Playlist) => p.tracks).flat();
     const name = playlists.map((p: Playlist) => p.name).join(" + ");
     const id = playlists.map(p => p.id).join('')
