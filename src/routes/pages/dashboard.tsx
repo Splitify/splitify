@@ -94,7 +94,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       <Button
         variant='contained'
         color='primary'
-        style={{ float: 'right', margin: 5 }}
+        style={{ float: "right", display: "inline-block", margin: 5 }}
         onClick={() =>
           Auth.logout().then(() => {
             window.location.href = window.location.origin + '/'
@@ -103,7 +103,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       >
         Logout
       </Button>
-      <Grid style={{ padding: '2%', width: '100%', paddingTop: 0 }} container spacing={5}>
+      <Grid style={{ padding: '2%', paddingTop: 0, flex: "none"}} container wrap="nowrap" direction={"row"} spacing={5}>
         <DragDropContext
           onDragEnd={evt => {
             if (!evt.destination) return
@@ -177,7 +177,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             setPlaylists([...playlists])
           }}
         >
-          <Grid item xs={4}>
+          <Grid item style={{ flex: "none"}} xs={4}>
             <PlaylistWrapper
               usedTracks={usedTracks}
               onSelect={p => loadPlaylist(p)}
@@ -188,7 +188,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
           {masterPlaylist ? (
             <>
               {playlists.map(p => (
-                <Grid item xs={4} key={p.id}>
+                <Grid style={{ flex: "none"}} item xs={4} key={p.id}>
                   <Subplaylist
                     genres={genres}
                     source={p.sourcePool}

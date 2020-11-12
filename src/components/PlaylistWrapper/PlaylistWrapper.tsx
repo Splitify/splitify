@@ -33,10 +33,11 @@ export default function (props: {
         <MasterPlaylist playlist={playlist} usedTracks={props.usedTracks} onOpenSelector={() => setSelectorOpen(true)} onFilterUpdate={props.onFilterUpdate} />
       ) : (
           <Box
+
             textAlign='center'
             component={Paper}
             onClick={() => setSelectorOpen(true)}
-            style={{ cursor: 'pointer', userSelect: 'none' }}
+            style={{ cursor: 'pointer', userSelect: 'none', width:"400%"}}
           >
             <div>{props.text || 'Select playlists'}</div>
             <Icon component={AddCircleOutlineIcon} />
