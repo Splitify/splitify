@@ -52,6 +52,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       snapshot_id: '',
       tracks: [],
       uri: '',
+      public: false,
+      collaborative: false,
       sourcePool: masterPlaylist!.tracks.map(t => asPlaylistTrack(t).clone!()),
       expand: async function () {
         return this

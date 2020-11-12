@@ -11,5 +11,7 @@ export interface Playlist {
   snapshot_id: string
   tracks: Array<Track>
   uri: string
+  public: boolean
+  collaborative: boolean
   expand : (expandTrack?: boolean) => Promise<this>
 }
