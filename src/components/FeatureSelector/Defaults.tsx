@@ -29,7 +29,7 @@ const options: FeatureSliderData[] = [
     currentMin: 0,
     currentMax: 100,
     units: '%',
-    description : 'Energy represents a perceptual measure of intensity and activity.'
+    description : 'Energy describes intensity and activity of a track.'
   },
   {
     id: 'instrumentalness',
