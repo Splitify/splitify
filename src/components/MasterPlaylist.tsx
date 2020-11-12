@@ -150,6 +150,7 @@ export default function MasterPlaylist(
           isDragDisabled={false}
           isDropDisabled={true}
           isDeletable={false}
+          showTrackCount={true}
           component={List}
           checked={[]}
         />

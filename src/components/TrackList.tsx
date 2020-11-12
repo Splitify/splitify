@@ -7,7 +7,7 @@ import { ListItem, Button } from "@material-ui/core"
 
 import { VariableSizeList as VirtualList } from 'react-window'
 
-export default function (props: { id: string; tracks: TrackObj[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDeletable: boolean, isDragClone?: boolean, component: React.ElementType, showActions?: boolean, checked: CheckedList[],  toggleChecked?: (id: string, track: TrackObj) => any}) {
+export default function (props: { id: string; tracks: TrackObj[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDeletable: boolean, isDragClone?: boolean, component: React.ElementType, showActions?: boolean, showTrackCount?: boolean, checked: CheckedList[],  toggleChecked?: (id: string, track: TrackObj) => any}) {
   const [height, setHeight] = useState(0);
 
   const [ref, setRef] = useState<HTMLElement>();
@@ -84,9 +84,9 @@ export default function (props: { id: string; tracks: TrackObj[], isDropDisabled
         </VirtualList>
       )}
     </Droppable>
-    <ListItem dense={true}>
+    {props.showTrackCount && <ListItem dense={true}>
       Total Tracks: {props.tracks.length}
-    </ListItem>
+    </ListItem>}
     {props.showActions && <ListItem style={{height: 40, padding: 0}}>
       <Button>One</Button>
       <Button>Two</Button>
