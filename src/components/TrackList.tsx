@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
 import { Track as TrackObj, CheckedList } from '../types'
 import TrackEntry from './TrackEntry'
@@ -8,8 +8,28 @@ import { ListItem, Button } from '@material-ui/core'
 import { VariableSizeList as VirtualList } from 'react-window'
 
 export default function (props: { id: string; tracks: TrackObj[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDeletable: boolean, isDragClone?: boolean, component: React.ElementType, showActions?: boolean, checked: CheckedList[],  toggleChecked?: (id: string, track: TrackObj) => any}) {
-
   const [height, setHeight] = useState(0);
+
+  const [ref, setRef] = useState<HTMLElement>();
+  useEffect(() => {
+    const checkHeight = function () {
+      if (!ref) return
+      const wh = window.innerHeight
+
+      let h = wh - (ref.getBoundingClientRect().top + window.pageYOffset || document.documentElement.scrollTop)
+      h = ((h%wh)+wh)%wh - (props.showActions ? 40 : 0) - 50
+
+      setHeight(h)
+    }
+    checkHeight()
+
+    window.addEventListener('resize', checkHeight)
+
+    return () => {
+      window.removeEventListener('resize', checkHeight)
+    }
+    // eslint-disable-next-line
+  }, [ref])
 
   const EntryInvariant = React.memo(({ data, index, style }: any) => (
     data[index] && <TrackEntry
@@ -44,19 +64,13 @@ export default function (props: { id: string; tracks: TrackObj[], isDropDisabled
     >
       {(provided, snapshot) => (
         <VirtualList
-          outerRef={provided.innerRef}
+          outerRef={
+            node => {
+              setRef(node)
+              provided.innerRef(node)
+            }}
           {...provided.droppableProps}
           innerElementType={props.component}
-          ref={el => {
-            // FIXME: Refactor to make it nice
-            
-            if (!el || height) return
-            let elem = (el as any)?._outerRef as HTMLElement
-            const wh = window.innerHeight
-            let h = wh - (elem.getBoundingClientRect().top + window.pageYOffset || document.documentElement.scrollTop)
-            h = ((h%wh)+wh)%wh - (props.showActions ? 40 : 0) - 50
-            setHeight(h)
-          }}
           height={height}
           itemCount={props.tracks.length + (snapshot.isUsingPlaceholder ? 1 : 0)}
           itemData={props.tracks}
