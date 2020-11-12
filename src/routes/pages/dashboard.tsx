@@ -27,10 +27,10 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
   const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>()
   const [genres, setGenres] = useState<string[]>([])
+  const [usedTracks, setUsedTracks] = useState<TrackObj[]>([])
+  const filteredLists: { [id: string]: TrackObj[] } = useState({})[0];
   const [checked, setChecked] = useState<CheckedList[]>([])
 
-  const filteredLists: { [id: string]: TrackObj[] } = useState({})[0]; 
-  
   function loadPlaylist(playlist: PlaylistObj) {
     Promise.all(playlist.tracks.map(t => t.expand())).then(() => {
       setMasterPlaylist(playlist)
@@ -91,6 +91,10 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     return playlist.tracks.findIndex(t => asPlaylistTrack(t).uuid === targetTrackUUID)
   }
 
+  const updateTracks = () => {
+    setUsedTracks(Array.from(new Set(playlists.map((p: PlaylistObj) => p.tracks).flat())))
+  }
+
   const toggleChecked = (id: string, track: TrackObj) => () => {
     let checkedPlaylist = findChecked(id)
     if (!checkedPlaylist) throw new Error("Failed to find checked list")
@@ -147,7 +151,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     return(<div></div>)
   }
 
-  const usedTracks = Array.from(new Set(playlists.map((p: PlaylistObj) => p.tracks).flat()));
 
   return (
     <div className={classes.root}>
@@ -178,23 +181,22 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
             if (sourcePlaylist === masterPlaylist) {
 
-                console.log('drag from master');
-  
-                let trackCopy = asPlaylistTrack(masterPlaylist.tracks[sourceIdx]).clone!({
-                  isCustom: true,
-                  sourceID: masterPlaylist.id,
-                  sourceName: () => "Master Playlist"
-                })
+              console.log('drag from master');
 
-                const dest_newTracks = [...destPlaylist.tracks];
-                dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, trackCopy);
-                destPlaylist.tracks = dest_newTracks
+              let trackCopy = asPlaylistTrack(masterPlaylist.tracks[sourceIdx]).clone!({
+                isCustom: true,
+                sourceID: masterPlaylist.id,
+                sourceName: () => "Master Playlist"
+              })
 
-                setPlaylists([...playlists]) 
+              const dest_newTracks = [...destPlaylist.tracks];
+              dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, trackCopy);
+              destPlaylist.tracks = dest_newTracks
 
-                return
+              setPlaylists([...playlists])
+
+              return
             }
-           
             const source_newTracks = [...sourcePlaylist.tracks];
             let removed = source_newTracks.splice(sourceIdx, 1)[0];
 
@@ -230,7 +232,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             } else {
               source_newTracks.splice(destIdx, 0, removed);
             }
-            
+
             sourcePlaylist.tracks = source_newTracks
 
             setPlaylists([...playlists])
@@ -252,6 +254,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                     toggleChecked={toggleChecked}
                     genres={genres}
                     source={p.sourcePool}
+                    onTrackUpdate={updateTracks}
                     playlist={p}
                     onDelete={() => deletePlaylist(p)}
                     onFilterUpdate={tracks => filteredLists[p.id] = tracks}
