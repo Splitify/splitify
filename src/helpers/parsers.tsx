@@ -109,8 +109,9 @@ export function parseGenres(
     .map((t: any) => t.name.toLowerCase())
     .filter((s: string) => s.replace('-', '').split(" ").some((g: string) => GENRE_WHITELIST.includes(g)))
     ?? [];
+  genres = genres.filter((g: string) => !artistNames.includes(g)); // Don't include the artist's name
+  genres = genres.filter((g: string) => !g.match(/\d{2}/)); // Don't include numbers
   genres.splice(3, 99); // Only keep the first three. The quality goes down quick on some songs
-  genres = genres.filter((g: string) => !artistNames.includes(g));
 
   if (genres.length === 0) {
     genres = album?.genres ?? [];
