@@ -61,9 +61,6 @@ const useStyles = makeStyles(theme => ({
   },
   buttonProgress: {
     color: green[500],
-    position: 'absolute',
-    top: '50%',
-    left: '40%',
     marginTop: -12,
     marginLeft: -8,
   },
@@ -248,16 +245,6 @@ export default function Subplaylist(props: {
           <Divider orientation="vertical" flexItem />
           <SortSelector onSort={handleSortAction} />
           <Divider orientation="vertical" flexItem />
-          <Button
-            variant='contained'
-            color='secondary'
-            className={classes.button}
-            onClick={() => props.onDelete && props.onDelete(props.playlist)}
-            startIcon={<DeleteIcon />}
-          >
-            Delete
-          </Button>
-          <Divider orientation="vertical" flexItem />
           {loading ? (
             <CircularProgress size={24} className={classes.buttonProgress} />
           ) : (
@@ -303,6 +290,16 @@ export default function Subplaylist(props: {
                     )
                 )
             )}
+          <Divider orientation="vertical" flexItem />
+          <Button
+            variant='contained'
+            color='secondary'
+            className={classes.button}
+            onClick={() => props.onDelete && props.onDelete(props.playlist)}
+            startIcon={<DeleteIcon />}
+          >
+            Delete
+          </Button>
         </ListItem>
         <ListItem>
           <GenreSelector
