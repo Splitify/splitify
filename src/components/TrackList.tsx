@@ -16,8 +16,12 @@ export default function (props: { id: string; tracks: TrackObj[], isDropDisabled
       if (!ref) return
       const wh = window.innerHeight
 
-      let h = wh - (ref.getBoundingClientRect().top + window.pageYOffset || document.documentElement.scrollTop)
-      h = ((h%wh)+wh)%wh - (props.showActions ? 40 : 0) - 50
+      // Check height of the parent rectangle to see if there are more components below the TrackList.
+      // If so, adjust the TrackList height accordingly
+      let parentRect = ref.parentElement!.getBoundingClientRect();
+
+      let h = wh - ((Math.max(ref.getBoundingClientRect().top, parentRect.top + parentRect.height)) + window.pageYOffset || document.documentElement.scrollTop)
+      h = ((h%wh)+wh)%wh - 50
 
       setHeight(h)
     }
@@ -28,7 +32,6 @@ export default function (props: { id: string; tracks: TrackObj[], isDropDisabled
     return () => {
       window.removeEventListener('resize', checkHeight)
     }
-    // eslint-disable-next-line
   }, [ref])
 
   const EntryInvariant = React.memo(({ data, index, style }: any) => (
