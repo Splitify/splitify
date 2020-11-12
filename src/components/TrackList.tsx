@@ -19,10 +19,11 @@ export default function (props: { id: string; tracks: TrackObj[], isDropDisabled
       // Check height of the parent rectangle to see if there are more components below the TrackList.
       // If so, adjust the TrackList height accordingly
       let parentRect = ref.parentElement!.getBoundingClientRect();
+      let refRect = ref.getBoundingClientRect()
 
-      let h = wh - ((Math.max(ref.getBoundingClientRect().top, parentRect.top + parentRect.height)) + window.pageYOffset || document.documentElement.scrollTop)
+      let h = wh - ((Math.max(refRect.top, parentRect.top + parentRect.height - refRect.height)) + window.pageYOffset || document.documentElement.scrollTop)
+  
       h = ((h%wh)+wh)%wh - 50
-
       setHeight(h)
     }
     checkHeight()
