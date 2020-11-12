@@ -59,7 +59,7 @@ const options: FeatureSliderData[] = [
     currentMin: 0,
     currentMax: 100,
     units: '%',
-    description : 'Speechiness detects the presence of spoken words in a track'
+    description : 'Speechiness detects the presence of spoken (not sung) words in a track'
   },
   {
     id: 'valence',
