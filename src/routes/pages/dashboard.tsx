@@ -12,7 +12,6 @@ import { DragDropContext } from 'react-beautiful-dnd';
 
 export const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: 1
   },
   playlist: {
     //Add styling for playlists here
