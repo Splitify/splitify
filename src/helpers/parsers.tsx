@@ -126,7 +126,7 @@ export function parseGenres(
   if (year > 1920) {
     genres.push(`${year}s`);
   }
-  return genres;
+  return ["ALL"].concat(genres);
 }
 
 export function parseFeaturesJSON(

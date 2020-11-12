@@ -65,7 +65,7 @@ export default function Subplaylist(props: {
   const [tracks, setTracks] = useState<TrackObj[]>(props.source)
 
   // Track selector
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(["ALL"])
   const [featureFilter, setFeatureFilter] = useState<TrackFilter>(() => () =>
     true
   )
