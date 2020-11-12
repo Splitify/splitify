@@ -22,9 +22,6 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-
-
-
 export default function FeatureMenu(props: {
     onSelect: (option: FeatureSliderData) => void
     hidden: string[]
