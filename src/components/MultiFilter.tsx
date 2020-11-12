@@ -4,7 +4,9 @@ import { Artist, Track as TrackObj, TrackFilter } from '../types'
 
 export default function MultiFilter(props: {
   callback: (f: TrackFilter) => void;
+  filterIsActive?: (v: boolean) => void;
 }) {
+
   const [filterValue, setFilterValue] = useState("");
   const [filterCategory, setFilterCategory] = useState("Name");
 
@@ -18,6 +20,13 @@ export default function MultiFilter(props: {
         || (filterCategory === "Album" && track.album?.name.toLowerCase().includes(filterValue) === true)
         || (filterCategory === "Genre" && track.genres.some((g: string) => g.includes(filterValue)));
     }
+
+    if(props.filterIsActive && filterValue === ""){
+      props.filterIsActive(false)
+    }else if(props.filterIsActive){
+      props.filterIsActive(true)
+    }
+    
     props.callback(TrackMatchesFilter);
     // eslint-disable-next-line
   }, [filterValue, filterCategory]);
