@@ -39,6 +39,20 @@ const useStyles = makeStyles({
   }
 })
 
+const likedPlaylistStub: Playlist = {
+  id: "liked-songs",
+  name: "Liked Songs",
+  description: "",
+  image: "",
+  owner: { id: "", display_name: "" },
+  snapshot_id: "",
+  tracks: [],
+  uri: "",
+  expand: async function () {
+    return this
+  }
+}
+
 let playlistCache: Playlist[] = [];
 
 export default function (props: { onSelect: (playlist: Playlist) => void }) {
@@ -46,7 +60,7 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
 
   async function handleRefresh() {
     setLoading(true)
-    setPlaylists((playlistCache = await getPlaylists()))
+    setPlaylists(playlistCache = [likedPlaylistStub].concat(await getPlaylists()))
     setLoading(false)
   }
 
@@ -82,7 +96,9 @@ export default function (props: { onSelect: (playlist: Playlist) => void }) {
       snapshot_id: playlists[0].snapshot_id,
       tracks: tracks,
       uri: playlists[0].uri,
-      expand: playlists[0].expand, // TODO this doesn't make sense...
+      expand: async function () {
+        return this
+      }
     })
     setLoading(false)
   }
