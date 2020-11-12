@@ -69,7 +69,7 @@ const options: FeatureSliderData[] = [
     currentMin: 0,
     currentMax: 100,
     units: '%',
-    description: 'Valence describes the musical positiveness conveyed by a track'
+    description: 'Valence describes the musical/emotional positiveness conveyed by a track'
   },
   {
     id: 'loudness',
