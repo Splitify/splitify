@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { Slider, Typography, makeStyles, Box, Popover } from '@material-ui/core'
+import { Slider, Typography, makeStyles, Popover } from '@material-ui/core'
 import { FeatureSliderData } from './FeatureSliderData'
-import { Info as InfoIcon } from '@material-ui/icons';
 
 
 const useStylesSlider = makeStyles((theme) => ({
@@ -33,15 +32,11 @@ export default function (props: {
 
   return (
     <div className={classes.root}>
-      <Typography id='range-slider' gutterBottom style={{ minWidth: 130 }}>
+      <Typography id='range-slider' gutterBottom style={{ minWidth: 130 }}  onMouseEnter={(event: any) => setPopupAnchor(event.currentTarget)}
+        onMouseLeave={() => setPopupAnchor(null)}>
         {props.feature.name}
+
       </Typography>
-      <Box style={{ padding: 12 }}>
-        <InfoIcon
-          onMouseEnter={(event: any) => setPopupAnchor(event.currentTarget)}
-          onMouseLeave={() => setPopupAnchor(null)}
-        />
-      </Box>
       <Popover
         id='mouse-over-popover'
         className={classes.popover}
