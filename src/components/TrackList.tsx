@@ -88,10 +88,12 @@ export default function (props: { id: string; tracks: TrackObj[], isDropDisabled
     {props.showTrackCount && <ListItem dense={true}>
       Total Tracks: {props.tracks.length}
     </ListItem>}
+    {/*
     {props.showActions && <ListItem style={{height: 40, padding: 0}}>
       <Button>One</Button>
       <Button>Two</Button>
       <Button>Three</Button>
     </ListItem>}
+    */}
   </>
 }
