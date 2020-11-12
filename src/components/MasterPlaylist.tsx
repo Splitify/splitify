@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Playlist as PlaylistObj, Track as TrackObj, TrackFilter } from '../types'
 
-import { makeStyles, List, ListItem, Paper, Popover, IconButton, Box, Divider } from '@material-ui/core'
+import { makeStyles, List, ListItem, Paper, Popover, IconButton, Box, Divider, Button } from '@material-ui/core'
 import { Info as InfoIcon, Replay as ReplayIcon } from '@material-ui/icons';
 
 import MultiFilter from './MultiFilter'
@@ -134,15 +134,14 @@ export default function MasterPlaylist(
             {popupAnchor == null ? "" : calRecommendedGenres()}
           </Popover>
           <Divider orientation="vertical" flexItem />
-          <ToggleButton
+          <Button
             className={classes.button}
             size="small"
-            selected={!filterUsedTracks}
-            value={!filterUsedTracks}
-            onChange={() => setFilterUsedTracks(!filterUsedTracks)}
+            variant='contained'
+            onClick={() => setFilterUsedTracks(!filterUsedTracks)}
           >
-            Show All
-          </ToggleButton>
+            {filterUsedTracks ? "show all" : "show unused"}
+          </Button>
         </ListItem>
         <ListItem divider={true}>
           <MultiFilter callback={f => setTrackFilter(() => f)} />
