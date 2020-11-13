@@ -322,7 +322,7 @@ export default function Subplaylist(props: {
           id={props.playlist.id}
           tracks={filterView}
           component={List}
-          showActions={true}
+          showActions={false}
           isDeletable={true}
           showTrackCount={true}
           toggleChecked={props.toggleChecked}
