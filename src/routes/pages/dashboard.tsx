@@ -9,6 +9,7 @@ import { CheckedList, Playlist as PlaylistObj, Track as TrackObj } from "../../t
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
 import { DragDropContext } from 'react-beautiful-dnd';
+import Logo from '../../images/textmark@72.png'
 
 export const useStyles = makeStyles(theme => ({
   root: {
@@ -173,6 +174,11 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
   return (
     <div className={classes.root}>
+      <img
+          src={Textmark}
+          width='480px'
+          alt="Splitify"
+        />
       <Button
         variant='contained'
         color='primary'
