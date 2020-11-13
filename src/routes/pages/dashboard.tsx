@@ -21,6 +21,11 @@ export const useStyles = makeStyles(theme => ({
     flexWrap: 'nowrap',
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
     transform: 'translateZ(0)',
+  },
+  gridListTile: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    width: "50%",
   }
 }))
 
@@ -66,14 +71,14 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       }
     }
   }
-  
+
   const [playlists, setPlaylists] = useState<PlaylistObjectPP[]>([])
 
   const addPlaylist = () => {
     const playlist = createPlaylist()
     console.log('Adding playlist', playlist.id)
     setPlaylists([...playlists, playlist])
-    setChecked([...checked, {id: playlist.id, tracks: []}])
+    setChecked([...checked, { id: playlist.id, tracks: [] }])
   }
 
   const deletePlaylist = (playlist: PlaylistObj) => {
@@ -127,7 +132,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       if (!sourcePlaylist) throw new Error("Failed to get playlist")
       source_newTracks = [...sourcePlaylist!.tracks];
       checkedList.tracks.forEach((track) => {
-        index = source_newTracks.map(function(e) { return e.id; }).indexOf(track.id);
+        index = source_newTracks.map(function (e) { return e.id; }).indexOf(track.id);
         source_newTracks!.splice(index, 1);
       })
       sourcePlaylist.tracks = source_newTracks
@@ -139,21 +144,21 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   }
 
   function DeleteTracksButton() {
-    for (let i = 0; i < checked.length; i++){
+    for (let i = 0; i < checked.length; i++) {
       if (checked[i].tracks[0]) {
         return (
           <Button
-              variant='contained'
-              color='secondary'
-              onClick={updateSourcePool}
-              style={{ float: 'left', margin: 5 }}
-            >
-              Delete Selected Tracks
-            </Button>
+            variant='contained'
+            color='secondary'
+            onClick={updateSourcePool}
+            style={{ float: 'left', margin: 5 }}
+          >
+            Delete Selected Tracks
+          </Button>
         )
       }
     }
-    return(<div></div>)
+    return (<div></div>)
   }
 
 
@@ -162,7 +167,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       <Button
         variant='contained'
         color='primary'
-        style={{ float: "right", display: "inline-block", margin: 5 }}
+        style={{ float: "right", margin: 5 }}
         onClick={() =>
           Auth.logout().then(() => {
             window.location.href = window.location.origin + '/'
@@ -171,7 +176,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       >
         Logout
       </Button>
-      <DeleteTracksButton/>
+      <DeleteTracksButton />
       <Grid style={{ width: '100%', margin: 0 }} container spacing={5}>
         <DragDropContext
           onDragEnd={evt => {
@@ -254,7 +259,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
               {masterPlaylist ? (
                 <>
                   {playlists.map(p => (
-                    <GridListTile key={p.id}>
+                    <GridListTile key={p.id} className={classes.gridListTile}>
                       <Subplaylist
                         toggleChecked={toggleChecked}
                         genres={genres}
@@ -263,7 +268,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                         playlist={p}
                         onDelete={() => deletePlaylist(p)}
                         onFilterUpdate={tracks => filteredLists[p.id] = tracks}
-                        checked = {checked}
+                        checked={checked}
                       />
                     </GridListTile>
                   ))}
