@@ -9,6 +9,7 @@ import { CheckedList, Playlist as PlaylistObj, Track as TrackObj } from "../../t
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
 import { DragDropContext } from 'react-beautiful-dnd';
+import "../../gradientBG.css"
 
 export const useStyles = makeStyles(theme => ({
   root: {
@@ -170,9 +171,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     return (<div></div>)
   }
 
-
   return (
-    <div className={classes.root}>
+    <div className={`${classes.root} gradientAnim`}>
       <Button
         variant='contained'
         color='primary'
@@ -263,7 +263,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
               onFilterUpdate={tracks => masterPlaylist && (filteredLists[masterPlaylist.id] = tracks)}
             />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={8} style={{ paddingRight: 0, overflowX: 'hidden' }}>
             <GridList className={classes.gridList} cols={2}>
               {masterPlaylist ? (
                 <>
@@ -281,7 +281,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                       />
                     </GridListTile>
                   ))}
-                  <GridListTile>
+                  <GridListTile style={{ paddingRight: 15 }}>
                     <Button
                       variant='contained'
                       color='primary'
