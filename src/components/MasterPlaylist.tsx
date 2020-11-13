@@ -81,7 +81,7 @@ export default function MasterPlaylist(
       .forEach((g: string) => map.set(g, (map.get(g) ?? 0) + 1));
 
     var mapAsc = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
-    mapAsc.splice(3, Number.MAX_SAFE_INTEGER);
+    mapAsc.splice(4, Number.MAX_SAFE_INTEGER);
     const suggestions = mapAsc.map(a => a[0]).filter(g => g !== "ALL");
 
     if (suggestions.length === 0) {

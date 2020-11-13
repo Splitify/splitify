@@ -11,6 +11,7 @@ const checkedIcon = <CheckBoxIcon fontSize='small' />
 
 export default function (props: {
   genres: string[]
+  selectedGenres: string[]
   onSelect: (values: string[]) => any
 }) {
   return (
@@ -22,6 +23,8 @@ export default function (props: {
       disableCloseOnSelect
       getOptionLabel={option => option}
       onChange={(event: any, newValue: string[]) => {
+        if (props.selectedGenres.length === 1 && props.selectedGenres[0] === "ALL")
+          newValue.splice(0, 1)
         props.onSelect(newValue)
       }}
       renderOption={(option, { selected }) => (

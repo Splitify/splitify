@@ -304,6 +304,7 @@ export default function Subplaylist(props: {
         <ListItem>
           <GenreSelector
             genres={props.genres}
+            selectedGenres={selectedGenres}
             onSelect={values => setSelectedGenres(values)}
           />
         </ListItem>
