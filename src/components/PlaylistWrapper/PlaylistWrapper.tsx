@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import PlaylistSelector from './PlaylistSelector'
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
-import { Icon, Dialog, Box, Paper } from '@material-ui/core'
+import { Icon, Dialog, Box, Paper, Typography } from '@material-ui/core'
 import { Playlist, Track as TrackObj } from '../../types'
 import MasterPlaylist from '../MasterPlaylist'
 
@@ -35,13 +35,13 @@ export default function (props: {
         <MasterPlaylist playlist={playlist} usedTracks={props.usedTracks} onOpenSelector={() => setSelectorOpen(true)} onFilterUpdate={props.onFilterUpdate} />
       ) : (
           <Box
-
             textAlign='center'
             component={Paper}
             onClick={() => setSelectorOpen(true)}
             style={{ cursor: 'pointer', userSelect: 'none'}}
+            padding={1}
           >
-            <div>{props.text || 'Select playlists'}</div>
+            <Typography gutterBottom={true}>{props.text || 'Select playlists'}</Typography>
             <Icon component={AddCircleOutlineIcon} />
           </Box>
         )}
