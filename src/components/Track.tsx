@@ -60,17 +60,18 @@ export default function Track(props: {
 
   return (
     <ListItemText disableTypography={true}>
-      <Typography
-        aria-haspopup='true'
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}
-        onClick={handlePreviewClick}
-        align='center'
-        style={{ 'userSelect': 'none', ...(isTrackCustom(props.track) && { textDecoration: "underline" }) }}
-      >
-        {props.track.name}
-      </Typography>
-      <TrackPopup track={props.track} anchor={popupAnchor} />
+        <Typography
+          aria-haspopup='true'
+          onMouseEnter={handlePopoverOpen}
+          onMouseLeave={handlePopoverClose}
+          onClick={handlePreviewClick}
+          align='center'
+          style={{ 'userSelect': 'none', ...(isTrackCustom(props.track) && { textDecoration: "underline" }) }}
+        >
+          {props.track.name}
+        </Typography>
+        <TrackPopup track={props.track} anchor={popupAnchor} />
+      
     </ListItemText>
   )
 }

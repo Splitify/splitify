@@ -154,6 +154,7 @@ abstract class TrackExtensible implements Track {
   abstract track: Track
   readonly uuid: string
 
+
   constructor() {
     this.uuid = uuid()
   }
@@ -218,25 +219,28 @@ class _PlaylistTrack extends TrackExtensible implements PlaylistTrack {
 
 }
 
-class _PlaylistTrackGroup extends TrackExtensible implements PlaylistTrackGroup {
+export class _PlaylistTrackGroup extends TrackExtensible implements PlaylistTrackGroup {
   tracks: PlaylistTrack[]
 
   constructor(...tracks: PlaylistTrack[]) {
     super()
-    if (tracks.length > 0) {
+    if (tracks.length === 0) {
       throw new Error('Empty track group')
     }
     this.tracks = tracks
   }
-
+  
+  set track(_) {
+    return
+  }
   get track() {
     return this.tracks[0]
   }
   get id() {
     return this.uuid
   }
-  get name() {
-    return 'GROUP'
+  get name () {
+    return this.tracks[0].name
   }
 }
 

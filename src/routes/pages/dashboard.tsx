@@ -3,9 +3,9 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import Auth from '../../auth'
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
-import { allGenresFromPlaylist, asPlaylistTrack, touchTrack } from "../../helpers/helpers";
+import { allGenresFromPlaylist, asPlaylistTrack, touchTrack, createTrackGroup} from "../../helpers/helpers";
+import { PlaylistTrack, CheckedList, Playlist as PlaylistObj, Track as TrackObj } from "../../types";
 import { Grid, Button, makeStyles, GridList, GridListTile } from '@material-ui/core';
-import { CheckedList, Playlist as PlaylistObj, Track as TrackObj } from "../../types";
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
 import { DragDropContext } from 'react-beautiful-dnd';
@@ -153,18 +153,59 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     setChecked([...checked])
   }
 
+  const groupTracks = () => {
+    let checkedTracks: PlaylistTrack[] = []
+    let sourcePlaylist: PlaylistObj | undefined
+    let source_newTracks: TrackObj[]
+    let index: number
+    checked.forEach((checkedList) => {
+      sourcePlaylist = findPlaylist(checkedList.id)
+      if (!sourcePlaylist) throw new Error("Failed to get playlist")
+      source_newTracks = [...sourcePlaylist!.tracks];
+      checkedList.tracks.forEach((track, index) => {
+        if (track) {
+          checkedTracks.push(asPlaylistTrack(track))
+        }
+      })
+      //we have a list of all selected tracks
+      let newGroup = createTrackGroup(...checkedTracks)
+      //remove tracks
+      checkedTracks.forEach((track) => {
+        index = source_newTracks.map(function(e) { return e.id; }).indexOf(track.id);
+        source_newTracks!.splice(index, 1);
+      })
+      //add in track group
+      source_newTracks.unshift(newGroup)
+      sourcePlaylist.tracks = source_newTracks
+      setPlaylists([...playlists])
+    })
+    let allChecked = checked
+    allChecked.map((checkedPlaylist) => checkedPlaylist.tracks = [])
+    setChecked([...checked])
+  }
+
   function DeleteTracksButton() {
     for (let i = 0; i < checked.length; i++) {
       if (checked[i].tracks[0]) {
         return (
+          <>
+          <Button
+              variant='contained'
+              color='secondary'
+              onClick={updateSourcePool}
+              style={{ float: 'left', margin: 5 }}
+            >
+              Delete Selected Tracks
+          </Button>
           <Button
             variant='contained'
             color='secondary'
-            onClick={updateSourcePool}
+            onClick={groupTracks}
             style={{ float: 'left', margin: 5 }}
           >
-            Delete Selected Tracks
+            Group Selected Tracks
           </Button>
+      </>
         )
       }
     }

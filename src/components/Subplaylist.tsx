@@ -174,6 +174,7 @@ export default function Subplaylist(props: {
     }
 
     setTracks([...tracks].sort(sortTracks))
+    tracks.sort(sortTracks).map((track) => console.log(track.name))
     updateView()
   }
 
