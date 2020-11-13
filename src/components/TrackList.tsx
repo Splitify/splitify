@@ -47,7 +47,7 @@ export default function (props: {
     return () => {
       window.removeEventListener('resize', checkHeight)
     }
-  }, [ref])
+  }, [ref, props._refresh])
 
   const [tracks, setTracks] = useState<TrackObj[]>([])
   const [expandedTracks, setExpandedTracks] = useState<TrackObj[]>([])
