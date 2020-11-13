@@ -263,7 +263,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
               onFilterUpdate={tracks => masterPlaylist && (filteredLists[masterPlaylist.id] = tracks)}
             />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={8} style={{ paddingRight: 0, overflowX: 'hidden' }}>
             <GridList className={classes.gridList} cols={2}>
               {masterPlaylist ? (
                 <>
@@ -281,7 +281,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                       />
                     </GridListTile>
                   ))}
-                  <GridListTile>
+                  <GridListTile style={{ paddingRight: 15 }}>
                     <Button
                       variant='contained'
                       color='primary'
