@@ -21,7 +21,6 @@ export default function (props: {
       options={Object.keys(props.genres)}
       defaultValue={["ALL"]}
       disableCloseOnSelect
-      // getOptionLabel={option => {console.log(option, props.genres[option]); return option + props.genres[option]}}
       onChange={(event: any, newValue: string[]) => {
         if (props.selectedGenres.length === 1 && props.selectedGenres[0] === "ALL")
           newValue.splice(0, 1)

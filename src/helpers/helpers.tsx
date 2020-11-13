@@ -260,7 +260,7 @@ export function createTrackGroup(...tracks: PlaylistTrack[]) {
 }
 
 
-export function createOccuranceMap(genres: string[]) {
+export function createOccurrenceMap(genres: string[]) {
   let map: Record<string, number> = {};
   genres.forEach((g: string) => map[g] = isNaN(map[g]) ? 1 : map[g] + 1);
   let map2: Record<string, number> = {};

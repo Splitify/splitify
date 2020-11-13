@@ -5,7 +5,7 @@ import { makeStyles, List, ListItem, Paper, Popover, IconButton, Box, Divider, B
 import { Info as InfoIcon, Replay as ReplayIcon } from '@material-ui/icons';
 import MultiFilter from './MultiFilter'
 import TrackList from './TrackList'
-import { createOccuranceMap } from '../helpers/helpers';
+import { createOccurrenceMap } from '../helpers/helpers';
 
 const useStyles = makeStyles(theme => ({
   popover: {
@@ -79,7 +79,7 @@ export default function MasterPlaylist(
       .map((t: TrackObj) => t.genres)
       .flat()
 
-    var mapAsc = Array.from(Object.entries(createOccuranceMap(unused)));
+    var mapAsc = Array.from(Object.entries(createOccurrenceMap(unused)));
     mapAsc.splice(4, Number.MAX_SAFE_INTEGER);
     const suggestions = mapAsc.map(a => a[0]).filter(g => g !== "ALL");
 

@@ -18,7 +18,7 @@ import {
 
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 
-import { asPlaylistTrack, isTrackCustom, createOrUpdatePlaylist, getUserProfile, createOccuranceMap } from '../helpers/helpers'
+import { asPlaylistTrack, isTrackCustom, createOrUpdatePlaylist, getUserProfile, createOccurrenceMap } from '../helpers/helpers'
 
 import {
   Playlist as PlaylistObj,
@@ -188,7 +188,7 @@ export default function Subplaylist(props: {
   }, [selectedGenres, featureFilter, props.source])
   
   useEffect(() => {
-    setGenresRecord(createOccuranceMap(props.source.map(t => t.genres).flat()))
+    setGenresRecord(createOccurrenceMap(props.source.map(t => t.genres).flat()))
   }, [props.source])
 
   // Save tracks to playlist when updated
