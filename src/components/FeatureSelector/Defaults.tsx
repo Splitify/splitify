@@ -8,7 +8,8 @@ const options: FeatureSliderData[] = [
     max: 100,
     currentMin: 0,
     currentMax: 100,
-    units: '%'
+    units: '%',
+    description : 'Acousticness is a confidence measure of whether the track is acoustic.'
   },
   {
     id: 'danceability',
@@ -17,7 +18,8 @@ const options: FeatureSliderData[] = [
     max: 100,
     currentMin: 0,
     currentMax: 100,
-    units: '%'
+    units: '%',
+    description : 'Danceability describes how suitable a track is for dancing'
   },
   {
     id: 'energy',
@@ -26,7 +28,8 @@ const options: FeatureSliderData[] = [
     max: 100,
     currentMin: 0,
     currentMax: 100,
-    units: '%'
+    units: '%',
+    description : 'Energy describes intensity and activity of a track.'
   },
   {
     id: 'instrumentalness',
@@ -35,7 +38,8 @@ const options: FeatureSliderData[] = [
     max: 100,
     currentMin: 0,
     currentMax: 100,
-    units: '%'
+    units: '%',
+    description: 'Instrumentalness predicts whether a track contains no vocals.'
   },
   {
     id: 'liveness',
@@ -44,7 +48,8 @@ const options: FeatureSliderData[] = [
     max: 100,
     currentMin: 0,
     currentMax: 100,
-    units: '%'
+    units: '%',
+    description: 'Liveness detects the presence of an audience in the recording'
   },
   {
     id: 'speechiness',
@@ -53,7 +58,8 @@ const options: FeatureSliderData[] = [
     max: 100,
     currentMin: 0,
     currentMax: 100,
-    units: '%'
+    units: '%',
+    description : 'Speechiness detects the presence of spoken (not sung) words in a track'
   },
   {
     id: 'valence',
@@ -62,7 +68,8 @@ const options: FeatureSliderData[] = [
     max: 100,
     currentMin: 0,
     currentMax: 100,
-    units: '%'
+    units: '%',
+    description: 'Valence describes the musical/emotional positiveness conveyed by a track'
   },
   {
     id: 'loudness',
@@ -71,7 +78,8 @@ const options: FeatureSliderData[] = [
     max: 0,
     currentMin: -60,
     currentMax: 0,
-    units: 'dB'
+    units: 'dB',
+    description : 'The average loudness of a track in decibels'
   },
   {
     id: 'tempo',
@@ -80,7 +88,8 @@ const options: FeatureSliderData[] = [
     max: 220,
     currentMin: 50,
     currentMax: 220,
-    units: 'BPM'
+    units: 'BPM',
+    description : 'The overall estimated tempo of a track in beats per minute'
   }
 ]
 

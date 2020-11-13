@@ -4,8 +4,8 @@ import Auth from '../../auth'
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
 import { allGenresFromPlaylist, asPlaylistTrack, touchTrack } from "../../helpers/helpers";
-import { Playlist as PlaylistObj, Track as TrackObj } from "../../types";
 import { Grid, Button, makeStyles, GridList, GridListTile } from '@material-ui/core';
+import { CheckedList, Playlist as PlaylistObj, Track as TrackObj } from "../../types";
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
 import { DragDropContext } from 'react-beautiful-dnd';
@@ -32,8 +32,9 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
   const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>()
   const [genres, setGenres] = useState<string[]>([])
-
+  const [usedTracks, setUsedTracks] = useState<TrackObj[]>([])
   const filteredLists: { [id: string]: TrackObj[] } = useState({})[0];
+  const [checked, setChecked] = useState<CheckedList[]>([])
 
   function loadPlaylist(playlist: PlaylistObj) {
     Promise.all(playlist.tracks.map(t => t.expand())).then(() => {
@@ -65,23 +66,26 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       }
     }
   }
-
+  
   const [playlists, setPlaylists] = useState<PlaylistObjectPP[]>([])
 
   const addPlaylist = () => {
     const playlist = createPlaylist()
     console.log('Adding playlist', playlist.id)
     setPlaylists([...playlists, playlist])
+    setChecked([...checked, {id: playlist.id, tracks: []}])
   }
 
   const deletePlaylist = (playlist: PlaylistObj) => {
     console.log('Deleting playlist', playlist.id)
     delete filteredLists[playlist.id]
     setPlaylists(playlists.filter(p => p.id !== playlist.id))
+    setChecked(checked.filter(p => p.id !== playlist.id))
   }
 
   // Find playlist object given its ID
   const findPlaylist = (id: string) => (id === masterPlaylist?.id && masterPlaylist) || playlists.find(p => p.id === id)
+  const findChecked = (id: string) => (checked.find(playlist => playlist.id === id))
 
   // Resolves filter index to track source index
   const getPlaylistIndexFromFilterIndex = (playlist: PlaylistObj, fIDX: number) => {
@@ -92,7 +96,66 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     return playlist.tracks.findIndex(t => asPlaylistTrack(t).uuid === targetTrackUUID)
   }
 
-  const usedTracks = Array.from(new Set(playlists.map((p: PlaylistObj) => p.tracks).flat()));
+  const updateTracks = () => {
+    setUsedTracks(Array.from(new Set(playlists.map((p: PlaylistObj) => p.tracks).flat())))
+  }
+
+  const toggleChecked = (id: string, track: TrackObj) => () => {
+    let checkedPlaylist = findChecked(id)
+    if (!checkedPlaylist) throw new Error("Failed to find checked list")
+
+    const currentIndex = checkedPlaylist!.tracks.indexOf(track);
+
+    if (currentIndex === -1) {
+      checkedPlaylist.tracks.push(track);
+    } else {
+      checkedPlaylist.tracks.splice(currentIndex, 1);
+    }
+    setChecked([...checked]);
+    console.log(checked)
+  };
+
+  const updateSourcePool = () => {
+    let playlistID: string
+    let sourcePlaylist: PlaylistObj | undefined
+    let source_newTracks: TrackObj[]
+    let index: number
+    checked.forEach((checkedList) => {
+      console.log("id is " + checkedList.id)
+      playlistID = checkedList.id
+      sourcePlaylist = findPlaylist(playlistID)
+      if (!sourcePlaylist) throw new Error("Failed to get playlist")
+      source_newTracks = [...sourcePlaylist!.tracks];
+      checkedList.tracks.forEach((track) => {
+        index = source_newTracks.map(function(e) { return e.id; }).indexOf(track.id);
+        source_newTracks!.splice(index, 1);
+      })
+      sourcePlaylist.tracks = source_newTracks
+      setPlaylists([...playlists])
+    })
+    let allChecked = checked
+    allChecked.map((checkedPlaylist) => checkedPlaylist.tracks = [])
+    setChecked([...checked])
+  }
+
+  function DeleteTracksButton() {
+    for (let i = 0; i < checked.length; i++){
+      if (checked[i].tracks[0]) {
+        return (
+          <Button
+              variant='contained'
+              color='secondary'
+              onClick={updateSourcePool}
+              style={{ float: 'left', margin: 5 }}
+            >
+              Delete Selected Tracks
+            </Button>
+        )
+      }
+    }
+    return(<div></div>)
+  }
+
 
   return (
     <div className={classes.root}>
@@ -108,7 +171,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       >
         Logout
       </Button>
-      <Grid style={{ padding: '2%', width: '100%', paddingTop: 0 }} container spacing={5}>
+      <DeleteTracksButton/>
+      <Grid style={{ width: '100%', margin: 0 }} container spacing={5}>
         <DragDropContext
           onDragEnd={evt => {
             if (!evt.destination) return
@@ -135,11 +199,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
               destPlaylist.tracks = dest_newTracks
 
               setPlaylists([...playlists])
-
               return
             }
-
-
             const source_newTracks = [...sourcePlaylist.tracks];
             let removed = source_newTracks.splice(sourceIdx, 1)[0];
 
@@ -170,7 +231,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                   sourcePlaylistPP.sourcePool.splice(poolIdx, 1)
                 }
               }
-
               dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, removed);
               destPlaylist.tracks = dest_newTracks
             } else {
@@ -196,11 +256,14 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                   {playlists.map(p => (
                     <GridListTile key={p.id}>
                       <Subplaylist
+                        toggleChecked={toggleChecked}
                         genres={genres}
                         source={p.sourcePool}
+                        onTrackUpdate={updateTracks}
                         playlist={p}
                         onDelete={() => deletePlaylist(p)}
                         onFilterUpdate={tracks => filteredLists[p.id] = tracks}
+                        checked = {checked}
                       />
                     </GridListTile>
                   ))}

@@ -109,15 +109,18 @@ export function parseGenres(
     .map((t: any) => t.name.toLowerCase())
     .filter((s: string) => s.replace('-', '').split(" ").some((g: string) => GENRE_WHITELIST.includes(g)))
     ?? [];
+  genres = genres.filter((g: string) => !artistNames.includes(g)); // Don't include the artist's name
+  genres = genres.filter((g: string) => !g.match(/\d{2}/)); // Don't include numbers
   genres.splice(3, 99); // Only keep the first three. The quality goes down quick on some songs
-  genres = genres.filter((g: string) => !artistNames.includes(g));
 
   if (genres.length === 0) {
     genres = album?.genres ?? [];
   }
 
   if (genres.length === 0) {
-    genres = Array.from(new Set(artists.map((a: Artist) => a.genres).flat()))
+    // Take the genres of the first artist who has at least one genre
+    const artistGenres = artists.filter(a => a.genres.length > 0).map(a => a.genres)
+    genres = artistGenres.length > 0 ? artistGenres[0] : [];
   }
 
   // convert the date into a decade
@@ -126,7 +129,7 @@ export function parseGenres(
   if (year > 1920) {
     genres.push(`${year}s`);
   }
-  return genres;
+  return ["ALL"].concat(genres);
 }
 
 export function parseFeaturesJSON(
@@ -251,4 +254,29 @@ export async function parsePlaylistJSON(
   }
 
   return expand ? await playlist.expand(expandTrack) : playlist
+}
+
+export async function getLikedSongs(expandTrack = false): Promise<Track[]> {
+  // Expand playlist to get tracks (Does not expand tracks)
+
+  let tracks: Track[] = []
+  const Q = Queue({ autostart: true, concurrency: 1, timeout: 10 * 1000 })
+
+  for await (let trackJSONBare of getPaginationRawGen(
+    api.getMySavedTracks
+  )) {
+    if (!trackJSONBare.track.id) continue;
+    let track = TrackAccumulator.request(
+      trackJSONBare['track']['id']
+    ).then(async (data: SpotifyApi.TrackObjectFull) =>
+      // Add parsed track, optionally request track expansion
+      asPlaylistTrack(await parseTrackJSON(await data, expandTrack))
+    )
+
+    Q.push(async cb => {
+      tracks.push(await track)
+      cb && cb()
+    })
+  }
+  return await tracks
 }

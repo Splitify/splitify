@@ -1,34 +1,37 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import clsx from 'clsx';
-import SaveIcon from '@material-ui/icons/Save';
 import { green } from '@material-ui/core/colors';
-import { Edit as EditIcon, Delete as DeleteIcon } from '@material-ui/icons'
+import { Edit as EditIcon, Delete as DeleteIcon, Save as SaveIcon } from '@material-ui/icons'
 import {
-  Paper,
-  IconButton,
   Button,
-  Dialog,
   CircularProgress,
+  Dialog,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
   makeStyles,
+  Paper,
   Tooltip,
-  Typography
+  Typography,
 } from '@material-ui/core';
-import EditPlaylistNameDialog from './EditPlaylistNameDialog';
-import { createOrUpdatePlaylist, getUserProfile } from '../helpers/helpers';
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import Divider from '@material-ui/core/Divider'
+
+import EditPlaylistNameDialog from './EditPlaylistNameDialog'
+
+import { asPlaylistTrack, isTrackCustom, createOrUpdatePlaylist, getUserProfile } from '../helpers/helpers'
+
 import {
   Playlist as PlaylistObj,
   Track as TrackObj,
-  TrackFilter
+  TrackFilter,
+  CheckedList
 } from '../types'
+
 import GenreSelector from './GenreSelector'
 import SortSelector from './SortSelector'
 import MultiFilter from './MultiFilter'
 import { FeatureSelector } from './FeatureSelector'
 import TrackList from './TrackList'
-import { asPlaylistTrack, isTrackCustom } from '../helpers/helpers'
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -44,7 +47,6 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     width: 200,
-    height: 230,
     overflow: 'auto'
   },
   button: {
@@ -71,6 +73,9 @@ export default function Subplaylist(props: {
   source: TrackObj[]
   playlist: PlaylistObj
   genres: string[]
+  checked: CheckedList[]
+  onTrackUpdate: () => void  
+  toggleChecked: (id: string, tracks: TrackObj) => any
   onFilterUpdate?: (tracks: TrackObj[]) => any
   onDelete?: (playlist: PlaylistObj) => any
 }) {
@@ -121,7 +126,7 @@ export default function Subplaylist(props: {
   const [excludedTracks, setExcludedTracks] = useState<TrackObj[]>([])
 
   // Track selector
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(["ALL"])
   const [featureFilter, setFeatureFilter] = useState<TrackFilter>(() => () =>
     true
   )
@@ -192,6 +197,7 @@ export default function Subplaylist(props: {
   // Save tracks to playlist when updated
   useEffect(() => {
     props.playlist.tracks = tracks;
+    props.onTrackUpdate()
     tracks.length === 0 ? setsaveDisabled(true) : setsaveDisabled(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
@@ -320,7 +326,11 @@ export default function Subplaylist(props: {
           id={props.playlist.id}
           tracks={filterView}
           component={List}
-          childComponent={ListItem}
+          showActions={true}
+          isDeletable={true}
+          showTrackCount={true}
+          toggleChecked={props.toggleChecked}
+          checked={props.checked}
         />
       </List>
     </div>

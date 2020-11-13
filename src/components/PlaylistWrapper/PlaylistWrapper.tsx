@@ -13,21 +13,23 @@ export default function (props: {
   onSelect?: (playlist: Playlist) => any
   onFilterUpdate?: (tracks: TrackObj[]) => any
 }) {
-  let [playlist, setPlaylist] = useState(props.playlist)
-  let [selectorOpen, setSelectorOpen] = useState(false)
+  const [playlist, setPlaylist] = useState(props.playlist)
+  const [selectorOpen, setSelectorOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   function handleSelect(playlist: Playlist) {
     setPlaylist(playlist)
     if (props.onSelect) props.onSelect(playlist)
     setSelectorOpen(false)
+    setLoading(false)
   }
   // Default state - have not selected a playlist yet
   // Loaded state - display the playlist component
 
   return (
     <React.Fragment>
-      <Dialog open={selectorOpen} onClose={() => setSelectorOpen(false)}>
-        <PlaylistSelector onSelect={handleSelect} />
+      <Dialog open={selectorOpen} onClose={() => setSelectorOpen(false || loading)}>
+        <PlaylistSelector onSelect={handleSelect} onLoading={() => setLoading(true)} />
       </Dialog>
       {playlist ? (
         <MasterPlaylist playlist={playlist} usedTracks={props.usedTracks} onOpenSelector={() => setSelectorOpen(true)} onFilterUpdate={props.onFilterUpdate} />

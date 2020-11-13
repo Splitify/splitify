@@ -8,4 +8,5 @@ export interface FeatureSliderData {
   currentMin: number
   currentMax: number
   units: string
+  description: string
 }

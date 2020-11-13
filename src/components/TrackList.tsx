@@ -1,20 +1,51 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
-import { Track as TrackObj } from '../types'
+import { Track as TrackObj, CheckedList } from '../types'
 import TrackEntry from './TrackEntry'
 import Track from './Track'
-import { VariableSizeList as List } from 'react-window'
+import { ListItem, Button } from "@material-ui/core"
 
-export default function (props: { id?: string; tracks: TrackObj[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDragClone?: boolean, component: React.ElementType, childComponent: React.ElementType}) {
-  const Wrapper = props.component;
+import { VariableSizeList as VirtualList } from 'react-window'
+
+export default function (props: { id: string; tracks: TrackObj[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDeletable: boolean, isDragClone?: boolean, component: React.ElementType, showActions?: boolean, showTrackCount?: boolean, checked: CheckedList[],  toggleChecked?: (id: string, track: TrackObj) => any}) {
+  const [height, setHeight] = useState(0);
+
+  const [ref, setRef] = useState<HTMLElement>();
+  useEffect(() => {
+    const checkHeight = function () {
+      if (!ref) return
+      const wh = window.innerHeight
+
+      // Check height of the parent rectangle to see if there are more components below the TrackList.
+      // If so, adjust the TrackList height accordingly
+      let parentRect = ref.parentElement!.getBoundingClientRect();
+      let refRect = ref.getBoundingClientRect()
+
+      let h = wh - ((Math.max(refRect.top, parentRect.top + parentRect.height - refRect.height)) + window.pageYOffset || document.documentElement.scrollTop)
+  
+      h = ((h%wh)+wh)%wh - 50
+      setHeight(h)
+    }
+    checkHeight()
+
+    window.addEventListener('resize', checkHeight)
+
+    return () => {
+      window.removeEventListener('resize', checkHeight)
+    }
+  }, [ref])
 
   const EntryInvariant = React.memo(({ data, index, style }: any) => (
     data[index] && <TrackEntry
       key={data[index].id}
       track={data[index]}
       index={index}
+      id={props.id}
       isDragDisabled={props.isDragDisabled}
+      isDeletable={props.isDeletable}
       style={style}
+      checked={props.checked}
+      toggleChecked={props.toggleChecked!}
     />
   ))
 
@@ -28,7 +59,7 @@ export default function (props: { id?: string; tracks: TrackObj[], isDropDisable
     </div>
   )
 
-  return (
+  return <>
     <Droppable
       droppableId={props.id || 'unknown'}
       mode='virtual'
@@ -36,19 +67,31 @@ export default function (props: { id?: string; tracks: TrackObj[], isDropDisable
       renderClone={TrackInvariant}
     >
       {(provided, snapshot) => (
-        <List
-          outerRef={provided.innerRef}
+        <VirtualList
+          outerRef={
+            node => {
+              setRef(node)
+              provided.innerRef(node)
+            }}
           {...provided.droppableProps}
-          innerElementType={Wrapper}
-          height={800}
+          innerElementType={props.component}
+          height={height}
           itemCount={props.tracks.length + (snapshot.isUsingPlaceholder ? 1 : 0)}
           itemData={props.tracks}
           itemSize={() => 60}
           width='100%'
         >
           {EntryInvariant}
-        </List>
+        </VirtualList>
       )}
     </Droppable>
-  )
+    {props.showTrackCount && <ListItem dense={true}>
+      Total Tracks: {props.tracks.length}
+    </ListItem>}
+    {props.showActions && <ListItem style={{height: 40, padding: 0}}>
+      <Button>One</Button>
+      <Button>Two</Button>
+      <Button>Three</Button>
+    </ListItem>}
+  </>
 }
