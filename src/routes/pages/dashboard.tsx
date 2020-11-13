@@ -5,7 +5,7 @@ import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
 import { allGenresFromPlaylist, asPlaylistTrack, touchTrack, createTrackGroup} from "../../helpers/helpers";
 import { PlaylistTrack, CheckedList, Playlist as PlaylistObj, Track as TrackObj } from "../../types";
-import { Grid, Button, makeStyles } from '@material-ui/core';
+import { Grid, Button, makeStyles, GridList, GridListTile } from '@material-ui/core';
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
 import { DragDropContext } from 'react-beautiful-dnd';
@@ -16,7 +16,23 @@ export const useStyles = makeStyles(theme => ({
   },
   playlist: {
     //Add styling for playlists here
-  }
+  },
+  gridList: {
+    flexWrap: 'nowrap',
+    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+    transform: 'translateZ(0)',
+  },
+  gridListTileRoot: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    padding: 2,
+    width: "45%",
+  },
+  gridListTileTile: {
+    overflow: 'visible',
+  },
+
+  
 }))
 
 interface IDashboardProps extends RouteComponentProps { }
@@ -65,14 +81,14 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       }
     }
   }
-  
+
   const [playlists, setPlaylists] = useState<PlaylistObjectPP[]>([])
 
   const addPlaylist = () => {
     const playlist = createPlaylist()
     console.log('Adding playlist', playlist.id)
     setPlaylists([...playlists, playlist])
-    setChecked([...checked, {id: playlist.id, tracks: []}])
+    setChecked([...checked, { id: playlist.id, tracks: [] }])
   }
 
   const deletePlaylist = (playlist: PlaylistObj) => {
@@ -111,7 +127,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       checkedPlaylist.tracks.splice(currentIndex, 1);
     }
     setChecked([...checked]);
-    console.log(checked)
   };
 
   const updateSourcePool = () => {
@@ -126,7 +141,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       if (!sourcePlaylist) throw new Error("Failed to get playlist")
       source_newTracks = [...sourcePlaylist!.tracks];
       checkedList.tracks.forEach((track) => {
-        index = source_newTracks.map(function(e) { return e.id; }).indexOf(track.id);
+        index = source_newTracks.map(function (e) { return e.id; }).indexOf(track.id);
         source_newTracks!.splice(index, 1);
       })
       sourcePlaylist.tracks = source_newTracks
@@ -172,7 +187,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   }
 
   function DeleteTracksButton() {
-    for (let i = 0; i < checked.length; i++){
+    for (let i = 0; i < checked.length; i++) {
       if (checked[i].tracks[0]) {
         return (
           <>
@@ -196,7 +211,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
         )
       }
     }
-    return(<div></div>)
+    return (<div></div>)
   }
 
 
@@ -205,7 +220,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       <Button
         variant='contained'
         color='primary'
-        style={{ float: 'right', margin: 5 }}
+        style={{ float: "right", margin: 5 }}
         onClick={() =>
           Auth.logout().then(() => {
             window.location.href = window.location.origin + '/'
@@ -214,7 +229,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       >
         Logout
       </Button>
-      <DeleteTracksButton/>
+      <DeleteTracksButton />
       <Grid style={{ width: '100%', margin: 0 }} container spacing={5}>
         <DragDropContext
           onDragEnd={evt => {
@@ -242,7 +257,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
               destPlaylist.tracks = dest_newTracks
 
               setPlaylists([...playlists])
-
               return
             }
             const source_newTracks = [...sourcePlaylist.tracks];
@@ -293,35 +307,38 @@ const Dashboard: React.FC<IDashboardProps> = () => {
               onFilterUpdate={tracks => masterPlaylist && (filteredLists[masterPlaylist.id] = tracks)}
             />
           </Grid>
-
-          {masterPlaylist ? (
-            <>
-              {playlists.map(p => (
-                <Grid item xs={4} key={p.id}>
-                  <Subplaylist
-                    toggleChecked={toggleChecked}
-                    genres={genres}
-                    source={p.sourcePool}
-                    onTrackUpdate={updateTracks}
-                    playlist={p}
-                    onDelete={() => deletePlaylist(p)}
-                    onFilterUpdate={tracks => filteredLists[p.id] = tracks}
-                    checked = {checked}
-                  />
-                </Grid>
-              ))}
-              <Grid item xs={1}>
-                <Button
-                  variant='contained'
-                  color='primary'
-                  onClick={() => addPlaylist()}
-                  startIcon={<AddIcon />}
-                >
-                  Add
-              </Button>
-              </Grid>
-            </>
-          ) : null}
+          <Grid item xs={8}>
+            <GridList className={classes.gridList} cols={2}>
+              {masterPlaylist ? (
+                <>
+                  {playlists.map(p => (
+                    <GridListTile key={p.id} classes={{root: classes.gridListTileRoot, tile: classes.gridListTileTile}}>
+                      <Subplaylist
+                        toggleChecked={toggleChecked}
+                        genres={genres}
+                        source={p.sourcePool}
+                        onTrackUpdate={updateTracks}
+                        playlist={p}
+                        onDelete={() => deletePlaylist(p)}
+                        onFilterUpdate={tracks => filteredLists[p.id] = tracks}
+                        checked={checked}
+                      />
+                    </GridListTile>
+                  ))}
+                  <GridListTile>
+                    <Button
+                      variant='contained'
+                      color='primary'
+                      onClick={() => addPlaylist()}
+                      startIcon={<AddIcon />}
+                    >
+                      Add
+                    </Button>
+                  </GridListTile>
+                </>
+              ) : null}
+            </GridList>
+          </Grid>
         </DragDropContext>
       </Grid>
     </div>

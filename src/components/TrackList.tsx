@@ -7,6 +7,7 @@ import { ListItem } from "@material-ui/core"
 import {_PlaylistTrackGroup} from '../helpers/helpers'
 
 import { VariableSizeList as VirtualList } from 'react-window'
+import Button from '@material-ui/core/Button/Button'
 
 export default function (props: { 
   id: string; 
@@ -120,12 +121,10 @@ export default function (props: {
     {props.showTrackCount && <ListItem dense={true}>
       Total Tracks: {props.tracks.length}
     </ListItem>}
-    {/*
     {props.showActions && <ListItem style={{height: 40, padding: 0}}>
       <Button>One</Button>
       <Button>Two</Button>
       <Button>Three</Button>
     </ListItem>}
-    */}
   </>
 }
