@@ -258,3 +258,15 @@ export function isTrackCustom(track: Track) {
 export function createTrackGroup(...tracks: PlaylistTrack[]) {
   return new _PlaylistTrackGroup(...tracks)
 }
+
+
+export function createOccuranceMap(genres: string[]) {
+  let map: Record<string, number> = {};
+  genres.forEach((g: string) => map[g] = 0);
+  genres.forEach((g: string) => map[g] = map[g] + 1);
+  let map2: Record<string, number> = {};
+  Array.from(Object.entries(map))
+    .sort((a, b) => b[1] - a[1])
+    .forEach(a => map2[a[0]] = a[1]);
+  return map2
+}
