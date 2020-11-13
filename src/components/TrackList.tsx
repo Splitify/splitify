@@ -3,7 +3,7 @@ import { Droppable } from 'react-beautiful-dnd'
 import { Track as TrackObj, CheckedList } from '../types'
 import TrackEntry from './TrackEntry'
 import Track from './Track'
-import { ListItem, Button } from "@material-ui/core"
+import { ListItem } from "@material-ui/core"
 
 import { VariableSizeList as VirtualList } from 'react-window'
 
