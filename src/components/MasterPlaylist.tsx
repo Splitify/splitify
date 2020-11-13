@@ -97,7 +97,7 @@ export default function MasterPlaylist(
 
   return (
     <div className={classes.root}>
-      <List component={Paper}>
+      <List dense component={Paper}>
         <ListItem style={{ justifyContent: "space-between" }} >
           Master Playlist{props.playlist.name.includes('+') ? "s" : ""}: {props.playlist.name}
           <IconButton onClick={props.onOpenSelector}>
