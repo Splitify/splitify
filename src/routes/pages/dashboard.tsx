@@ -22,11 +22,17 @@ export const useStyles = makeStyles(theme => ({
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
     transform: 'translateZ(0)',
   },
-  gridListTile: {
+  gridListTileRoot: {
     paddingLeft: 20,
     paddingRight: 20,
-    width: "50%",
-  }
+    width: "45%",
+    overflow: 'visible',
+  },
+  gridListTileTile: {
+    overflow: 'visible',
+  },
+
+  
 }))
 
 interface IDashboardProps extends RouteComponentProps { }
@@ -258,7 +264,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
               {masterPlaylist ? (
                 <>
                   {playlists.map(p => (
-                    <GridListTile key={p.id} className={classes.gridListTile}>
+                    <GridListTile key={p.id} classes={{root: classes.gridListTileRoot, tile: classes.gridListTileTile}}>
                       <Subplaylist
                         toggleChecked={toggleChecked}
                         genres={genres}
