@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import PlaylistSelector from './PlaylistSelector'
 
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
-import { Icon, Dialog, Box, Paper, Typography } from '@material-ui/core'
+import { Dialog } from '@material-ui/core'
 import { Playlist, Track as TrackObj } from '../../types'
 import MasterPlaylist from '../MasterPlaylist'
 
@@ -14,10 +13,11 @@ export default function (props: {
   onFilterUpdate?: (tracks: TrackObj[]) => any
 }) {
   const [playlist, setPlaylist] = useState(props.playlist)
-  const [selectorOpen, setSelectorOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [selectorOpen, setSelectorOpen] = useState(true)
+  const [loading, setLoading] = useState(true)
 
   function handleSelect(playlist: Playlist) {
+    setLoading(true)
     setPlaylist(playlist)
     if (props.onSelect) props.onSelect(playlist)
     setSelectorOpen(false)
@@ -29,22 +29,11 @@ export default function (props: {
   return (
     <React.Fragment>
       <Dialog open={selectorOpen} onClose={() => setSelectorOpen(false || loading)}>
-        <PlaylistSelector onSelect={handleSelect} onLoading={() => setLoading(true)} />
+        <PlaylistSelector onSelect={handleSelect}/>
       </Dialog>
       {playlist ? (
         <MasterPlaylist playlist={playlist} usedTracks={props.usedTracks} onOpenSelector={() => setSelectorOpen(true)} onFilterUpdate={props.onFilterUpdate} />
-      ) : (
-          <Box
-            textAlign='center'
-            component={Paper}
-            onClick={() => setSelectorOpen(true)}
-            style={{ cursor: 'pointer', userSelect: 'none'}}
-            padding={1}
-          >
-            <Typography gutterBottom={true}>{props.text || 'Select playlists'}</Typography>
-            <Icon component={AddCircleOutlineIcon} />
-          </Box>
-        )}
+      ) : (<div />)}
     </React.Fragment>
   )
 }
