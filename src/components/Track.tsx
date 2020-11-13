@@ -29,13 +29,22 @@ export default function Track(props: {
     globalAudioPlayers = []
     audio.pause()
     audio.currentTime = 0
+    audio.volume = 0
   }
-
+  
   function startAudio() {
     if (!audio) return
     audio.currentTime = 0
     globalAudioPlayers.push(audio)
     audio.play()
+    
+    audio.volume = 0
+    var fadeAudio = setInterval(function () {
+      audio.volume += 0.04
+      if (audio.volume >= 0.5) {
+          clearInterval(fadeAudio)
+      }
+  }, 50)
   }
 
   const handlePreviewClick = () => {
