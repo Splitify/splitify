@@ -8,7 +8,7 @@ import { ListItem } from "@material-ui/core"
 import { VariableSizeList as VirtualList } from 'react-window'
 import Button from '@material-ui/core/Button/Button'
 
-export default function (props: { id: string; tracks: TrackObj[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDeletable: boolean, isDragClone?: boolean, component: React.ElementType, showActions?: boolean, showTrackCount?: boolean, checked: CheckedList[],  toggleChecked?: (id: string, track: TrackObj) => any}) {
+export default function (props: { id: string; tracks: TrackObj[], isDropDisabled?: boolean, isDragDisabled?: boolean, isDeletable: boolean, isDragClone?: boolean, component: React.ElementType, showActions?: boolean, showTrackCount?: boolean, checked: CheckedList[], _refresh?:boolean, toggleChecked?: (id: string, track: TrackObj) => any}) {
   const [height, setHeight] = useState(0);
 
   const [ref, setRef] = useState<HTMLElement>();
@@ -34,7 +34,7 @@ export default function (props: { id: string; tracks: TrackObj[], isDropDisabled
     return () => {
       window.removeEventListener('resize', checkHeight)
     }
-  }, [ref])
+  }, [ref, props._refresh])
 
   const EntryInvariant = React.memo(({ data, index, style }: any) => (
     data[index] && <TrackEntry
