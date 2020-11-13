@@ -2,6 +2,7 @@ import { parsePlaylistJSON, parseUserJSON } from './parsers'
 import { Playlist, Track, PlaylistTrack, PlaylistTrackGroup, User, PlaylistTrackBase } from '../types'
 import { api } from '../auth'
 import { v4 as uuid } from 'uuid';
+import { Fab } from '@material-ui/core';
 
 // Get all playlists
 export async function getPlaylists(
@@ -154,6 +155,7 @@ abstract class TrackExtensible implements Track {
   abstract track: Track
   readonly uuid: string
 
+
   constructor() {
     this.uuid = uuid()
   }
@@ -218,17 +220,20 @@ class _PlaylistTrack extends TrackExtensible implements PlaylistTrack {
 
 }
 
-class _PlaylistTrackGroup extends TrackExtensible implements PlaylistTrackGroup {
+export class _PlaylistTrackGroup extends TrackExtensible implements PlaylistTrackGroup {
   tracks: PlaylistTrack[]
 
   constructor (...tracks: PlaylistTrack[]) {
     super()
-    if (tracks.length > 0) {
+    if (tracks.length === 0) {
       throw new Error('Empty track group')
     }
     this.tracks = tracks
   }
-
+  
+  set track(_) {
+    return
+  }
   get track() {
     return this.tracks[0]
   }
@@ -236,7 +241,7 @@ class _PlaylistTrackGroup extends TrackExtensible implements PlaylistTrackGroup 
     return this.uuid
   }
   get name () {
-    return 'GROUP'
+    return this.tracks[0].name
   }
 }
 

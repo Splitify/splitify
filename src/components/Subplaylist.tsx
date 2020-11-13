@@ -87,6 +87,7 @@ export default function Subplaylist(props: {
   const [success, setSuccess] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("Save")
   const [filterIsActive, setFilterIsActive] = useState(false);
+  const [trackGroup, setTrackGroups] = useState()
 
   const buttonClassname = clsx({
     [classes.button]: true,
@@ -171,6 +172,7 @@ export default function Subplaylist(props: {
     }
 
     setTracks([...tracks].sort(sortTracks))
+    tracks.sort(sortTracks).map((track) => console.log(track.name))
     updateView()
   }
 
