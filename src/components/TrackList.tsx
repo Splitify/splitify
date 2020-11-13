@@ -3,7 +3,7 @@ import { Droppable } from 'react-beautiful-dnd'
 import { Track as TrackObj, CheckedList } from '../types'
 import TrackEntry from './TrackEntry'
 import Track from './Track'
-import { ListItem, Button } from "@material-ui/core"
+import { ListItem } from "@material-ui/core"
 
 import { VariableSizeList as VirtualList } from 'react-window'
 
@@ -88,10 +88,12 @@ export default function (props: { id: string; tracks: TrackObj[], isDropDisabled
     {props.showTrackCount && <ListItem dense={true}>
       Total Tracks: {props.tracks.length}
     </ListItem>}
+    {/*
     {props.showActions && <ListItem style={{height: 40, padding: 0}}>
       <Button>One</Button>
       <Button>Two</Button>
       <Button>Three</Button>
     </ListItem>}
+    */}
   </>
 }
