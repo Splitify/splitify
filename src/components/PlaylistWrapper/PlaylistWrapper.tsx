@@ -14,7 +14,7 @@ export default function (props: {
   onFilterUpdate?: (tracks: TrackObj[]) => any
 }) {
   const [playlist, setPlaylist] = useState(props.playlist)
-  const [selectorOpen, setSelectorOpen] = useState(false)
+  const [selectorOpen, setSelectorOpen] = useState(true)
   const [loading, setLoading] = useState(false)
 
   function handleSelect(playlist: Playlist) {
@@ -33,18 +33,7 @@ export default function (props: {
       </Dialog>
       {playlist ? (
         <MasterPlaylist playlist={playlist} usedTracks={props.usedTracks} onOpenSelector={() => setSelectorOpen(true)} onFilterUpdate={props.onFilterUpdate} />
-      ) : (
-          <Box
-
-            textAlign='center'
-            component={Paper}
-            onClick={() => setSelectorOpen(true)}
-            style={{ cursor: 'pointer', userSelect: 'none'}}
-          >
-            <div>{props.text || 'Select playlists'}</div>
-            <Icon component={AddCircleOutlineIcon} />
-          </Box>
-        )}
+      ) : (<div/>)}
     </React.Fragment>
   )
 }
