@@ -25,8 +25,8 @@ export const useStyles = makeStyles(theme => ({
   gridListTileRoot: {
     paddingLeft: 20,
     paddingRight: 20,
+    padding: 2,
     width: "45%",
-    overflow: 'visible',
   },
   gridListTileTile: {
     overflow: 'visible',
