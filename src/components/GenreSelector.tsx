@@ -14,6 +14,7 @@ export default function (props: {
   selectedGenres: string[]
   onSelect: (values: string[]) => any
 }) {
+  const displayLimit = 6;
   return (
     <Autocomplete
       multiple
@@ -26,6 +27,8 @@ export default function (props: {
           newValue.splice(0, 1)
         props.onSelect(newValue)
       }}
+      limitTags={displayLimit}
+      getLimitTagsText={(n) => `and ${n} more genres...`}
       renderOption={(option, { selected }) => (
         <React.Fragment>
           <Checkbox

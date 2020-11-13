@@ -46,8 +46,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   paper: {
-    width: 200,
-    overflow: 'auto'
+    minWidth: 300
   },
   button: {
     margin: theme.spacing(0.5, 0),
@@ -77,6 +76,9 @@ export default function Subplaylist(props: {
   onDelete?: (playlist: PlaylistObj) => any
 }) {
   const classes = useStyles()
+
+  let [eventDrilldown, _setEventDrilldown] = useState(false)
+  const tick = () => _setEventDrilldown(v => !v)
 
   // SAVING ANIMATION STUFF
   const [saveDisabled, setsaveDisabled] = useState(true);
@@ -210,6 +212,7 @@ export default function Subplaylist(props: {
     let view = tracks.filter(trackFilter)
     updateFilteredView(view)
     props.onFilterUpdate && props.onFilterUpdate(view)
+    tick();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks, trackFilter, props.onFilterUpdate])
 
@@ -234,7 +237,7 @@ export default function Subplaylist(props: {
           }}
         />
       </Dialog>
-      <List dense component={Paper}>
+      <List dense component={Paper} className={classes.paper}>
         <ListItem style={{ justifyContent: "space-between" }}>
           <Typography>
             {props.playlist.name}
@@ -328,6 +331,7 @@ export default function Subplaylist(props: {
           showTrackCount={true}
           toggleChecked={props.toggleChecked}
           checked={props.checked}
+          _refresh={eventDrilldown}
         />
       </List>
     </div>
