@@ -5,7 +5,7 @@
 .gradientAnim:before {
   content: "";
   z-index: -1;
-  filter: opacity(0.6) brightness(0.8);
+  filter: opacity(0.3) brightness(0.8);
   position: fixed;
   top: 0;
   left: 0;

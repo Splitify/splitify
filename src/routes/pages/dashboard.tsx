@@ -172,7 +172,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   }
 
   return (
-    <div className={classes.root}>
+    <div className={`${classes.root} gradientAnim`}>
       <Button
         variant='contained'
         color='primary'
