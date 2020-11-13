@@ -175,14 +175,18 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   return (
     <div className={classes.root}>
       <img
-          src={Textmark}
+          src={Logo}
           width='480px'
           alt="Splitify"
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         />
       <Button
         variant='contained'
         color='primary'
-        style={{ float: "right", margin: 5 }}
+        style={{ float: "right", margin: 100 }}
         onClick={() =>
           Auth.logout().then(() => {
             window.location.href = window.location.origin + '/'
