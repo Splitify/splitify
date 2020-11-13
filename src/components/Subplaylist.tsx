@@ -46,8 +46,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   paper: {
-    width: 200,
-    overflow: 'auto'
+    minWidth: 300
   },
   button: {
     margin: theme.spacing(0.5, 0),
@@ -238,7 +237,7 @@ export default function Subplaylist(props: {
           }}
         />
       </Dialog>
-      <List dense component={Paper}>
+      <List dense component={Paper} className={classes.paper}>
         <ListItem style={{ justifyContent: "space-between" }}>
           <Typography>
             {props.playlist.name}
