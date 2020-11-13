@@ -18,7 +18,7 @@ import {
 
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 
-import { asPlaylistTrack, isTrackCustom, createOrUpdatePlaylist, getUserProfile } from '../helpers/helpers'
+import { asPlaylistTrack, isTrackCustom, createOrUpdatePlaylist, getUserProfile, createOccuranceMap } from '../helpers/helpers'
 
 import {
   Playlist as PlaylistObj,
@@ -117,16 +117,12 @@ export default function Subplaylist(props: {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [tracks, setTracks] = useState<TrackObj[]>(props.source)
 
-  // eslint-disable-next-line
-  const [includedTracks, setIncludedTracks] = useState<TrackObj[]>([])
-  // eslint-disable-next-line
-  const [excludedTracks, setExcludedTracks] = useState<TrackObj[]>([])
-
   // Track selector
   const [selectedGenres, setSelectedGenres] = useState<string[]>(["ALL"])
   const [featureFilter, setFeatureFilter] = useState<TrackFilter>(() => () =>
     true
   )
+  const [genresRecord, setGenresRecord] = useState<Record<string, number>>({});
 
   // Visual properties
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => () => true)
@@ -187,9 +183,13 @@ export default function Subplaylist(props: {
         .concat(doFilter(props.source, ...filters)) // New items from the source pool
         .filter((v, i, a) => a.indexOf(v) === i) // Dedup
     )
-
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedGenres, featureFilter, props.source])
+  
+  useEffect(() => {
+    setGenresRecord(createOccuranceMap(props.source.map(t => t.genres).flat()))
+  }, [props.source])
 
   // Save tracks to playlist when updated
   useEffect(() => {
@@ -303,7 +303,7 @@ export default function Subplaylist(props: {
         </ListItem>
         <ListItem>
           <GenreSelector
-            genres={props.genres}
+            genres={genresRecord}
             selectedGenres={selectedGenres}
             onSelect={values => setSelectedGenres(values)}
           />

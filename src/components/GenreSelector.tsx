@@ -10,7 +10,7 @@ const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
 const checkedIcon = <CheckBoxIcon fontSize='small' />
 
 export default function (props: {
-  genres: string[]
+  genres: Record<string,number>
   selectedGenres: string[]
   onSelect: (values: string[]) => any
 }) {
@@ -18,10 +18,10 @@ export default function (props: {
     <Autocomplete
       multiple
       fullWidth={true}
-      options={props.genres}
+      options={Object.keys(props.genres)}
       defaultValue={["ALL"]}
       disableCloseOnSelect
-      getOptionLabel={option => option}
+      // getOptionLabel={option => {console.log(option, props.genres[option]); return option + props.genres[option]}}
       onChange={(event: any, newValue: string[]) => {
         if (props.selectedGenres.length === 1 && props.selectedGenres[0] === "ALL")
           newValue.splice(0, 1)
@@ -35,7 +35,7 @@ export default function (props: {
             style={{ marginRight: 8 }}
             checked={selected}
           />
-          {option}
+          {`${option} (${props.genres[option]})`}
         </React.Fragment>
       )}
       renderInput={params => (
