@@ -20,6 +20,7 @@ export default function (props: {
   showActions?: boolean, 
   showTrackCount?: boolean, 
   checked: CheckedList[],  
+  _refresh?:boolean,
   toggleChecked?: (id: string, track: TrackObj) => any
 }){
   const [height, setHeight] = useState(0);
@@ -47,7 +48,7 @@ export default function (props: {
     return () => {
       window.removeEventListener('resize', checkHeight)
     }
-  }, [ref, props._refresh])
+  }, [ref])
 
   const [tracks, setTracks] = useState<TrackObj[]>([])
   const [expandedTracks, setExpandedTracks] = useState<TrackObj[]>([])
