@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import Auth from '../../auth'
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
@@ -46,6 +46,10 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   const [usedTracks, setUsedTracks] = useState<TrackObj[]>([])
   const filteredLists: { [id: string]: TrackObj[] } = useState({})[0];
   const [checked, setChecked] = useState<CheckedList[]>([])
+
+  useEffect(() => {
+    setChecked([])
+  }, [masterPlaylist])
 
   function loadPlaylist(playlist: PlaylistObj) {
     Promise.all(playlist.tracks.map(t => t.expand())).then(() => {
