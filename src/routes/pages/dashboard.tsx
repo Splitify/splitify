@@ -107,7 +107,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       checkedPlaylist.tracks.splice(currentIndex, 1);
     }
     setChecked([...checked]);
-    console.log(checked)
   };
 
   const updateSourcePool = () => {

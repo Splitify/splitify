@@ -234,7 +234,7 @@ export default function Subplaylist(props: {
           }}
         />
       </Dialog>
-      <List component={Paper}>
+      <List dense component={Paper}>
         <ListItem style={{ justifyContent: "space-between" }}>
           <Typography>
             {props.playlist.name}
