@@ -68,7 +68,7 @@ export default function MasterPlaylist(
     props.onFilterUpdate && props.onFilterUpdate(tracks)
     
     // eslint-disable-next-line
-  }, [trackFilter, usedFilter])
+  }, [trackFilter, usedFilter, props.playlist])
 
   const calRecommendedGenres = () => {
     let map = new Map<string, number>();
