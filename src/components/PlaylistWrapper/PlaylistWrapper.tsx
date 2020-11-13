@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import PlaylistSelector from './PlaylistSelector'
 
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
-import { Icon, Dialog, Box, Paper } from '@material-ui/core'
+import { Dialog } from '@material-ui/core'
 import { Playlist, Track as TrackObj } from '../../types'
 import MasterPlaylist from '../MasterPlaylist'
 
@@ -33,7 +32,7 @@ export default function (props: {
       </Dialog>
       {playlist ? (
         <MasterPlaylist playlist={playlist} usedTracks={props.usedTracks} onOpenSelector={() => setSelectorOpen(true)} onFilterUpdate={props.onFilterUpdate} />
-      ) : (<div/>)}
+      ) : (<div />)}
     </React.Fragment>
   )
 }
