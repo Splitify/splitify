@@ -133,7 +133,11 @@ export default function Subplaylist(props: {
     t.included_genres = intersection
     return intersection.length !== 0;
   }
-
+  
+  function padNumber(n : Number): string {
+    return n.toString().padStart(5,'0')
+  }
+  
   function handleSortAction(type: string) {
     const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
       let var1: string = ''
@@ -155,6 +159,10 @@ export default function Subplaylist(props: {
           if (track2.album) {
             var2 = track2.album.name
           }
+          break
+        case 'Popularity':
+          var1 = padNumber(track2.popularity)
+          var2 = padNumber(track1.popularity)
           break
         default:
           var1 = track1.name
