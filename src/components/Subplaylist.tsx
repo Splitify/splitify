@@ -154,10 +154,10 @@ export default function Subplaylist(props: {
           break
         case 'Album':
           if (track1.album) {
-            var1 = track1.album.name
+            var1 = track1.album.name + padNumber(track1.track_number)
           }
           if (track2.album) {
-            var2 = track2.album.name
+            var2 = track2.album.name + padNumber(track2.track_number)
           }
           break
         case 'Popularity':
