@@ -174,15 +174,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
   return (
     <div className={`${classes.root} gradientAnim`}>
-      <img
-          src={Logo}
-          width='480px'
-          alt="Splitify"
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        />
       <Button
         variant='contained'
         color='primary'
