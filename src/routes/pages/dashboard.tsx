@@ -5,7 +5,7 @@ import PlaylistWrapper from '../../components/PlaylistWrapper/'
 import Subplaylist from '../../components/Subplaylist'
 import { allGenresFromPlaylist, asPlaylistTrack, touchTrack } from "../../helpers/helpers";
 import { Playlist as PlaylistObj, Track as TrackObj } from "../../types";
-import { Grid, Button, makeStyles } from '@material-ui/core';
+import { Grid, Button, makeStyles, GridList, GridListTile } from '@material-ui/core';
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
 import { DragDropContext } from 'react-beautiful-dnd';
@@ -16,6 +16,11 @@ export const useStyles = makeStyles(theme => ({
   },
   playlist: {
     //Add styling for playlists here
+  },
+  gridList: {
+    flexWrap: 'nowrap',
+    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+    transform: 'translateZ(0)',
   }
 }))
 
@@ -28,8 +33,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>()
   const [genres, setGenres] = useState<string[]>([])
 
-  const filteredLists: { [id: string]: TrackObj[] } = useState({})[0]; 
-  
+  const filteredLists: { [id: string]: TrackObj[] } = useState({})[0];
+
   function loadPlaylist(playlist: PlaylistObj) {
     Promise.all(playlist.tracks.map(t => t.expand())).then(() => {
       setMasterPlaylist(playlist)
@@ -103,7 +108,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       >
         Logout
       </Button>
-      <Grid style={{ padding: '2%', paddingTop: 0, flex: "none"}} container wrap="nowrap" direction={"row"} spacing={5}>
+      <Grid style={{ padding: '2%', width: '100%', paddingTop: 0 }} container spacing={5}>
         <DragDropContext
           onDragEnd={evt => {
             if (!evt.destination) return
@@ -117,24 +122,24 @@ const Dashboard: React.FC<IDashboardProps> = () => {
 
             if (sourcePlaylist === masterPlaylist) {
 
-                console.log('drag from master');
-  
-                let trackCopy = asPlaylistTrack(masterPlaylist.tracks[sourceIdx]).clone!({
-                  isCustom: true,
-                  sourceID: masterPlaylist.id,
-                  sourceName: () => "Master Playlist"
-                })
+              console.log('drag from master');
 
-                const dest_newTracks = [...destPlaylist.tracks];
-                dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, trackCopy);
-                destPlaylist.tracks = dest_newTracks
+              let trackCopy = asPlaylistTrack(masterPlaylist.tracks[sourceIdx]).clone!({
+                isCustom: true,
+                sourceID: masterPlaylist.id,
+                sourceName: () => "Master Playlist"
+              })
 
-                setPlaylists([...playlists]) 
+              const dest_newTracks = [...destPlaylist.tracks];
+              dest_newTracks.splice(destIdx !== -1 ? destIdx : dest_newTracks.length, 0, trackCopy);
+              destPlaylist.tracks = dest_newTracks
 
-                return
+              setPlaylists([...playlists])
+
+              return
             }
 
-           
+
             const source_newTracks = [...sourcePlaylist.tracks];
             let removed = source_newTracks.splice(sourceIdx, 1)[0];
 
@@ -171,45 +176,48 @@ const Dashboard: React.FC<IDashboardProps> = () => {
             } else {
               source_newTracks.splice(destIdx, 0, removed);
             }
-            
+
             sourcePlaylist.tracks = source_newTracks
 
             setPlaylists([...playlists])
           }}
         >
-          <Grid item style={{ flex: "none"}} xs={4}>
+          <Grid item xs={4}>
             <PlaylistWrapper
               usedTracks={usedTracks}
               onSelect={p => loadPlaylist(p)}
               onFilterUpdate={tracks => masterPlaylist && (filteredLists[masterPlaylist.id] = tracks)}
             />
           </Grid>
-
-          {masterPlaylist ? (
-            <>
-              {playlists.map(p => (
-                <Grid style={{ flex: "none"}} item xs={4} key={p.id}>
-                  <Subplaylist
-                    genres={genres}
-                    source={p.sourcePool}
-                    playlist={p}
-                    onDelete={() => deletePlaylist(p)}
-                    onFilterUpdate={tracks => filteredLists[p.id] = tracks}
-                  />
-                </Grid>
-              ))}
-              <Grid item xs={1}>
-                <Button
-                  variant='contained'
-                  color='primary'
-                  onClick={() => addPlaylist()}
-                  startIcon={<AddIcon />}
-                >
-                  Add
-              </Button>
-              </Grid>
-            </>
-          ) : null}
+          <Grid item xs={8}>
+            <GridList className={classes.gridList} cols={2}>
+              {masterPlaylist ? (
+                <>
+                  {playlists.map(p => (
+                    <GridListTile key={p.id}>
+                      <Subplaylist
+                        genres={genres}
+                        source={p.sourcePool}
+                        playlist={p}
+                        onDelete={() => deletePlaylist(p)}
+                        onFilterUpdate={tracks => filteredLists[p.id] = tracks}
+                      />
+                    </GridListTile>
+                  ))}
+                  <GridListTile>
+                    <Button
+                      variant='contained'
+                      color='primary'
+                      onClick={() => addPlaylist()}
+                      startIcon={<AddIcon />}
+                    >
+                      Add
+                    </Button>
+                  </GridListTile>
+                </>
+              ) : null}
+            </GridList>
+          </Grid>
         </DragDropContext>
       </Grid>
     </div>
