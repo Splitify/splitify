@@ -67,7 +67,6 @@ let playlistCache: Playlist[] = [];
 export default function (
   props: {
     onSelect: (playlist: Playlist) => void,
-    onLoading: () => void
   }) {
   const classes = useStyles()
 
@@ -94,7 +93,6 @@ export default function (
 
   const handleSelection = async () => {
     setLoading(true);
-    props.onLoading();
 
     let playlists = await Promise.all(
       checked.filter(s => s !== likedPlaylistStub.id)

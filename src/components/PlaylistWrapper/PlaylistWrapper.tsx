@@ -14,9 +14,10 @@ export default function (props: {
 }) {
   const [playlist, setPlaylist] = useState(props.playlist)
   const [selectorOpen, setSelectorOpen] = useState(true)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   function handleSelect(playlist: Playlist) {
+    setLoading(true)
     setPlaylist(playlist)
     if (props.onSelect) props.onSelect(playlist)
     setSelectorOpen(false)
@@ -28,7 +29,7 @@ export default function (props: {
   return (
     <React.Fragment>
       <Dialog open={selectorOpen} onClose={() => setSelectorOpen(false || loading)}>
-        <PlaylistSelector onSelect={handleSelect} onLoading={() => setLoading(true)} />
+        <PlaylistSelector onSelect={handleSelect}/>
       </Dialog>
       {playlist ? (
         <MasterPlaylist playlist={playlist} usedTracks={props.usedTracks} onOpenSelector={() => setSelectorOpen(true)} onFilterUpdate={props.onFilterUpdate} />
