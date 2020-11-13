@@ -18,7 +18,7 @@ import {
 
 import EditPlaylistNameDialog from './EditPlaylistNameDialog'
 
-import { asPlaylistTrack, isTrackCustom, createOrUpdatePlaylist, getUserProfile } from '../helpers/helpers'
+import { asPlaylistTrack, isTrackCustom, createOrUpdatePlaylist, getUserProfile, createOccurrenceMap } from '../helpers/helpers'
 
 import {
   Playlist as PlaylistObj,
@@ -46,8 +46,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   paper: {
-    width: 200,
-    overflow: 'auto'
+    minWidth: 300
   },
   button: {
     margin: theme.spacing(0.5, 0),
@@ -77,6 +76,9 @@ export default function Subplaylist(props: {
   onDelete?: (playlist: PlaylistObj) => any
 }) {
   const classes = useStyles()
+
+  let [eventDrilldown, _setEventDrilldown] = useState(false)
+  const tick = () => _setEventDrilldown(v => !v)
 
   // SAVING ANIMATION STUFF
   const [saveDisabled, setsaveDisabled] = useState(true);
@@ -117,16 +119,12 @@ export default function Subplaylist(props: {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [tracks, setTracks] = useState<TrackObj[]>(props.source)
 
-  // eslint-disable-next-line
-  const [includedTracks, setIncludedTracks] = useState<TrackObj[]>([])
-  // eslint-disable-next-line
-  const [excludedTracks, setExcludedTracks] = useState<TrackObj[]>([])
-
   // Track selector
   const [selectedGenres, setSelectedGenres] = useState<string[]>(["ALL"])
   const [featureFilter, setFeatureFilter] = useState<TrackFilter>(() => () =>
     true
   )
+  const [genresRecord, setGenresRecord] = useState<Record<string, number>>({});
 
   // Visual properties
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => () => true)
@@ -137,7 +135,11 @@ export default function Subplaylist(props: {
     t.included_genres = intersection
     return intersection.length !== 0;
   }
-
+  
+  function padNumber(n : Number): string {
+    return n.toString().padStart(5,'0')
+  }
+  
   function handleSortAction(type: string) {
     const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
       let var1: string = ''
@@ -154,11 +156,15 @@ export default function Subplaylist(props: {
           break
         case 'Album':
           if (track1.album) {
-            var1 = track1.album.name
+            var1 = track1.album.name + padNumber(track1.track_number)
           }
           if (track2.album) {
-            var2 = track2.album.name
+            var2 = track2.album.name + padNumber(track2.track_number)
           }
+          break
+        case 'Popularity':
+          var1 = padNumber(track2.popularity)
+          var2 = padNumber(track1.popularity)
           break
         default:
           var1 = track1.name
@@ -187,9 +193,13 @@ export default function Subplaylist(props: {
         .concat(doFilter(props.source, ...filters)) // New items from the source pool
         .filter((v, i, a) => a.indexOf(v) === i) // Dedup
     )
-
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedGenres, featureFilter, props.source])
+  
+  useEffect(() => {
+    setGenresRecord(createOccurrenceMap(props.source.map(t => t.genres).flat()))
+  }, [props.source])
 
   // Save tracks to playlist when updated
   useEffect(() => {
@@ -210,6 +220,7 @@ export default function Subplaylist(props: {
     let view = tracks.filter(trackFilter)
     updateFilteredView(view)
     props.onFilterUpdate && props.onFilterUpdate(view)
+    tick();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks, trackFilter, props.onFilterUpdate])
 
@@ -234,7 +245,7 @@ export default function Subplaylist(props: {
           }}
         />
       </Dialog>
-      <List dense component={Paper}>
+      <List dense component={Paper} className={classes.paper}>
         <ListItem style={{ justifyContent: "space-between" }}>
           <Typography>
             {props.playlist.name}
@@ -303,7 +314,8 @@ export default function Subplaylist(props: {
         </ListItem>
         <ListItem>
           <GenreSelector
-            genres={props.genres}
+            genres={genresRecord}
+            selectedGenres={selectedGenres}
             onSelect={values => setSelectedGenres(values)}
           />
         </ListItem>
@@ -327,6 +339,7 @@ export default function Subplaylist(props: {
           showTrackCount={true}
           toggleChecked={props.toggleChecked}
           checked={props.checked}
+          _refresh={eventDrilldown}
         />
       </List>
     </div>

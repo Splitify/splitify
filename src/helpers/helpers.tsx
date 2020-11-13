@@ -82,9 +82,9 @@ export async function createOrUpdatePlaylist(
   userId: string,
   playlist: Playlist,
   expand: boolean = false
-){
+) {
 
-  if(playlist.id.substr(0, 4) === "temp"){
+  if (playlist.id.substr(0, 4) === "temp") {
     console.log("Current playlist doesnt exist. Creating now...");
     // First create the new playlist
     const newPlaylist = await parsePlaylistJSON(
@@ -103,7 +103,7 @@ export async function createOrUpdatePlaylist(
 
     // add the to the playlist 100 tracks at a time
     await paginated_api_request(playlist.id, trackUris, api.addTracksToPlaylist);
-  }else{
+  } else {
     console.log("Current playlist exists. Updating instead..");
     // get current playlist info and construct payload
     const curInfo = await getPlaylist(playlist.id)
@@ -132,13 +132,13 @@ async function paginated_api_request(playlist_id: string, track_uris: string[], 
   let remaining = track_uris.length;
   let start = 0;
 
-  while(remaining > 0){
+  while (remaining > 0) {
     console.log("start: ", start, "remaining: ", remaining);
-    if(remaining >= 100){
-      console.log("adding from: ", start, " to: ", start+100);
-      api_function(playlist_id, track_uris.slice(start, start+100));
+    if (remaining >= 100) {
+      console.log("adding from: ", start, " to: ", start + 100);
+      api_function(playlist_id, track_uris.slice(start, start + 100));
       remaining -= 100
-    }else{
+    } else {
       console.log("adding from: ", start, " to: ", track_uris.length);
       api_function(playlist_id, track_uris.slice(start));
       remaining -= (track_uris.length - start);
@@ -164,56 +164,56 @@ abstract class TrackExtensible implements Track {
   get name() {
     return this.track.name
   }
-  get popularity () {
+  get popularity() {
     return this.track.popularity
   }
-  get track_number () {
+  get track_number() {
     return this.track.track_number
   }
-  get uri () {
+  get uri() {
     return this.track.uri
   }
-  get preview_url () {
+  get preview_url() {
     return this.track.preview_url
   }
-  get type () {
+  get type() {
     return this.track.type
   }
-  get album () {
+  get album() {
     return this.track.album
   }
-  get features () {
+  get features() {
     return this.track.features
   }
-  get genres () {
+  get genres() {
     return this.track.genres
   }
-  get explicit () {
+  get explicit() {
     return this.track.explicit
   }
-  get duration_ms () {
+  get duration_ms() {
     return this.track.duration_ms
   }
-  get artists () {
+  get artists() {
     return this.track.artists
   }
 
-  async expand () {
+  async expand() {
     return this.track.expand()
   }
 }
 
 class _PlaylistTrack extends TrackExtensible implements PlaylistTrack {
   track: Track
-  constructor(track: Track, apply: PlaylistTrackBase ) {
-      super()
-      this.track = track
-      delete apply.uuid // Don't apply UUID
-      Object.assign(this, apply)
+  constructor(track: Track, apply: PlaylistTrackBase) {
+    super()
+    this.track = track
+    delete apply.uuid // Don't apply UUID
+    Object.assign(this, apply)
   }
-  
+
   clone(apply?: PlaylistTrackBase) {
-    return new _PlaylistTrack(this.track, {...(this as PlaylistTrackBase), ...apply})
+    return new _PlaylistTrack(this.track, { ...(this as PlaylistTrackBase), ...apply })
   }
 
 }
@@ -221,7 +221,7 @@ class _PlaylistTrack extends TrackExtensible implements PlaylistTrack {
 class _PlaylistTrackGroup extends TrackExtensible implements PlaylistTrackGroup {
   tracks: PlaylistTrack[]
 
-  constructor (...tracks: PlaylistTrack[]) {
+  constructor(...tracks: PlaylistTrack[]) {
     super()
     if (tracks.length > 0) {
       throw new Error('Empty track group')
@@ -232,15 +232,15 @@ class _PlaylistTrackGroup extends TrackExtensible implements PlaylistTrackGroup 
   get track() {
     return this.tracks[0]
   }
-  get id () {
+  get id() {
     return this.uuid
   }
-  get name () {
+  get name() {
     return 'GROUP'
   }
 }
 
-export function asPlaylistTrack(track: Track) : PlaylistTrack {
+export function asPlaylistTrack(track: Track): PlaylistTrack {
   if ((track as PlaylistTrack).track) {
     return track as PlaylistTrack
   }
@@ -257,4 +257,15 @@ export function isTrackCustom(track: Track) {
 
 export function createTrackGroup(...tracks: PlaylistTrack[]) {
   return new _PlaylistTrackGroup(...tracks)
+}
+
+
+export function createOccurrenceMap(genres: string[]) {
+  let map: Record<string, number> = {};
+  genres.forEach((g: string) => map[g] = isNaN(map[g]) ? 1 : map[g] + 1);
+  let map2: Record<string, number> = {};
+  Array.from(Object.entries(map))
+    .sort((a, b) => b[1] - a[1])
+    .forEach(a => map2[a[0]] = a[1]);
+  return map2
 }

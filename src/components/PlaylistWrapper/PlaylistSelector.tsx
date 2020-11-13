@@ -37,6 +37,12 @@ const useStyles = makeStyles({
   },
   actions: {
     justifyContent: "space-evenly"
+  },
+  colorPrimary: {
+    backgroundColor: '#4dc088',
+  },
+  barColorPrimary: {
+    backgroundColor: '#699fd5',
   }
 })
 
@@ -61,7 +67,6 @@ let playlistCache: Playlist[] = [];
 export default function (
   props: {
     onSelect: (playlist: Playlist) => void,
-    onLoading: () => void
   }) {
   const classes = useStyles()
 
@@ -88,7 +93,6 @@ export default function (
 
   const handleSelection = async () => {
     setLoading(true);
-    props.onLoading();
 
     let playlists = await Promise.all(
       checked.filter(s => s !== likedPlaylistStub.id)
@@ -198,7 +202,7 @@ export default function (
         </Paper>
       </CardContent>
       <Fade in={loading}>
-        <LinearProgress />
+        <LinearProgress classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} />
       </Fade>
 
       <CardActions className={classes.actions}>

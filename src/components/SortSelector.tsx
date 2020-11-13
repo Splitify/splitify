@@ -51,6 +51,7 @@ export default function Subplaylist(props: {
         <MenuItem onClick={() => doClick('Track Name')}>Track Name</MenuItem>
         <MenuItem onClick={() => doClick('Artist')}>Artist</MenuItem>
         <MenuItem onClick={() => doClick('Album')}>Album</MenuItem>
+        <MenuItem onClick={() => doClick('Popularity')}>Popularity</MenuItem>
       </Menu>
     </>
   )

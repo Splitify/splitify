@@ -5,6 +5,7 @@ import { makeStyles, List, ListItem, Paper, Popover, IconButton, Box, Divider, B
 import { Info as InfoIcon, Replay as ReplayIcon } from '@material-ui/icons';
 import MultiFilter from './MultiFilter'
 import TrackList from './TrackList'
+import { createOccurrenceMap } from '../helpers/helpers';
 
 const useStyles = makeStyles(theme => ({
   popover: {
@@ -71,17 +72,15 @@ export default function MasterPlaylist(
   }, [trackFilter, usedFilter, props.playlist])
 
   const calRecommendedGenres = () => {
-    let map = new Map<string, number>();
     let filter = (t: TrackObj) => !props.usedTracks.some((m: TrackObj) => m.id === t.id);
 
-    props.playlist.tracks
+    const unused = props.playlist.tracks
       .filter(filter)
       .map((t: TrackObj) => t.genres)
       .flat()
-      .forEach((g: string) => map.set(g, (map.get(g) ?? 0) + 1));
 
-    var mapAsc = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
-    mapAsc.splice(3, Number.MAX_SAFE_INTEGER);
+    var mapAsc = Array.from(Object.entries(createOccurrenceMap(unused)));
+    mapAsc.splice(4, Number.MAX_SAFE_INTEGER);
     const suggestions = mapAsc.map(a => a[0]).filter(g => g !== "ALL");
 
     if (suggestions.length === 0) {
