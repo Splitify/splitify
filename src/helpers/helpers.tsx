@@ -2,7 +2,6 @@ import { parsePlaylistJSON, parseUserJSON } from './parsers'
 import { Playlist, Track, PlaylistTrack, PlaylistTrackGroup, User, PlaylistTrackBase } from '../types'
 import { api } from '../auth'
 import { v4 as uuid } from 'uuid';
-import { Fab } from '@material-ui/core';
 
 // Get all playlists
 export async function getPlaylists(

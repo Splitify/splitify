@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
-import { Track as TrackObj, CheckedList, PlaylistTrackGroup } from '../types'
+import { Track as TrackObj, CheckedList } from '../types'
 import TrackEntry from './TrackEntry'
 import Track from './Track'
 import { ListItem } from "@material-ui/core"
@@ -55,13 +55,13 @@ export default function (props: {
 
   useEffect(() => {
     setTracks(props.tracks)
-  })
+  }, [props.tracks])
 
   useEffect(() => {
     //expand tracks here
     let allTracks = tracks
     let newTracks = allTracks
-    allTracks.map((track, index) => {
+    allTracks.forEach((track, index) => {
       if (track instanceof _PlaylistTrackGroup) {
         newTracks.splice(index, 1, ...track.tracks);
     }})
@@ -97,6 +97,7 @@ export default function (props: {
       droppableId={props.id || 'unknown'}
       mode='virtual'
       isDropDisabled={props.isDropDisabled}
+
       renderClone={TrackInvariant}
     >
       {(provided, snapshot) => (

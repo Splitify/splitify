@@ -155,13 +155,10 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   const groupTracks = () => {
     let checkedTracks: PlaylistTrack[] = []
     let sourcePlaylist: PlaylistObj | undefined
-    let playlistID: string
     let source_newTracks: TrackObj[]
     let index: number
-    let newPlaylists: PlaylistObjectPP[]
     checked.forEach((checkedList) => {
-      playlistID = checkedList.id
-      sourcePlaylist = findPlaylist(playlistID)
+      sourcePlaylist = findPlaylist(checkedList.id)
       if (!sourcePlaylist) throw new Error("Failed to get playlist")
       source_newTracks = [...sourcePlaylist!.tracks];
       checkedList.tracks.forEach((track, index) => {
@@ -172,7 +169,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       //we have a list of all selected tracks
       let newGroup = createTrackGroup(...checkedTracks)
       //remove tracks
-      checkedTracks.map((track) => {
+      checkedTracks.forEach((track) => {
         index = source_newTracks.map(function(e) { return e.id; }).indexOf(track.id);
         source_newTracks!.splice(index, 1);
       })
