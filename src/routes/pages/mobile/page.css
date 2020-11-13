@@ -1,0 +1,9 @@
+.animateFlicker {
+  animation: grey 8s forwards;
+}
+
+@keyframes grey {
+  100% {
+    filter: grayscale(100%);
+  }
+}

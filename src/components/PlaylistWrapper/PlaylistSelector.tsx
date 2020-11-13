@@ -145,8 +145,8 @@ export default function (
     <Card className={classes.root}>
       <CardContent className={classes.content}>
         <Box m={1}>
-          <Typography variant="h5" gutterBottom align="center" >
-            Select Playlists to Split from
+          <Typography variant="h5" gutterBottom align="center" style={{ userSelect: 'none' }} >
+            Select playlists to split from
           </Typography>
         </Box>
         <Box m={2}>
