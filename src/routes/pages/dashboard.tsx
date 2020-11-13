@@ -9,6 +9,7 @@ import { CheckedList, Playlist as PlaylistObj, Track as TrackObj } from "../../t
 import { v4 as uuid } from 'uuid';
 import AddIcon from '@material-ui/icons/Add';
 import { DragDropContext } from 'react-beautiful-dnd';
+import "../../gradientBG.css"
 
 export const useStyles = makeStyles(theme => ({
   root: {
@@ -169,7 +170,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     }
     return (<div></div>)
   }
-
 
   return (
     <div className={classes.root}>

@@ -1,0 +1,52 @@
+:root {
+  --colorA: #4dc088;
+  --colorB: #699fd5;
+}
+.gradientAnim:before {
+  content: "";
+  z-index: -1;
+  filter: opacity(0.6) brightness(0.8);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(146deg, var(--colorA), var(--colorB));
+  background-size: 10000% 10000%;
+  -webkit-animation: GradientAnim 60s ease infinite;
+  -moz-animation: GradientAnim 60s ease infinite;
+  animation: GradientAnim 60s ease infinite;
+}
+@-webkit-keyframes GradientAnim {
+  0% {
+    background-position: 0% 46%;
+  }
+  50% {
+    background-position: 100% 55%;
+  }
+  100% {
+    background-position: 0% 46%;
+  }
+}
+@-moz-keyframes GradientAnim {
+  0% {
+    background-position: 0% 46%;
+  }
+  50% {
+    background-position: 100% 55%;
+  }
+  100% {
+    background-position: 0% 46%;
+  }
+}
+@keyframes GradientAnim {
+  0% {
+    background-position: 0% 46%;
+  }
+  50% {
+    background-position: 100% 55%;
+  }
+  100% {
+    background-position: 0% 46%;
+  }
+}
