@@ -37,6 +37,12 @@ const useStyles = makeStyles({
   },
   actions: {
     justifyContent: "space-evenly"
+  },
+  colorPrimary: {
+    backgroundColor: '#4dc088',
+  },
+  barColorPrimary: {
+    backgroundColor: '#699fd5',
   }
 })
 
@@ -198,7 +204,7 @@ export default function (
         </Paper>
       </CardContent>
       <Fade in={loading}>
-        <LinearProgress />
+        <LinearProgress classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} />
       </Fade>
 
       <CardActions className={classes.actions}>
