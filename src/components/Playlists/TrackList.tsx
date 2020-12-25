@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { Button, ListItem } from '@material-ui/core'
 
-import { Track as TrackObj } from '../../../types'
+import { Track as TrackObj } from '../../types'
 
 import { Droppable } from 'react-beautiful-dnd'
 import { VariableSizeList as VirtualList } from 'react-window'
 
-import TrackEntry from '../../Tracks/TrackEntry'
-import Track from '../../Tracks/Track'
-import { asPlaylistTrack, _PlaylistTrackGroup } from '../../../helpers/helpers'
+import TrackEntry from '../Tracks/TrackEntry'
+import Track from '../Tracks/Track'
+import { asPlaylistTrack, _PlaylistTrackGroup } from '../../helpers/helpers'
+
+import DeleteTracksButton from './Actions/DeleteTracksButton'
 
 export default function (props: {
   id: string
@@ -17,6 +19,7 @@ export default function (props: {
   isDropDisabled?: boolean
   isDragDisabled?: boolean
   isCheckEnabled?: boolean
+  showActions?: boolean
   showTrackCount?: boolean
   _refresh?: boolean
 }) {
@@ -148,15 +151,15 @@ export default function (props: {
           </VirtualList>
         )}
       </Droppable>
-      {props.showTrackCount && (
-        <ListItem dense={true}>Total Tracks: {props.tracks.length}</ListItem>
-      )}
-      {checkedItems.length > 0 && (
-        <ListItem style={{ height: 40, padding: 0 }}>
-          <Button>One</Button>
+      {props.showActions && (
+        <ListItem style={{ height: 40, padding: 8 }}>
+          {checkedItems.length > 0 && <DeleteTracksButton />}
           <Button>Two</Button>
           <Button>Three</Button>
         </ListItem>
+      )}
+      {props.showTrackCount && (
+        <ListItem dense={true}>Total Tracks: {props.tracks.length}</ListItem>
       )}
     </>
   )

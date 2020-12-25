@@ -8,7 +8,7 @@ const useStylesSlider = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     paddingTop: 0,
     paddingBottom: 0,
-    width: '100%',
+    width: '90%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between'

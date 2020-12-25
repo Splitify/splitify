@@ -20,8 +20,8 @@ import {
 
 import { createOccurrenceMap } from '../../helpers/helpers'
 
-import MultiFilter from './Components/Filters/MultiFilter'
-import TrackList from './Components/TrackList'
+import MultiFilter from './Filters/MultiFilter'
+import TrackList from './TrackList'
 
 const useStyles = makeStyles(theme => ({
   popover: {

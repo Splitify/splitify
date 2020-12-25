@@ -6,7 +6,7 @@ import { Track as TrackObj } from '../../types'
 import { asPlaylistTrack, isTrackCustom } from '../../helpers/helpers'
 import { BarChart, Bar, Cell, XAxis, YAxis } from 'recharts'
 
-import options from '../Playlists/Components/Selectors/FeatureSelector/Defaults'
+import options from '../Playlists/Selectors/FeatureSelector/Defaults'
 
 const INCLUDED_FEATURES = options.map(o => o.id as string)
 
