@@ -65,11 +65,9 @@ export default function (props: {
               )}
               <Track track={props.track} isDragging={snapshot.isDragging} />
               {props.isDragDisabled ?? (
-                <ListItemSecondaryAction>
-                  <ListItemIcon>
-                    <DragHandleIcon />
-                  </ListItemIcon>
-                </ListItemSecondaryAction>
+                <ListItemIcon>
+                  <DragHandleIcon />
+                </ListItemIcon>
               )}
             </>
           ) : (
