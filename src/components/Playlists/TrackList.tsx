@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Button, ListItem } from '@material-ui/core'
+import { FilterNone, LibraryMusic, Remove, SelectAll } from '@material-ui/icons'
 
 import { Track as TrackObj } from '../../types'
 
@@ -11,9 +12,7 @@ import Track from '../Tracks/Track'
 import { asPlaylistTrack, _PlaylistTrackGroup } from '../../helpers/helpers'
 
 import { TrackListActionType } from './Actions/types'
-
 import SortButton from './Actions/SortButton'
-import { FilterNone, Remove, SelectAll } from '@material-ui/icons'
 
 export default function (props: {
   id: string
@@ -178,17 +177,18 @@ export default function (props: {
                   }}
                   startIcon={<Remove />}
                 >
-                  Delete ({checkedItems.length})
+                  Delete
                 </Button>,
-                // <Button
-                //   onClick={() => {
-                //     if (!props.onAction) return
-                //     props.onAction('groupTracks', [...checkedItems])
-                //     setCheckedItems([])
-                //   }}
-                // >
-                //   Group ({checkedItems.length})
-                // </Button>,
+                <Button
+                  onClick={() => {
+                    if (!props.onAction) return
+                    props.onAction('groupTracks', [...checkedItems])
+                    setCheckedItems([])
+                  }}
+                  startIcon={<LibraryMusic />}
+                >
+                  Group
+                </Button>,
                 <Button
                   onClick={() => {
                     setCheckedItems([])
@@ -218,8 +218,13 @@ export default function (props: {
           />
         </ListItem>
       )}
-      {props.showTrackCount && (
-        <ListItem dense={true}>Total Tracks: {props.tracks.length}</ListItem>
+      {(props.showTrackCount || checkedItems.length) && (
+        <ListItem dense={true}>
+          Total Tracks: {props.tracks.length}
+          {checkedItems.length
+            ? ` | Selected Tracks: ${checkedItems.length}`
+            : ''}
+        </ListItem>
       )}
     </>
   )
