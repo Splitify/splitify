@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Button, Menu, MenuItem, makeStyles } from '@material-ui/core'
 import SortIcon from '@material-ui/icons/Sort'
 
-export default function Subplaylist (props: {
+export default function SortButton (props: {
   onSort: (type: string) => void
 }) {
   const useStyles = makeStyles(theme => ({
