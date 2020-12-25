@@ -8,7 +8,7 @@ export class Accumulumatorinator<T> {
   private _accumulator: string[]
   private _promise: Promise<T[]>
   private _resolve: Function
-  private _timeout?: number
+  private _timeout?: any
 
   constructor (limit: Number, callback: (ids: string[]) => any) {
     this.callback = callback
