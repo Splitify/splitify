@@ -17,7 +17,8 @@ import {
   allGenresFromPlaylist,
   asPlaylistTrack,
   touchTrack,
-  createTrackGroup
+  createTrackGroup,
+  isTrackGroup
 } from '../../helpers/helpers'
 
 import '../../gradientBG.css'
@@ -136,47 +137,48 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   }
 
   const removeTracksFromPlaylist = (playlist: PlaylistObj, ids: string[]) => {
-    let targetPlaylist = findPlaylist(playlist.id)
-    targetPlaylist!.tracks = targetPlaylist!.tracks.filter(
+    let targetPlaylist = findPlaylist(playlist.id) as PlaylistObjectPP
+    targetPlaylist!.sourcePool = targetPlaylist!.sourcePool.filter(
       t => !ids.includes(asPlaylistTrack(t).uuid!)
     )
     setPlaylists([...playlists])
   }
 
-  // const groupTracks = () => {
-  //   let checkedTracks: PlaylistTrack[] = []
-  //   let sourcePlaylist: PlaylistObj | undefined
-  //   let source_newTracks: TrackObj[]
-  //   let index: number
-  // checked.forEach(checkedList => {
-  //   sourcePlaylist = findPlaylist(checkedList.id)
-  //   if (!sourcePlaylist) throw new Error('Failed to get playlist')
-  //   source_newTracks = [...sourcePlaylist!.tracks]
-  //   checkedList.tracks.forEach((track, index) => {
-  //     if (track) {
-  //       checkedTracks.push(asPlaylistTrack(track))
-  //     }
-  //   })
-  //   //we have a list of all selected tracks
-  //   let newGroup = createTrackGroup(...checkedTracks)
-  //   //remove tracks
-  //   checkedTracks.forEach(track => {
-  //     index = source_newTracks
-  //       .map(function (e) {
-  //         return e.id
-  //       })
-  //       .indexOf(track.id)
-  //     source_newTracks!.splice(index, 1)
-  //   })
-  //   //add in track group
-  //   source_newTracks.unshift(newGroup)
-  //   sourcePlaylist.tracks = source_newTracks
-  //   setPlaylists([...playlists])
-  // })
-  // let allChecked = checked
-  // allChecked.map(checkedPlaylist => (checkedPlaylist.tracks = []))
-  // setChecked([...checked])
-  // }
+  /**
+   * Create a group containing tracks of ids `ids`
+   * Replace the position of the first track in the playlist with the group
+   * Remove other track instances in the playlist that are part of the group
+   */
+  const groupTracks = (playlist: PlaylistObj, ids: string[]) => {
+    // Get the track objects
+    let resolvedTracks = ids.map(
+      id =>
+        playlist.tracks.find(
+          t => asPlaylistTrack(t).uuid === id
+        ) as PlaylistTrack
+    )
+
+    console.log(ids, 'resolved to', resolvedTracks);
+
+    // Get the index of the first track object
+    let headTrackIdx = playlist.tracks.findIndex(
+      t => asPlaylistTrack(t).uuid === ids[0]
+    )
+
+    console.log('head resolved to position', headTrackIdx);
+
+    let newGroup = createTrackGroup(resolvedTracks)
+
+    let playlistPP = playlist as PlaylistObjectPP
+
+    playlistPP.tracks[headTrackIdx] = newGroup
+    playlistPP.tracks = playlist.tracks.filter(
+      t => !ids.includes(asPlaylistTrack(t).uuid!)
+    )
+
+    console.log('playlist now', playlist);
+    setPlaylists([...playlists])
+  }
 
   return (
     <div className={`${classes.root} gradientAnim`}>
@@ -308,9 +310,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                         onAction={(action, data) => {
                           switch (action) {
                             case 'groupTracks':
-                              break
-                            case 'sortTracks':
-                              // TODO: Sort tracks
+                              groupTracks(p, data)
                               break
                             case 'deleteTracks':
                               removeTracksFromPlaylist(p, data)

@@ -11,18 +11,18 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import { Track as TrackObj } from '../../types'
 
 import { Draggable } from 'react-beautiful-dnd'
-import { asPlaylistTrack } from '../../helpers/helpers'
+import { asPlaylistTrack, isTrackGroup } from '../../helpers/helpers'
 
 import Track from './Track'
 
-export default function (props: {
+const TrackEntry = function (props: {
   track: TrackObj
   index?: number
   isDragDisabled?: boolean
 
   canCheck?: boolean
   isChecked?: boolean
-  toggleChecked: (state: boolean) => any
+  toggleChecked?: (state: boolean) => any
 
   style?: any
 }) {
@@ -34,6 +34,10 @@ export default function (props: {
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  if (isTrackGroup(props.track)) {
+    console.log('GROUP', props.track)
+  }
 
   return (
     <Draggable
@@ -60,10 +64,24 @@ export default function (props: {
                 <Checkbox
                   checked={props.isChecked}
                   tabIndex={-1}
-                  onChange={() => props.toggleChecked(!props.isChecked)}
+                  onChange={() =>
+                    props.toggleChecked && props.toggleChecked(!props.isChecked)
+                  }
                 />
               )}
-              <Track track={props.track} isDragging={snapshot.isDragging} />
+              {isTrackGroup(props.track) ? (
+                props.track.tracks.map(t => (
+                  <TrackEntry
+                    track={t}
+                    key={t.uuid}
+                    canCheck={false}
+                    isDragDisabled={true}
+                  />
+                ))
+              ) : (
+                <Track track={props.track} isDragging={snapshot.isDragging} />
+              )}
+
               {props.isDragDisabled ?? (
                 <ListItemIcon>
                   <DragHandleIcon />
@@ -78,3 +96,5 @@ export default function (props: {
     </Draggable>
   )
 }
+
+export default TrackEntry

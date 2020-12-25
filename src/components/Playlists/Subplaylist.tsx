@@ -170,8 +170,9 @@ export default function Subplaylist (props: {
     const filters = [TrackCorrectGenre, featureFilter]
 
     setTracks(
-      doFilter(tracks, ...filters) // Existing current matches (to maintain ordering)
-        .concat(doFilter(props.source, ...filters)) // New items from the source pool
+      // doFilter(tracks, ...filters) // Existing current matches (to maintain ordering)
+        // .concat
+        (doFilter(props.source, ...filters)) // New items from the source pool
         .filter((v, i, a) => a.indexOf(v) === i) // Dedup
     )
 

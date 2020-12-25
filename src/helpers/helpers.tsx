@@ -259,10 +259,14 @@ export function isTrackCustom(track: Track) {
   return asPlaylistTrack(track).isCustom
 }
 
-export function createTrackGroup(...tracks: PlaylistTrack[]) {
+export function createTrackGroup(tracks: PlaylistTrack[]) {
   return new _PlaylistTrackGroup(...tracks)
 }
 
+export function isTrackGroup(track: Track | PlaylistTrack): track is PlaylistTrackGroup {
+  console.log((track as _PlaylistTrackGroup).tracks)
+  return !!(track as _PlaylistTrackGroup).tracks
+}
 
 export function createOccurrenceMap(genres: string[]) {
   let map: Record<string, number> = {};
