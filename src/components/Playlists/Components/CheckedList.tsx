@@ -1,4 +1,4 @@
-import { Track } from './Track'
+import { Track } from '../../../types/Track'
 
 export interface CheckedList {
   id: string

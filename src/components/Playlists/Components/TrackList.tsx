@@ -8,23 +8,21 @@ import { VariableSizeList as VirtualList } from 'react-window'
 
 import TrackEntry from '../../Tracks/TrackEntry'
 import Track from '../../Tracks/Track'
-import { _PlaylistTrackGroup } from '../../../helpers/helpers'
+import { asPlaylistTrack, _PlaylistTrackGroup } from '../../../helpers/helpers'
 
 export default function (props: {
   id: string
   tracks: TrackObj[]
+  component: React.ElementType
   isDropDisabled?: boolean
   isDragDisabled?: boolean
-  isDeletable: boolean
-  isDragClone?: boolean
-  component: React.ElementType
-  showActions?: boolean
+  isCheckEnabled?: boolean
   showTrackCount?: boolean
-  checked: CheckedList[]
   _refresh?: boolean
-  toggleChecked?: (id: string, track: TrackObj) => any
 }) {
   const [height, setHeight] = useState(0)
+
+  const [checkedItems, setCheckedItems] = useState<string[]>([])
 
   const [ref, setRef] = useState<HTMLElement>()
   useEffect(() => {
@@ -77,20 +75,39 @@ export default function (props: {
   }, [tracks])
 
   const EntryInvariant = React.memo(
-    ({ data, index, style }: any) =>
-      data[index] && (
-        <TrackEntry
-          key={data[index].id}
-          track={data[index]}
-          index={index}
-          id={props.id}
-          isDragDisabled={props.isDragDisabled}
-          isDeletable={props.isDeletable}
-          style={style}
-          checked={props.checked}
-          toggleChecked={props.toggleChecked!}
-        />
-      )
+    ({
+      data,
+      index,
+      style
+    }: {
+      data: TrackObj[]
+      index: number
+      style: any
+    }) => {
+      if (data[index]) {
+        let uuid = asPlaylistTrack(data[index]).uuid!
+
+        return (
+          <TrackEntry
+            key={data[index].id}
+            track={data[index]}
+            index={index}
+            isDragDisabled={props.isDragDisabled}
+            style={style}
+            canCheck={props.isCheckEnabled}
+            isChecked={checkedItems.includes(uuid)}
+            toggleChecked={state =>
+              setCheckedItems(
+                state
+                  ? [...checkedItems, uuid]
+                  : checkedItems.filter(id => id !== uuid)
+              )
+            }
+          />
+        )
+      }
+      return null
+    }
   )
 
   const TrackInvariant = (provided: any, snapshot: any, rubric: any) => (
@@ -134,7 +151,7 @@ export default function (props: {
       {props.showTrackCount && (
         <ListItem dense={true}>Total Tracks: {props.tracks.length}</ListItem>
       )}
-      {props.showActions && (
+      {checkedItems.length > 0 && (
         <ListItem style={{ height: 40, padding: 0 }}>
           <Button>One</Button>
           <Button>Two</Button>

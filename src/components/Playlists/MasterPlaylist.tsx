@@ -164,10 +164,9 @@ export default function MasterPlaylist (props: {
           tracks={filteredTracks}
           isDragDisabled={false}
           isDropDisabled={true}
-          isDeletable={false}
+          isCheckEnabled={false}
           showTrackCount={true}
           component={List}
-          checked={[]}
         />
       </List>
     </div>

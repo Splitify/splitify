@@ -345,11 +345,8 @@ export default function Subplaylist (props: {
           id={props.playlist.id}
           tracks={filterView}
           component={List}
-          showActions={false}
-          isDeletable={true}
+          isCheckEnabled={true}
           showTrackCount={true}
-          toggleChecked={props.toggleChecked}
-          checked={props.checked}
           _refresh={eventDrilldown}
         />
       </List>
