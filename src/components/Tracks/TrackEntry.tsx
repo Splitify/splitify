@@ -8,7 +8,7 @@ import {
 import DragHandleIcon from '@material-ui/icons/DragHandle'
 import Skeleton from '@material-ui/lab/Skeleton'
 
-import { Track as TrackObj, CheckedList } from '../../types'
+import { Track as TrackObj } from '../../types'
 
 import { Draggable } from 'react-beautiful-dnd'
 import { asPlaylistTrack } from '../../helpers/helpers'

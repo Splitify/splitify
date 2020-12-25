@@ -35,7 +35,6 @@ import {
   Playlist as PlaylistObj,
   Track as TrackObj,
   TrackFilter,
-  CheckedList
 } from '../../types'
 
 import GenreSelector from './Components/GenreSelector'
@@ -80,9 +79,7 @@ export default function Subplaylist (props: {
   source: TrackObj[]
   playlist: PlaylistObj
   genres: string[]
-  checked: CheckedList[]
   onTrackUpdate: () => void
-  toggleChecked: (id: string, tracks: TrackObj) => any
   onFilterUpdate?: (tracks: TrackObj[]) => any
   onDelete?: (playlist: PlaylistObj) => any
 }) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button, ListItem } from '@material-ui/core'
 
-import { Track as TrackObj, CheckedList } from '../../../types'
+import { Track as TrackObj } from '../../../types'
 
 import { Droppable } from 'react-beautiful-dnd'
 import { VariableSizeList as VirtualList } from 'react-window'

@@ -10,7 +10,6 @@ import AddIcon from '@material-ui/icons/Add'
 
 import {
   PlaylistTrack,
-  CheckedList,
   Playlist as PlaylistObj,
   Track as TrackObj
 } from '../../types'
@@ -63,12 +62,8 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   const [masterPlaylist, setMasterPlaylist] = useState<PlaylistObj>()
   const [genres, setGenres] = useState<string[]>([])
   const [usedTracks, setUsedTracks] = useState<TrackObj[]>([])
-  const filteredLists: { [id: string]: TrackObj[] } = useState({})[0]
-  const [checked, setChecked] = useState<CheckedList[]>([])
 
-  useEffect(() => {
-    setChecked([])
-  }, [masterPlaylist])
+  const filteredLists: { [id: string]: TrackObj[] } = useState({})[0]
 
   function loadPlaylist (playlist: PlaylistObj) {
     Promise.all(playlist.tracks.map(t => t.expand())).then(() => {
@@ -107,22 +102,18 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     const playlist = createPlaylist()
     console.log('Adding playlist', playlist.id)
     setPlaylists([...playlists, playlist])
-    setChecked([...checked, { id: playlist.id, tracks: [] }])
   }
 
   const deletePlaylist = (playlist: PlaylistObj) => {
     console.log('Deleting playlist', playlist.id)
     delete filteredLists[playlist.id]
     setPlaylists(playlists.filter(p => p.id !== playlist.id))
-    setChecked(checked.filter(p => p.id !== playlist.id))
   }
 
   // Find playlist object given its ID
   const findPlaylist = (id: string) =>
     (id === masterPlaylist?.id && masterPlaylist) ||
     playlists.find(p => p.id === id)
-  const findChecked = (id: string) =>
-    checked.find(playlist => playlist.id === id)
 
   // Resolves filter index to track source index
   const getPlaylistIndexFromFilterIndex = (
@@ -144,109 +135,95 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     )
   }
 
-  const toggleChecked = (id: string, track: TrackObj) => () => {
-    let checkedPlaylist = findChecked(id)
-    if (!checkedPlaylist) throw new Error('Failed to find checked list')
+  // const updateSourcePool = () => {
+  //   let playlistID: string
+  //   let sourcePlaylist: PlaylistObj | undefined
+  //   let source_newTracks: TrackObj[]
+  //   let index: number
+  //   checked.forEach(checkedList => {
+  //     console.log('id is ' + checkedList.id)
+  //     playlistID = checkedList.id
+  //     sourcePlaylist = findPlaylist(playlistID)
+  //     if (!sourcePlaylist) throw new Error('Failed to get playlist')
+  //     source_newTracks = [...sourcePlaylist!.tracks]
+  //     checkedList.tracks.forEach(track => {
+  //       index = source_newTracks
+  //         .map(function (e) {
+  //           return e.id
+  //         })
+  //         .indexOf(track.id)
+  //       source_newTracks!.splice(index, 1)
+  //     })
+  //     sourcePlaylist.tracks = source_newTracks
+  //     setPlaylists([...playlists])
+  //   })
+  //   let allChecked = checked
+  //   allChecked.map(checkedPlaylist => (checkedPlaylist.tracks = []))
+  //   setChecked([...checked])
+  // }
 
-    const currentIndex = checkedPlaylist!.tracks.indexOf(track)
+  // const groupTracks = () => {
+  //   let checkedTracks: PlaylistTrack[] = []
+  //   let sourcePlaylist: PlaylistObj | undefined
+  //   let source_newTracks: TrackObj[]
+  //   let index: number
+  // checked.forEach(checkedList => {
+  //   sourcePlaylist = findPlaylist(checkedList.id)
+  //   if (!sourcePlaylist) throw new Error('Failed to get playlist')
+  //   source_newTracks = [...sourcePlaylist!.tracks]
+  //   checkedList.tracks.forEach((track, index) => {
+  //     if (track) {
+  //       checkedTracks.push(asPlaylistTrack(track))
+  //     }
+  //   })
+  //   //we have a list of all selected tracks
+  //   let newGroup = createTrackGroup(...checkedTracks)
+  //   //remove tracks
+  //   checkedTracks.forEach(track => {
+  //     index = source_newTracks
+  //       .map(function (e) {
+  //         return e.id
+  //       })
+  //       .indexOf(track.id)
+  //     source_newTracks!.splice(index, 1)
+  //   })
+  //   //add in track group
+  //   source_newTracks.unshift(newGroup)
+  //   sourcePlaylist.tracks = source_newTracks
+  //   setPlaylists([...playlists])
+  // })
+  // let allChecked = checked
+  // allChecked.map(checkedPlaylist => (checkedPlaylist.tracks = []))
+  // setChecked([...checked])
+  // }
 
-    if (currentIndex === -1) {
-      checkedPlaylist.tracks.push(track)
-    } else {
-      checkedPlaylist.tracks.splice(currentIndex, 1)
-    }
-    setChecked([...checked])
-  }
-
-  const updateSourcePool = () => {
-    let playlistID: string
-    let sourcePlaylist: PlaylistObj | undefined
-    let source_newTracks: TrackObj[]
-    let index: number
-    checked.forEach(checkedList => {
-      console.log('id is ' + checkedList.id)
-      playlistID = checkedList.id
-      sourcePlaylist = findPlaylist(playlistID)
-      if (!sourcePlaylist) throw new Error('Failed to get playlist')
-      source_newTracks = [...sourcePlaylist!.tracks]
-      checkedList.tracks.forEach(track => {
-        index = source_newTracks
-          .map(function (e) {
-            return e.id
-          })
-          .indexOf(track.id)
-        source_newTracks!.splice(index, 1)
-      })
-      sourcePlaylist.tracks = source_newTracks
-      setPlaylists([...playlists])
-    })
-    let allChecked = checked
-    allChecked.map(checkedPlaylist => (checkedPlaylist.tracks = []))
-    setChecked([...checked])
-  }
-
-  const groupTracks = () => {
-    let checkedTracks: PlaylistTrack[] = []
-    let sourcePlaylist: PlaylistObj | undefined
-    let source_newTracks: TrackObj[]
-    let index: number
-    checked.forEach(checkedList => {
-      sourcePlaylist = findPlaylist(checkedList.id)
-      if (!sourcePlaylist) throw new Error('Failed to get playlist')
-      source_newTracks = [...sourcePlaylist!.tracks]
-      checkedList.tracks.forEach((track, index) => {
-        if (track) {
-          checkedTracks.push(asPlaylistTrack(track))
-        }
-      })
-      //we have a list of all selected tracks
-      let newGroup = createTrackGroup(...checkedTracks)
-      //remove tracks
-      checkedTracks.forEach(track => {
-        index = source_newTracks
-          .map(function (e) {
-            return e.id
-          })
-          .indexOf(track.id)
-        source_newTracks!.splice(index, 1)
-      })
-      //add in track group
-      source_newTracks.unshift(newGroup)
-      sourcePlaylist.tracks = source_newTracks
-      setPlaylists([...playlists])
-    })
-    let allChecked = checked
-    allChecked.map(checkedPlaylist => (checkedPlaylist.tracks = []))
-    setChecked([...checked])
-  }
-
-  function DeleteTracksButton () {
-    for (let i = 0; i < checked.length; i++) {
-      if (checked[i].tracks[0]) {
-        return (
-          <>
-            <Button
-              variant='contained'
-              color='secondary'
-              onClick={updateSourcePool}
-              style={{ float: 'left', margin: 5 }}
-            >
-              Delete Selected Tracks
-            </Button>
-            <Button
-              variant='contained'
-              color='secondary'
-              onClick={groupTracks}
-              style={{ float: 'left', margin: 5 }}
-            >
-              Group Selected Tracks
-            </Button>
-          </>
-        )
-      }
-    }
-    return <div></div>
-  }
+  // function DeleteTracksButton () {
+  //   for (let i = 0; i < checked.length; i++) {
+  //     if (checked[i].tracks[0]) {
+  //       return (
+  //         <>
+  //           <Button
+  //             variant='contained'
+  //             color='secondary'
+  //             onClick={updateSourcePool}
+  //             style={{ float: 'left', margin: 5 }}
+  //           >
+  //             Delete Selected Tracks
+  //           </Button>
+  //           <Button
+  //             variant='contained'
+  //             color='secondary'
+  //             onClick={groupTracks}
+  //             style={{ float: 'left', margin: 5 }}
+  //           >
+  //             Group Selected Tracks
+  //           </Button>
+  //         </>
+  //       )
+  //     }
+  //   }
+  //   return <div></div>
+  // }
 
   return (
     <div className={`${classes.root} gradientAnim`}>
@@ -262,7 +239,7 @@ const Dashboard: React.FC<IDashboardProps> = () => {
       >
         Logout
       </Button>
-      <DeleteTracksButton />
+      {/* <DeleteTracksButton /> */}
       <Grid style={{ width: '100%', margin: 0 }} container spacing={5}>
         <DragDropContext
           onDragEnd={evt => {
@@ -372,7 +349,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                       }}
                     >
                       <Subplaylist
-                        toggleChecked={toggleChecked}
                         genres={genres}
                         source={p.sourcePool}
                         onTrackUpdate={updateTracks}
@@ -381,7 +357,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                         onFilterUpdate={tracks =>
                           (filteredLists[p.id] = tracks)
                         }
-                        checked={checked}
                       />
                     </GridListTile>
                   ))}
