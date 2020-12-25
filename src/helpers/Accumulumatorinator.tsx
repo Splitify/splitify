@@ -31,7 +31,7 @@ export class Accumulumatorinator<T> {
   }
 
   /**
-   * Request for an id. 
+   * Request for an id.
    * Returns a promise that will be resolved when the current accumulation finishes
    */
   request (id: string, instant?: boolean) {
@@ -93,8 +93,12 @@ export class CachingAccumulumatorinator<T> extends Accumulumatorinator<T> {
     this.cache.setItem(id, data)
     return data
   }
-  
-  async requestCustom (id: string, urlparams: string, instant?: boolean): Promise<T> {
+
+  async requestCustom (
+    id: string,
+    urlparams: string,
+    instant?: boolean
+  ): Promise<T> {
     let hit = await this.cache.getItem(id)
     if (hit) {
       // console.info(`${this.cacheName}:${id} found in cache`);

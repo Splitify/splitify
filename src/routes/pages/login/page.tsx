@@ -1,13 +1,6 @@
-/* 
-// Login page
-
-*/
-
 import React from 'react'
 
-import Box from '@material-ui/core/Box'
-import Container from '@material-ui/core/Container'
-import Typography from '@material-ui/core/Typography'
+import { Box, Container, Typography } from '@material-ui/core'
 
 import Textmark from '../../../images/textmark@72.png'
 

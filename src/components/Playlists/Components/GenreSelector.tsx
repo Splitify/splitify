@@ -10,25 +10,28 @@ const icon = <CheckBoxOutlineBlankIcon fontSize='small' />
 const checkedIcon = <CheckBoxIcon fontSize='small' />
 
 export default function (props: {
-  genres: Record<string,number>
+  genres: Record<string, number>
   selectedGenres: string[]
   onSelect: (values: string[]) => any
 }) {
-  const displayLimit = 6;
+  const displayLimit = 6
   return (
     <Autocomplete
       multiple
       fullWidth={true}
       options={Object.keys(props.genres)}
-      defaultValue={["ALL"]}
+      defaultValue={['ALL']}
       disableCloseOnSelect
       onChange={(event: any, newValue: string[]) => {
-        if (props.selectedGenres.length === 1 && props.selectedGenres[0] === "ALL")
+        if (
+          props.selectedGenres.length === 1 &&
+          props.selectedGenres[0] === 'ALL'
+        )
           newValue.splice(0, 1)
         props.onSelect(newValue)
       }}
       limitTags={displayLimit}
-      getLimitTagsText={(n) => `and ${n} more genres...`}
+      getLimitTagsText={n => `and ${n} more genres...`}
       renderOption={(option, { selected }) => (
         <React.Fragment>
           <Checkbox

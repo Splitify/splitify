@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { Draggable } from 'react-beautiful-dnd'
+import {
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemIcon,
+  Checkbox
+} from '@material-ui/core'
+import DragHandleIcon from '@material-ui/icons/DragHandle'
 import Skeleton from '@material-ui/lab/Skeleton'
 
 import { Track as TrackObj, CheckedList } from '../../types'
-import Track from './Track'
 
-import DragHandleIcon from '@material-ui/icons/DragHandle'
-import { ListItem, ListItemSecondaryAction, ListItemIcon, Checkbox } from '@material-ui/core'
+import { Draggable } from 'react-beautiful-dnd'
 import { asPlaylistTrack } from '../../helpers/helpers'
+
+import Track from './Track'
 
 export default function (props: {
   id: string
@@ -30,15 +36,20 @@ export default function (props: {
   }, [])
 
   useEffect(() => {
-    let list = props.checked.find((list) => list.id === props.id)
+    let list = props.checked.find(list => list.id === props.id)
     let isChecked = false
     if (list) {
       isChecked = list.tracks.includes(track!)
     }
-    setChecked(isChecked)}, [track, props.checked, props.id]
-    )
+    setChecked(isChecked)
+  }, [track, props.checked, props.id])
 
-  function Checkboxes(props: {id: string, track: TrackObj, isDeletable: boolean, toggleChecked: (id: string, track: TrackObj) => any}) {
+  function Checkboxes (props: {
+    id: string
+    track: TrackObj
+    isDeletable: boolean
+    toggleChecked: (id: string, track: TrackObj) => any
+  }) {
     if (props.isDeletable) {
       return (
         <Checkbox
@@ -73,7 +84,12 @@ export default function (props: {
         >
           {track ? (
             <>
-              <Checkboxes id={props.id} toggleChecked={props.toggleChecked} isDeletable={props.isDeletable} track={track}/>
+              <Checkboxes
+                id={props.id}
+                toggleChecked={props.toggleChecked}
+                isDeletable={props.isDeletable}
+                track={track}
+              />
               <Track track={props.track} isDragging={snapshot.isDragging} />
               {props.isDragDisabled ?? (
                 <ListItemSecondaryAction>

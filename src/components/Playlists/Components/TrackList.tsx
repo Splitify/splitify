@@ -1,31 +1,32 @@
 import React, { useState, useEffect } from 'react'
-import { Droppable } from 'react-beautiful-dnd'
+import { Button, ListItem } from '@material-ui/core'
+
 import { Track as TrackObj, CheckedList } from '../../../types'
+
+import { Droppable } from 'react-beautiful-dnd'
+import { VariableSizeList as VirtualList } from 'react-window'
+
 import TrackEntry from '../../Tracks/TrackEntry'
 import Track from '../../Tracks/Track'
-import { ListItem } from "@material-ui/core"
-import {_PlaylistTrackGroup} from '../../../helpers/helpers'
+import { _PlaylistTrackGroup } from '../../../helpers/helpers'
 
-import { VariableSizeList as VirtualList } from 'react-window'
-import Button from '@material-ui/core/Button/Button'
-
-export default function (props: { 
-  id: string; 
-  tracks: TrackObj[], 
-  isDropDisabled?: boolean, 
-  isDragDisabled?: boolean, 
-  isDeletable: boolean, 
-  isDragClone?: boolean, 
-  component: React.ElementType, 
-  showActions?: boolean, 
-  showTrackCount?: boolean, 
-  checked: CheckedList[],  
-  _refresh?:boolean,
+export default function (props: {
+  id: string
+  tracks: TrackObj[]
+  isDropDisabled?: boolean
+  isDragDisabled?: boolean
+  isDeletable: boolean
+  isDragClone?: boolean
+  component: React.ElementType
+  showActions?: boolean
+  showTrackCount?: boolean
+  checked: CheckedList[]
+  _refresh?: boolean
   toggleChecked?: (id: string, track: TrackObj) => any
-}){
-  const [height, setHeight] = useState(0);
+}) {
+  const [height, setHeight] = useState(0)
 
-  const [ref, setRef] = useState<HTMLElement>();
+  const [ref, setRef] = useState<HTMLElement>()
   useEffect(() => {
     const checkHeight = function () {
       if (!ref) return
@@ -33,12 +34,17 @@ export default function (props: {
 
       // Check height of the parent rectangle to see if there are more components below the TrackList.
       // If so, adjust the TrackList height accordingly
-      let parentRect = ref.parentElement!.getBoundingClientRect();
+      let parentRect = ref.parentElement!.getBoundingClientRect()
       let refRect = ref.getBoundingClientRect()
 
-      let h = wh - ((Math.max(refRect.top, parentRect.top + parentRect.height - refRect.height)) + window.pageYOffset || document.documentElement.scrollTop)
-  
-      h = ((h%wh)+wh)%wh - 50
+      let h =
+        wh -
+        (Math.max(
+          refRect.top,
+          parentRect.top + parentRect.height - refRect.height
+        ) + window.pageYOffset || document.documentElement.scrollTop)
+
+      h = (((h % wh) + wh) % wh) - 50
       setHeight(h)
     }
     checkHeight()
@@ -64,24 +70,28 @@ export default function (props: {
     let newTracks = allTracks
     allTracks.forEach((track, index) => {
       if (track instanceof _PlaylistTrackGroup) {
-        newTracks.splice(index, 1, ...track.tracks);
-    }})
+        newTracks.splice(index, 1, ...track.tracks)
+      }
+    })
     setExpandedTracks(newTracks)
   }, [tracks])
 
-  const EntryInvariant = React.memo(({ data, index, style }: any) => (
-    data[index] && <TrackEntry
-      key={data[index].id}
-      track={data[index]}
-      index={index}
-      id={props.id}
-      isDragDisabled={props.isDragDisabled}
-      isDeletable={props.isDeletable}
-      style={style}
-      checked={props.checked}
-      toggleChecked={props.toggleChecked!}
-    />
-  ))
+  const EntryInvariant = React.memo(
+    ({ data, index, style }: any) =>
+      data[index] && (
+        <TrackEntry
+          key={data[index].id}
+          track={data[index]}
+          index={index}
+          id={props.id}
+          isDragDisabled={props.isDragDisabled}
+          isDeletable={props.isDeletable}
+          style={style}
+          checked={props.checked}
+          toggleChecked={props.toggleChecked!}
+        />
+      )
+  )
 
   const TrackInvariant = (provided: any, snapshot: any, rubric: any) => (
     <div
@@ -93,40 +103,44 @@ export default function (props: {
     </div>
   )
 
-  return <>
-    <Droppable
-      droppableId={props.id || 'unknown'}
-      mode='virtual'
-      isDropDisabled={props.isDropDisabled}
-
-      renderClone={TrackInvariant}
-    >
-      {(provided, snapshot) => (
-        <VirtualList
-          outerRef={
-            node => {
+  return (
+    <>
+      <Droppable
+        droppableId={props.id || 'unknown'}
+        mode='virtual'
+        isDropDisabled={props.isDropDisabled}
+        renderClone={TrackInvariant}
+      >
+        {(provided, snapshot) => (
+          <VirtualList
+            outerRef={node => {
               setRef(node)
               provided.innerRef(node)
             }}
-          {...provided.droppableProps}
-          innerElementType={props.component}
-          height={height}
-          itemCount={expandedTracks.length + (snapshot.isUsingPlaceholder ? 1 : 0)}
-          itemData={expandedTracks}
-          itemSize={() => 60}
-          width='100%'
-        >
-          {EntryInvariant}
-        </VirtualList>
+            {...provided.droppableProps}
+            innerElementType={props.component}
+            height={height}
+            itemCount={
+              expandedTracks.length + (snapshot.isUsingPlaceholder ? 1 : 0)
+            }
+            itemData={expandedTracks}
+            itemSize={() => 60}
+            width='100%'
+          >
+            {EntryInvariant}
+          </VirtualList>
+        )}
+      </Droppable>
+      {props.showTrackCount && (
+        <ListItem dense={true}>Total Tracks: {props.tracks.length}</ListItem>
       )}
-    </Droppable>
-    {props.showTrackCount && <ListItem dense={true}>
-      Total Tracks: {props.tracks.length}
-    </ListItem>}
-    {props.showActions && <ListItem style={{height: 40, padding: 0}}>
-      <Button>One</Button>
-      <Button>Two</Button>
-      <Button>Three</Button>
-    </ListItem>}
-  </>
+      {props.showActions && (
+        <ListItem style={{ height: 40, padding: 0 }}>
+          <Button>One</Button>
+          <Button>Two</Button>
+          <Button>Three</Button>
+        </ListItem>
+      )}
+    </>
+  )
 }

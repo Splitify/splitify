@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { Route, RouteProps } from 'react-router-dom'
-import { useHistory } from 'react-router-dom'
+import { Route, RouteProps, useHistory } from 'react-router-dom'
 import Auth from '../auth'
 
 interface IRoute {
@@ -23,11 +22,9 @@ export const Private: FC<RouteProps & IRoute> = ({
   />
 )
 
-// our components props accept a number for the initial value
-const AuthProxy: React.FunctionComponent<{ component: React.ComponentClass }> = ({
-  component: Component,
-  ...props
-}) => {
+const AuthProxy: React.FunctionComponent<{
+  component: React.ComponentClass
+}> = ({ component: Component, ...props }) => {
   const history = useHistory()
 
   // validate user

@@ -1,5 +1,5 @@
-import { Track } from './Track';
-import { PlaylistTrack } from './PlaylistTrack';
+import { Track } from './Track'
+import { PlaylistTrack } from './PlaylistTrack'
 
 export interface PlaylistTrackGroup extends PlaylistTrack {
   tracks: PlaylistTrack[]

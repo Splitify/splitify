@@ -1,12 +1,17 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import React, { useState } from 'react'
+import {
+  Button,
+  TextField,
+  DialogActions,
+  DialogContent,
+  DialogTitle
+} from '@material-ui/core'
 
-export default function FormDialog(props: { name: string, onSave: (newName?: string) => void }) {
-  const [newName, setNewName] = React.useState(props.name)
+export default function FormDialog (props: {
+  name: string
+  onSave: (newName?: string) => void
+}) {
+  const [newName, setNewName] = useState(props.name)
 
   return (
     <div>
@@ -14,20 +19,20 @@ export default function FormDialog(props: { name: string, onSave: (newName?: str
       <DialogContent>
         <TextField
           autoFocus
-          label="New Name"
+          label='New Name'
           defaultValue={props.name}
           fullWidth
-          onChange={(e) => setNewName(e.target.value)}
+          onChange={e => setNewName(e.target.value)}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => props.onSave()} color="primary">
+        <Button onClick={() => props.onSave()} color='primary'>
           Cancel
-      </Button>
-        <Button onClick={() => props.onSave(newName)} color="primary">
+        </Button>
+        <Button onClick={() => props.onSave(newName)} color='primary'>
           Ok
-      </Button>
+        </Button>
       </DialogActions>
     </div>
-  );
+  )
 }

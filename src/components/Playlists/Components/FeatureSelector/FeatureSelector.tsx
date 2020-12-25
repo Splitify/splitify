@@ -24,7 +24,6 @@ export default function (props: {
     props.onUpdateFilterFunction(track => {
       // If track does not have features, pass it through
       if (!track.features) return true
-      
 
       return sliders.every(slider => {
         let value = track!.features![slider.id]
@@ -39,9 +38,9 @@ export default function (props: {
       })
     })
 
-    if(props.filterIsActive && sliders.length === 0){
+    if (props.filterIsActive && sliders.length === 0) {
       props.filterIsActive(false)
-    }else if(props.filterIsActive){
+    } else if (props.filterIsActive) {
       props.filterIsActive(true)
     }
 
@@ -73,9 +72,14 @@ export default function (props: {
 
   return (
     <Wrapper>
-      {sliders.length === options.length ? "" : (
+      {sliders.length === options.length ? (
+        ''
+      ) : (
         <ChildWrapper>
-          <FeatureMenu onSelect={addSlider} hidden={sliders.map(el => el.name)} />
+          <FeatureMenu
+            onSelect={addSlider}
+            hidden={sliders.map(el => el.name)}
+          />
         </ChildWrapper>
       )}
       {sliders.map((p, index) => (
@@ -85,7 +89,7 @@ export default function (props: {
             delete={() => deleteSlider(p.name)}
             onFeatureUpdate={updateSlider}
           />
-          <ListItemSecondaryAction >
+          <ListItemSecondaryAction>
             <IconButton onClick={() => deleteSlider(p.name)}>
               <CloseIcon />
             </IconButton>

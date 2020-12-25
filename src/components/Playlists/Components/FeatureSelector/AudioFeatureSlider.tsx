@@ -2,17 +2,16 @@ import React, { useState } from 'react'
 import { Slider, Typography, makeStyles, Popover } from '@material-ui/core'
 import { FeatureSliderData } from './FeatureSliderData'
 
-
-const useStylesSlider = makeStyles((theme) => ({
+const useStylesSlider = makeStyles(theme => ({
   root: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     paddingTop: 0,
     paddingBottom: 0,
     width: '100%',
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between"
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   popover: {
     pointerEvents: 'none'
@@ -32,10 +31,14 @@ export default function (props: {
 
   return (
     <div className={classes.root}>
-      <Typography id='range-slider' gutterBottom style={{ minWidth: 130 }}  onMouseEnter={(event: any) => setPopupAnchor(event.currentTarget)}
-        onMouseLeave={() => setPopupAnchor(null)}>
+      <Typography
+        id='range-slider'
+        gutterBottom
+        style={{ minWidth: 130 }}
+        onMouseEnter={(event: any) => setPopupAnchor(event.currentTarget)}
+        onMouseLeave={() => setPopupAnchor(null)}
+      >
         {props.feature.name}
-
       </Typography>
       <Popover
         id='mouse-over-popover'
@@ -54,7 +57,7 @@ export default function (props: {
           horizontal: 'center'
         }}
         disableRestoreFocus
-        >
+      >
         {props.feature.description}
       </Popover>
       <Slider

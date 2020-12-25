@@ -1,8 +1,8 @@
 /* UI component to select a playlist */
 
 import React, { useState, useEffect } from 'react'
-
 import {
+  Checkbox,
   Fade,
   List,
   ListItem,
@@ -13,6 +13,7 @@ import {
   Card,
   CardContent,
   CardActions,
+  ListItemIcon,
   Paper,
   TextField,
   InputAdornment,
@@ -23,9 +24,12 @@ import {
 import SearchIcon from '@material-ui/icons/Search'
 
 import { Playlist } from '../../types'
-import { getPlaylist, getPlaylists, getUserProfile } from '../../helpers/helpers'
-import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon'
-import Checkbox from '@material-ui/core/Checkbox/Checkbox'
+import {
+  getPlaylist,
+  getPlaylists,
+  getUserProfile
+} from '../../helpers/helpers'
+
 import { getLikedSongs } from '../../helpers/parsers'
 
 const useStyles = makeStyles({
@@ -36,25 +40,25 @@ const useStyles = makeStyles({
     padding: 0
   },
   actions: {
-    justifyContent: "space-evenly"
+    justifyContent: 'space-evenly'
   },
   colorPrimary: {
-    backgroundColor: '#4dc088',
+    backgroundColor: '#4dc088'
   },
   barColorPrimary: {
-    backgroundColor: '#699fd5',
+    backgroundColor: '#699fd5'
   }
 })
 
 const likedPlaylistStub: Playlist = {
-  id: "liked-songs",
-  name: "Liked Songs",
-  description: "",
-  image: "",
-  owner: { id: "", display_name: "" },
-  snapshot_id: "",
+  id: 'liked-songs',
+  name: 'Liked Songs',
+  description: '',
+  image: '',
+  owner: { id: '', display_name: '' },
+  snapshot_id: '',
   tracks: [],
-  uri: "",
+  uri: '',
   public: false,
   collaborative: false,
   expand: async function () {
@@ -62,51 +66,51 @@ const likedPlaylistStub: Playlist = {
   }
 }
 
-let playlistCache: Playlist[] = [];
+let playlistCache: Playlist[] = []
 
-export default function (
-  props: {
-    onSelect: (playlist: Playlist) => void,
-  }) {
+export default function (props: { onSelect: (playlist: Playlist) => void }) {
   const classes = useStyles()
 
-  async function handleRefresh() {
+  async function handleRefresh () {
     setLoading(true)
-    setPlaylists(playlistCache = [likedPlaylistStub].concat(await getPlaylists()))
+    setPlaylists(
+      (playlistCache = [likedPlaylistStub].concat(await getPlaylists()))
+    )
     setLoading(false)
   }
 
-  const [checked, setChecked] = React.useState<string[]>([]);
+  const [checked, setChecked] = useState<string[]>([])
 
   const handleToggle = (value: string) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
+    const currentIndex = checked.indexOf(value)
+    const newChecked = [...checked]
 
     if (currentIndex === -1) {
-      newChecked.push(value);
+      newChecked.push(value)
     } else {
-      newChecked.splice(currentIndex, 1);
+      newChecked.splice(currentIndex, 1)
     }
 
-    setChecked(newChecked);
-  };
+    setChecked(newChecked)
+  }
 
   const handleSelection = async () => {
-    setLoading(true);
+    setLoading(true)
 
     let playlists = await Promise.all(
-      checked.filter(s => s !== likedPlaylistStub.id)
+      checked
+        .filter(s => s !== likedPlaylistStub.id)
         .map(async (s: string) => await getPlaylist(s, true))
-    );
+    )
 
     if (checked.includes(likedPlaylistStub.id)) {
-      likedPlaylistStub.tracks = await getLikedSongs(true);
-      likedPlaylistStub.owner = await getUserProfile();
+      likedPlaylistStub.tracks = await getLikedSongs(true)
+      likedPlaylistStub.owner = await getUserProfile()
       playlists = [likedPlaylistStub].concat(playlists)
     }
 
-    const tracks = playlists.map((p: Playlist) => p.tracks).flat();
-    const name = playlists.map((p: Playlist) => p.name).join(" + ");
+    const tracks = playlists.map((p: Playlist) => p.tracks).flat()
+    const name = playlists.map((p: Playlist) => p.name).join(' + ')
     const id = playlists.map(p => p.id).join('')
 
     await props.onSelect({
@@ -128,8 +132,8 @@ export default function (
   }
 
   const restrictSearch = (p: Playlist) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-    || checked.includes(p.id);
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    checked.includes(p.id)
 
   let [playlists, setPlaylists] = useState<Playlist[]>(playlistCache)
   let [loading, setLoading] = useState(false)
@@ -143,7 +147,12 @@ export default function (
     <Card className={classes.root}>
       <CardContent className={classes.content}>
         <Box m={1}>
-          <Typography variant="h5" gutterBottom align="center" style={{ userSelect: 'none' }} >
+          <Typography
+            variant='h5'
+            gutterBottom
+            align='center'
+            style={{ userSelect: 'none' }}
+          >
             Select playlists to split from
           </Typography>
         </Box>
@@ -181,7 +190,7 @@ export default function (
                 >
                   <ListItemIcon>
                     <Checkbox
-                      edge="start"
+                      edge='start'
                       checked={checked.indexOf(playlist.id) !== -1}
                       tabIndex={-1}
                       disableRipple
@@ -191,18 +200,23 @@ export default function (
                 </ListItem>
               ))
             ) : (
-                <ListItem>
-                  <ListItemText
-                    primary={'No playlists exist!'}
-                    secondary={search ? 'Try a different search term' : ''}
-                  />
-                </ListItem>
-              )}
+              <ListItem>
+                <ListItemText
+                  primary={'No playlists exist!'}
+                  secondary={search ? 'Try a different search term' : ''}
+                />
+              </ListItem>
+            )}
           </List>
         </Paper>
       </CardContent>
       <Fade in={loading}>
-        <LinearProgress classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} />
+        <LinearProgress
+          classes={{
+            colorPrimary: classes.colorPrimary,
+            barColorPrimary: classes.barColorPrimary
+          }}
+        />
       </Fade>
 
       <CardActions className={classes.actions}>

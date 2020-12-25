@@ -13,5 +13,5 @@ export interface Playlist {
   uri: string
   public: boolean
   collaborative: boolean
-  expand : (expandTrack?: boolean) => Promise<this>
+  expand: (expandTrack?: boolean) => Promise<this>
 }
