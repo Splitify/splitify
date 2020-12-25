@@ -10,7 +10,10 @@ import TrackEntry from '../Tracks/TrackEntry'
 import Track from '../Tracks/Track'
 import { asPlaylistTrack, _PlaylistTrackGroup } from '../../helpers/helpers'
 
-import DeleteTracksButton from './Actions/DeleteTracksButton'
+import { TrackListActionType } from './Actions/types'
+
+import SortButton from './Actions/SortButton'
+import { FilterNone, Remove, SelectAll } from '@material-ui/icons'
 
 export default function (props: {
   id: string
@@ -22,10 +25,22 @@ export default function (props: {
   showActions?: boolean
   showTrackCount?: boolean
   _refresh?: boolean
+  onAction?: (action: TrackListActionType, data?: any) => any
 }) {
   const [height, setHeight] = useState(0)
 
   const [checkedItems, setCheckedItems] = useState<string[]>([])
+
+  /**
+   * Validate checked items, remove if not in current (visible) list
+   * (Should probably still stay selected if just filtered out, oh well)
+   */
+  useEffect(() => {
+    const validUUIDs = props.tracks.map(t => asPlaylistTrack(t).uuid!)
+    setCheckedItems(checkedItems =>
+      checkedItems.filter(uuid => validUUIDs.includes(uuid))
+    )
+  }, [props.tracks])
 
   const [ref, setRef] = useState<HTMLElement>()
   useEffect(() => {
@@ -153,9 +168,54 @@ export default function (props: {
       </Droppable>
       {props.showActions && (
         <ListItem style={{ height: 40, padding: 8 }}>
-          {checkedItems.length > 0 && <DeleteTracksButton />}
-          <Button>Two</Button>
-          <Button>Three</Button>
+          {checkedItems.length > 0
+            ? [
+                <Button
+                  onClick={() => {
+                    if (!props.onAction) return
+                    props.onAction('deleteTracks', [...checkedItems])
+                    setCheckedItems([])
+                  }}
+                  startIcon={<Remove />}
+                >
+                  Delete ({checkedItems.length})
+                </Button>,
+                // <Button
+                //   onClick={() => {
+                //     if (!props.onAction) return
+                //     props.onAction('groupTracks', [...checkedItems])
+                //     setCheckedItems([])
+                //   }}
+                // >
+                //   Group ({checkedItems.length})
+                // </Button>,
+                <Button
+                  onClick={() => {
+                    setCheckedItems([])
+                  }}
+                  startIcon={<FilterNone />}
+                >
+                  Deselect All
+                </Button>
+              ]
+            : []}
+          {checkedItems.length !== props.tracks.length && (
+            <Button
+              onClick={() => {
+                setCheckedItems(props.tracks.map(t => asPlaylistTrack(t).uuid!))
+              }}
+              startIcon={<SelectAll />}
+            >
+              Select All
+            </Button>
+          )}
+
+          <SortButton
+            onSort={type => {
+              if (!props.onAction) return
+              props.onAction('sortTracks', type)
+            }}
+          />
         </ListItem>
       )}
       {props.showTrackCount && (

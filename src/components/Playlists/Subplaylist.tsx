@@ -36,9 +36,10 @@ import {
   Track as TrackObj,
   TrackFilter
 } from '../../types'
+import { SubplaylistActionType } from './Actions/types'
 
 import GenreSelector from './Selectors/GenreSelector'
-import SortSelector from './Actions/SortButton'
+import { sortFunction } from './Actions/SortButton'
 import MultiFilter from './Filters/MultiFilter'
 import { FeatureSelector } from './Selectors/FeatureSelector'
 import TrackList from './TrackList'
@@ -79,9 +80,8 @@ export default function Subplaylist (props: {
   source: TrackObj[]
   playlist: PlaylistObj
   genres: string[]
-  onTrackUpdate: () => void
-  onFilterUpdate?: (tracks: TrackObj[]) => any
-  onDelete?: (playlist: PlaylistObj) => any
+
+  onAction?: (action: SubplaylistActionType, data?: any) => any
 }) {
   const classes = useStyles()
 
@@ -89,7 +89,7 @@ export default function Subplaylist (props: {
   const tick = () => _setEventDrilldown(v => !v)
 
   // SAVING ANIMATION STUFF
-  const [saveDisabled, setsaveDisabled] = useState(true)
+  const [saveDisabled, setSaveDisabled] = useState(true)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [buttonLabel, setButtonLabel] = useState('Save')
@@ -120,7 +120,7 @@ export default function Subplaylist (props: {
       }, 4000)
     }
 
-    setsaveDisabled(true)
+    setSaveDisabled(true)
   }
 
   const [editDialogOpen, setEditDialogOpen] = useState(false)
@@ -143,45 +143,13 @@ export default function Subplaylist (props: {
     return intersection.length !== 0
   }
 
-  function padNumber (n: Number): string {
-    return n.toString().padStart(5, '0')
-  }
-
   function handleSortAction (type: string) {
-    const sortTracks = (track1: TrackObj, track2: TrackObj): number => {
-      let var1: string = ''
-      let var2: string = ''
+    // Compose sortFunction(type, ...)
+    let sortFn = (track1: TrackObj, track2: TrackObj) =>
+      sortFunction(type, track1, track2)
 
-      switch (type) {
-        case 'Track Name':
-          var1 = track1.name
-          var2 = track2.name
-          break
-        case 'Artist':
-          var1 = track1.artists[0].name
-          var2 = track2.artists[0].name
-          break
-        case 'Album':
-          if (track1.album) {
-            var1 = track1.album.name + padNumber(track1.track_number)
-          }
-          if (track2.album) {
-            var2 = track2.album.name + padNumber(track2.track_number)
-          }
-          break
-        case 'Popularity':
-          var1 = padNumber(track2.popularity)
-          var2 = padNumber(track1.popularity)
-          break
-        default:
-          var1 = track1.name
-          var2 = track2.name
-      }
-      return var1.localeCompare(var2)
-    }
+    setTracks([...tracks].sort(sortFn))
 
-    setTracks([...tracks].sort(sortTracks))
-    tracks.sort(sortTracks).map(track => console.log(track.name))
     updateView()
   }
 
@@ -195,10 +163,12 @@ export default function Subplaylist (props: {
     return source.filter(t => isTrackCustom(t) || filters.every(f => f(t)))
   }
 
+  /**
+   * Update the list of track in the playlist when the genre / features filter is changed
+   */
   useEffect(() => {
     const filters = [TrackCorrectGenre, featureFilter]
 
-    // Update the list of track in the playlist when the genre / features filter is changed
     setTracks(
       doFilter(tracks, ...filters) // Existing current matches (to maintain ordering)
         .concat(doFilter(props.source, ...filters)) // New items from the source pool
@@ -208,18 +178,26 @@ export default function Subplaylist (props: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedGenres, featureFilter, props.source])
 
+  /**
+   * Update the list of genres when the `source` prop changes
+   */
   useEffect(() => {
     setGenresRecord(createOccurrenceMap(props.source.map(t => t.genres).flat()))
   }, [props.source])
 
-  // Save tracks to playlist when updated
+  /**
+   * Save tracks to playlist when updated
+   */
   useEffect(() => {
     props.playlist.tracks = tracks
-    props.onTrackUpdate()
-    tracks.length === 0 ? setsaveDisabled(true) : setsaveDisabled(false)
+    props.onAction && props.onAction('trackUpdate')
+    setSaveDisabled(tracks.length === 0)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
 
+  /**
+   * Update internal track storage when the `playlist` prop changes
+   */
   useEffect(() => {
     setTracks(props.playlist.tracks)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -230,10 +208,10 @@ export default function Subplaylist (props: {
   const updateView = useCallback(() => {
     let view = tracks.filter(trackFilter)
     updateFilteredView(view)
-    props.onFilterUpdate && props.onFilterUpdate(view)
+    props.onAction && props.onAction('filterUpdate', view)
     tick()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tracks, trackFilter, props.onFilterUpdate])
+  }, [tracks, trackFilter, props.onAction])
 
   useEffect(() => {
     // Update the displayed items when the tracks change, or the track filter changes
@@ -251,7 +229,7 @@ export default function Subplaylist (props: {
             setEditDialogOpen(false)
             if (newName) {
               props.playlist.name = newName
-              setsaveDisabled(false)
+              setSaveDisabled(false)
             }
           }}
         />
@@ -262,8 +240,6 @@ export default function Subplaylist (props: {
           <IconButton onClick={() => setEditDialogOpen(true)}>
             <EditIcon />
           </IconButton>
-          <Divider orientation='vertical' flexItem />
-          <SortSelector onSort={handleSortAction} />
           <Divider orientation='vertical' flexItem />
           {loading ? (
             <CircularProgress size={24} className={classes.buttonProgress} />
@@ -314,7 +290,9 @@ export default function Subplaylist (props: {
             variant='contained'
             color='secondary'
             className={classes.button}
-            onClick={() => props.onDelete && props.onDelete(props.playlist)}
+            onClick={() =>
+              props.onAction && props.onAction('deletePlaylist', props.playlist)
+            }
             startIcon={<DeleteIcon />}
           >
             Delete
@@ -345,6 +323,17 @@ export default function Subplaylist (props: {
           isCheckEnabled={true}
           showActions={true}
           showTrackCount={true}
+          onAction={(action, data) => {
+            // Bubble the action up
+            switch (action) {
+              case 'sortTracks': {
+                handleSortAction(data)
+                break
+              }
+              default:
+                props.onAction && props.onAction(action, data)
+            }
+          }}
           _refresh={eventDrilldown}
         />
       </List>

@@ -135,32 +135,13 @@ const Dashboard: React.FC<IDashboardProps> = () => {
     )
   }
 
-  // const updateSourcePool = () => {
-  //   let playlistID: string
-  //   let sourcePlaylist: PlaylistObj | undefined
-  //   let source_newTracks: TrackObj[]
-  //   let index: number
-  //   checked.forEach(checkedList => {
-  //     console.log('id is ' + checkedList.id)
-  //     playlistID = checkedList.id
-  //     sourcePlaylist = findPlaylist(playlistID)
-  //     if (!sourcePlaylist) throw new Error('Failed to get playlist')
-  //     source_newTracks = [...sourcePlaylist!.tracks]
-  //     checkedList.tracks.forEach(track => {
-  //       index = source_newTracks
-  //         .map(function (e) {
-  //           return e.id
-  //         })
-  //         .indexOf(track.id)
-  //       source_newTracks!.splice(index, 1)
-  //     })
-  //     sourcePlaylist.tracks = source_newTracks
-  //     setPlaylists([...playlists])
-  //   })
-  //   let allChecked = checked
-  //   allChecked.map(checkedPlaylist => (checkedPlaylist.tracks = []))
-  //   setChecked([...checked])
-  // }
+  const removeTracksFromPlaylist = (playlist: PlaylistObj, ids: string[]) => {
+    let targetPlaylist = findPlaylist(playlist.id)
+    targetPlaylist!.tracks = targetPlaylist!.tracks.filter(
+      t => !ids.includes(asPlaylistTrack(t).uuid!)
+    )
+    setPlaylists([...playlists])
+  }
 
   // const groupTracks = () => {
   //   let checkedTracks: PlaylistTrack[] = []
@@ -195,34 +176,6 @@ const Dashboard: React.FC<IDashboardProps> = () => {
   // let allChecked = checked
   // allChecked.map(checkedPlaylist => (checkedPlaylist.tracks = []))
   // setChecked([...checked])
-  // }
-
-  // function DeleteTracksButton () {
-  //   for (let i = 0; i < checked.length; i++) {
-  //     if (checked[i].tracks[0]) {
-  //       return (
-  //         <>
-  //           <Button
-  //             variant='contained'
-  //             color='secondary'
-  //             onClick={updateSourcePool}
-  //             style={{ float: 'left', margin: 5 }}
-  //           >
-  //             Delete Selected Tracks
-  //           </Button>
-  //           <Button
-  //             variant='contained'
-  //             color='secondary'
-  //             onClick={groupTracks}
-  //             style={{ float: 'left', margin: 5 }}
-  //           >
-  //             Group Selected Tracks
-  //           </Button>
-  //         </>
-  //       )
-  //     }
-  //   }
-  //   return <div></div>
   // }
 
   return (
@@ -351,12 +304,28 @@ const Dashboard: React.FC<IDashboardProps> = () => {
                       <Subplaylist
                         genres={genres}
                         source={p.sourcePool}
-                        onTrackUpdate={updateTracks}
                         playlist={p}
-                        onDelete={() => deletePlaylist(p)}
-                        onFilterUpdate={tracks =>
-                          (filteredLists[p.id] = tracks)
-                        }
+                        onAction={(action, data) => {
+                          switch (action) {
+                            case 'groupTracks':
+                              break
+                            case 'sortTracks':
+                              // TODO: Sort tracks
+                              break
+                            case 'deleteTracks':
+                              removeTracksFromPlaylist(p, data)
+                              break
+                            case 'deletePlaylist':
+                              deletePlaylist(p)
+                              break
+                            case 'filterUpdate':
+                              filteredLists[p.id] = data
+                              break
+                            case 'trackUpdate':
+                              updateTracks()
+                              break
+                          }
+                        }}
                       />
                     </GridListTile>
                   ))}
