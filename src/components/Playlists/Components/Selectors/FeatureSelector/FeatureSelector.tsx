@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { IconButton, ListItemSecondaryAction } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 
-import { TrackFilter } from '../../../../types'
+import { TrackFilter } from '../../../../../types'
 
 import { FeatureSliderData } from './FeatureSliderData'
 import FeatureMenu from './FeatureMenu'

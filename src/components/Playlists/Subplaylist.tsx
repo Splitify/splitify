@@ -21,7 +21,7 @@ import {
 import clsx from 'clsx'
 import { green } from '@material-ui/core/colors'
 
-import EditPlaylistNameDialog from './Components/EditPlaylistNameDialog'
+import EditPlaylistNameDialog from './Components/Actions/EditPlaylistNameDialog'
 
 import {
   asPlaylistTrack,
@@ -37,10 +37,10 @@ import {
   TrackFilter,
 } from '../../types'
 
-import GenreSelector from './Components/GenreSelector'
-import SortSelector from './Components/SortSelector'
-import MultiFilter from './Components/MultiFilter'
-import { FeatureSelector } from './Components/FeatureSelector'
+import GenreSelector from './Components/Selectors/GenreSelector'
+import SortSelector from './Components/Actions/SortButton'
+import MultiFilter from './Components/Filters/MultiFilter'
+import { FeatureSelector } from './Components/Selectors/FeatureSelector'
 import TrackList from './Components/TrackList'
 
 const useStyles = makeStyles(theme => ({

@@ -20,7 +20,7 @@ import {
 
 import { createOccurrenceMap } from '../../helpers/helpers'
 
-import MultiFilter from './Components/MultiFilter'
+import MultiFilter from './Components/Filters/MultiFilter'
 import TrackList from './Components/TrackList'
 
 const useStyles = makeStyles(theme => ({
