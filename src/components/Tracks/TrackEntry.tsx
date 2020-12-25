@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import {
   ListItem,
-  ListItemSecondaryAction,
   ListItemIcon,
   Checkbox
 } from '@material-ui/core'

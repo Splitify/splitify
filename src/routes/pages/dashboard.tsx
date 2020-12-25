@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   Grid,
   Button,
@@ -9,7 +9,6 @@ import {
 import AddIcon from '@material-ui/icons/Add'
 
 import {
-  PlaylistTrack,
   Playlist as PlaylistObj,
   Track as TrackObj
 } from '../../types'
@@ -17,7 +16,6 @@ import {
   allGenresFromPlaylist,
   asPlaylistTrack,
   touchTrack,
-  createTrackGroup
 } from '../../helpers/helpers'
 
 import '../../gradientBG.css'
