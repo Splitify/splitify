@@ -1,13 +1,6 @@
-/* 
-// Login page
-
-*/
-
 import React from 'react'
 
-import Box from '@material-ui/core/Box'
-import Container from '@material-ui/core/Container'
-import Typography from '@material-ui/core/Typography'
+import { Box, Container, Typography } from '@material-ui/core'
 
 import Textmark from '../../../images/textmark@72.png'
 
@@ -47,15 +40,16 @@ export default function () {
           >
             <img
               height='50px'
-              width='50px'
-              alt='Spotify Logo'
-              src={SpotifyLogo}
-            />
-            <img
-              height='50px'
               width='100%'
               alt='Last.fm Logo'
               src={LastFMLogo}
+            />
+            <img
+              height='80px'
+              width='80px'
+              style={{ marginTop: 20 }}
+              alt='Spotify Logo'
+              src={SpotifyLogo}
             />
           </div>
         </div>

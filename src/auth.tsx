@@ -7,7 +7,6 @@ const authStore = getStorage('auth')
 export const api: SpotifyAPI.SpotifyWebApiJs = new SpotifyAPI()
 
 export default new (class {
-
   // Login function, takes in access_token and expires_in (seconds)
   async login ({
     access_token,
@@ -23,7 +22,8 @@ export default new (class {
 
     // Store token and expiry time
     await authStore.setItem('token', access_token)
-    await authStore.setItem('expiry', 
+    await authStore.setItem(
+      'expiry',
       new Date(new Date().getTime() + expires_in * 1000)
     )
 
@@ -31,7 +31,6 @@ export default new (class {
   }
 
   async validate (token?: string) {
-
     // Function: Validate access token (i.e. is the access token active)
     // Validation is performed once per page load
     const doValidate = async () => {
@@ -91,12 +90,13 @@ export default new (class {
       client_id: process.env.REACT_APP_CLIENT_ID,
       redirect_uri: `${window.location.protocol}//${window.location.host}/login`,
       response_type: 'token',
-      scope: 'playlist-read-private playlist-read-collaborative playlist-modify-private playlist-read-collaborative playlist-read-private playlist-modify-public user-library-read'
+      scope:
+        'playlist-read-private playlist-read-collaborative playlist-modify-private playlist-read-collaborative playlist-read-private playlist-modify-public user-library-read'
     }
     return `${authEndpoint}?${new URLSearchParams(data as any).toString()}`
   }
 
-  get api() {
+  get api () {
     return api
   }
 })()

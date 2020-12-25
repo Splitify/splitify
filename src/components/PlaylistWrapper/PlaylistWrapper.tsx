@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
-import PlaylistSelector from './PlaylistSelector'
-
 import { Dialog } from '@material-ui/core'
+
 import { Playlist, Track as TrackObj } from '../../types'
-import MasterPlaylist from '../MasterPlaylist'
+
+import PlaylistSelector from './PlaylistSelector'
+import MasterPlaylist from '../Playlists/MasterPlaylist'
 
 export default function (props: {
   text?: string
   playlist?: Playlist
-  usedTracks: TrackObj[],
+  usedTracks: TrackObj[]
   onSelect?: (playlist: Playlist) => any
   onFilterUpdate?: (tracks: TrackObj[]) => any
 }) {
@@ -16,7 +17,7 @@ export default function (props: {
   const [selectorOpen, setSelectorOpen] = useState(true)
   const [loading, setLoading] = useState(true)
 
-  function handleSelect(playlist: Playlist) {
+  function handleSelect (playlist: Playlist) {
     setLoading(true)
     setPlaylist(playlist)
     if (props.onSelect) props.onSelect(playlist)
@@ -28,12 +29,22 @@ export default function (props: {
 
   return (
     <React.Fragment>
-      <Dialog open={selectorOpen} onClose={() => setSelectorOpen(false || loading)}>
-        <PlaylistSelector onSelect={handleSelect}/>
+      <Dialog
+        open={selectorOpen}
+        onClose={() => setSelectorOpen(false || loading)}
+      >
+        <PlaylistSelector onSelect={handleSelect} />
       </Dialog>
       {playlist ? (
-        <MasterPlaylist playlist={playlist} usedTracks={props.usedTracks} onOpenSelector={() => setSelectorOpen(true)} onFilterUpdate={props.onFilterUpdate} />
-      ) : (<div />)}
+        <MasterPlaylist
+          playlist={playlist}
+          usedTracks={props.usedTracks}
+          onOpenSelector={() => setSelectorOpen(true)}
+          onFilterUpdate={props.onFilterUpdate}
+        />
+      ) : (
+        <div />
+      )}
     </React.Fragment>
   )
 }

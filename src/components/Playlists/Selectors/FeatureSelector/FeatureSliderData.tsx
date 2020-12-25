@@ -1,4 +1,4 @@
-import { Features } from "../../types/Features"
+import { Features } from '../../../../types/Features'
 
 export interface FeatureSliderData {
   id: keyof Features

@@ -3,7 +3,6 @@ import { Artist } from './Artist'
 import { Features } from './Features'
 
 export interface Track {
-
   id: string
   album?: Album
   artists: Array<Artist>
@@ -23,5 +22,5 @@ export interface Track {
   type: string
   uri: string
   features?: Features
-  expand : () => Promise<Track>
+  expand: () => Promise<Track>
 }

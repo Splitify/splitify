@@ -9,7 +9,8 @@ const options: FeatureSliderData[] = [
     currentMin: 0,
     currentMax: 100,
     units: '%',
-    description : 'Acousticness is a confidence measure of whether the track is acoustic.'
+    description:
+      'Acousticness is a confidence measure of whether the track is acoustic.'
   },
   {
     id: 'danceability',
@@ -19,7 +20,7 @@ const options: FeatureSliderData[] = [
     currentMin: 0,
     currentMax: 100,
     units: '%',
-    description : 'Danceability describes how suitable a track is for dancing'
+    description: 'Danceability describes how suitable a track is for dancing'
   },
   {
     id: 'energy',
@@ -29,7 +30,7 @@ const options: FeatureSliderData[] = [
     currentMin: 0,
     currentMax: 100,
     units: '%',
-    description : 'Energy describes intensity and activity of a track.'
+    description: 'Energy describes intensity and activity of a track.'
   },
   {
     id: 'instrumentalness',
@@ -59,7 +60,8 @@ const options: FeatureSliderData[] = [
     currentMin: 0,
     currentMax: 100,
     units: '%',
-    description : 'Speechiness detects the presence of spoken (not sung) words in a track'
+    description:
+      'Speechiness detects the presence of spoken (not sung) words in a track'
   },
   {
     id: 'valence',
@@ -69,7 +71,8 @@ const options: FeatureSliderData[] = [
     currentMin: 0,
     currentMax: 100,
     units: '%',
-    description: 'Valence describes the musical/emotional positiveness conveyed by a track'
+    description:
+      'Valence describes the musical/emotional positiveness conveyed by a track'
   },
   {
     id: 'loudness',
@@ -79,7 +82,7 @@ const options: FeatureSliderData[] = [
     currentMin: -60,
     currentMax: 0,
     units: 'dB',
-    description : 'The average loudness of a track in decibels'
+    description: 'The average loudness of a track in decibels'
   },
   {
     id: 'tempo',
@@ -89,7 +92,7 @@ const options: FeatureSliderData[] = [
     currentMin: 50,
     currentMax: 220,
     units: 'BPM',
-    description : 'The overall estimated tempo of a track in beats per minute'
+    description: 'The overall estimated tempo of a track in beats per minute'
   }
 ]
 

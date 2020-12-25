@@ -1,11 +1,27 @@
-import React, { useEffect, useState } from 'react'
-import { Playlist as PlaylistObj, Track as TrackObj, TrackFilter } from '../types'
+import React, { useEffect, useState, useCallback } from 'react'
+import {
+  makeStyles,
+  List,
+  ListItem,
+  Paper,
+  Popover,
+  IconButton,
+  Box,
+  Divider,
+  Button
+} from '@material-ui/core'
+import { Info as InfoIcon, Replay as ReplayIcon } from '@material-ui/icons'
 
-import { makeStyles, List, ListItem, Paper, Popover, IconButton, Box, Divider, Button } from '@material-ui/core'
-import { Info as InfoIcon, Replay as ReplayIcon } from '@material-ui/icons';
-import MultiFilter from './MultiFilter'
+import {
+  Playlist as PlaylistObj,
+  Track as TrackObj,
+  TrackFilter
+} from '../../types'
+
+import { createOccurrenceMap } from '../../helpers/helpers'
+
+import MultiFilter from './Filters/MultiFilter'
 import TrackList from './TrackList'
-import { createOccurrenceMap } from '../helpers/helpers';
 
 const useStyles = makeStyles(theme => ({
   popover: {
@@ -20,23 +36,21 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     margin: theme.spacing(1),
-    whiteSpace: "nowrap"
+    whiteSpace: 'nowrap'
   }
 }))
 
-export default function MasterPlaylist(
-  props: {
-    playlist: PlaylistObj,
-    usedTracks: TrackObj[],
-    onOpenSelector: () => void,
-    onFilterUpdate?: (tracks: TrackObj[]) => any
-  }) {
+export default function MasterPlaylist (props: {
+  playlist: PlaylistObj
+  usedTracks: TrackObj[]
+  onOpenSelector: () => void
+  onFilterUpdate?: (tracks: TrackObj[]) => any
+}) {
   const classes = useStyles()
 
   const [trackFilter, setTrackFilter] = useState<TrackFilter>(() => () => true)
   const [filterUsedTracks, setFilterUsedTracks] = useState(false)
   const [popupAnchor, setPopupAnchor] = useState(null)
-
 
   // Async state update
 
@@ -45,7 +59,7 @@ export default function MasterPlaylist(
 
   useEffect(() => {
     // Expand the playlist (get tracks) and update the UI every 250ms
-    ; (async () => {
+    ;(async () => {
       let intl = setInterval(() => tick(), 250)
       props.playlist.expand().then(function () {
         clearInterval(intl)
@@ -55,10 +69,10 @@ export default function MasterPlaylist(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // TODO: Changing playlist? props.playlist
 
-  const usedFilter = React.useCallback(
-    (t: TrackObj) => 
-      !filterUsedTracks
-      || !props.usedTracks.some((m: TrackObj) => m.id === t.id),
+  const usedFilter = useCallback(
+    (t: TrackObj) =>
+      !filterUsedTracks ||
+      !props.usedTracks.some((m: TrackObj) => m.id === t.id),
     [props.usedTracks, filterUsedTracks]
   )
 
@@ -67,42 +81,44 @@ export default function MasterPlaylist(
     let tracks = props.playlist.tracks.filter(trackFilter).filter(usedFilter)
     setFilteredTracks(tracks)
     props.onFilterUpdate && props.onFilterUpdate(tracks)
-    
+
     // eslint-disable-next-line
   }, [trackFilter, usedFilter, props.playlist])
 
   const calRecommendedGenres = () => {
-    let filter = (t: TrackObj) => !props.usedTracks.some((m: TrackObj) => m.id === t.id);
+    let filter = (t: TrackObj) =>
+      !props.usedTracks.some((m: TrackObj) => m.id === t.id)
 
     const unused = props.playlist.tracks
       .filter(filter)
       .map((t: TrackObj) => t.genres)
       .flat()
 
-    var mapAsc = Array.from(Object.entries(createOccurrenceMap(unused)));
-    mapAsc.splice(4, Number.MAX_SAFE_INTEGER);
-    const suggestions = mapAsc.map(a => a[0]).filter(g => g !== "ALL");
+    var mapAsc = Array.from(Object.entries(createOccurrenceMap(unused)))
+    mapAsc.splice(4, Number.MAX_SAFE_INTEGER)
+    const suggestions = mapAsc.map(a => a[0]).filter(g => g !== 'ALL')
 
     if (suggestions.length === 0) {
-      return "No suggestions"
+      return 'No suggestions'
     } else if (suggestions.length === 1) {
-      return "Try " + suggestions[0];
+      return 'Try ' + suggestions[0]
     }
 
     const re = /(.*), (\w+)/
     const english = suggestions.join(', ').replace(re, 'Try $1 or $2')
-    return english;
+    return english
   }
 
   return (
     <div className={classes.root}>
       <List dense component={Paper}>
-        <ListItem style={{ justifyContent: "space-between" }} >
-          Master Playlist{props.playlist.name.includes('+') ? "s" : ""}: {props.playlist.name}
+        <ListItem style={{ justifyContent: 'space-between' }}>
+          Master Playlist{props.playlist.name.includes('+') ? 's' : ''}:{' '}
+          {props.playlist.name}
           <IconButton onClick={props.onOpenSelector}>
             <ReplayIcon />
           </IconButton>
-          <Divider orientation="vertical" flexItem />
+          <Divider orientation='vertical' flexItem />
           <Box style={{ padding: 12 }}>
             <InfoIcon
               onMouseEnter={(event: any) => setPopupAnchor(event.currentTarget)}
@@ -127,31 +143,30 @@ export default function MasterPlaylist(
             }}
             disableRestoreFocus
           >
-            {popupAnchor == null ? "" : calRecommendedGenres()}
+            {popupAnchor == null ? '' : calRecommendedGenres()}
           </Popover>
-          <Divider orientation="vertical" flexItem />
+          <Divider orientation='vertical' flexItem />
           <Button
             className={classes.button}
-            size="small"
+            size='small'
             variant='contained'
             onClick={() => setFilterUsedTracks(!filterUsedTracks)}
           >
-            {filterUsedTracks ? "show all" : "hide used"}
+            {filterUsedTracks ? 'show all' : 'hide used'}
           </Button>
         </ListItem>
         <ListItem divider={true}>
           <MultiFilter callback={f => setTrackFilter(() => f)} />
-        </ListItem >
+        </ListItem>
 
         <TrackList
           id={props.playlist.id}
           tracks={filteredTracks}
           isDragDisabled={false}
           isDropDisabled={true}
-          isDeletable={false}
+          isCheckEnabled={false}
           showTrackCount={true}
           component={List}
-          checked={[]}
         />
       </List>
     </div>

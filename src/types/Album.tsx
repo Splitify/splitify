@@ -10,6 +10,5 @@ export interface Album {
   total_tracks: number
   popularity: number
   uri: string
-  expand : () => Promise<this>
-
+  expand: () => Promise<this>
 }

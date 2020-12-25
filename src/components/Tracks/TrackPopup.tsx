@@ -1,14 +1,12 @@
 import React from 'react'
-
-import { BarChart, Bar, Cell, XAxis, YAxis } from 'recharts'
-
 import { Grid, Popover, Typography, makeStyles } from '@material-ui/core'
 import ExplicitIcon from '@material-ui/icons/Explicit'
 
-import { Track as TrackObj } from '../types'
-import options from './FeatureSelector/Defaults'
-import { asPlaylistTrack, isTrackCustom } from '../helpers/helpers'
+import { Track as TrackObj } from '../../types'
+import { asPlaylistTrack, isTrackCustom } from '../../helpers/helpers'
+import { BarChart, Bar, Cell, XAxis, YAxis } from 'recharts'
 
+import options from '../Playlists/Selectors/FeatureSelector/Defaults'
 
 const INCLUDED_FEATURES = options.map(o => o.id as string)
 
@@ -21,7 +19,6 @@ const numToNaturalTime = (n: Number) => {
   const date = new Date(n.valueOf())
   return `${date.getMinutes()} min ${date.getSeconds()} sec`
 }
-
 
 const COLOUR_FROM = '#4dc088'
 const COLOUR_TO = '#699fd5'
@@ -38,9 +35,12 @@ const interpolate = (a: number, b: number, perc: number): number => {
 
 const COLOURS = options.map((v, i) => {
   const perc = i / (options.length - 1)
-  return "#" + interpolate(rf, rt, perc).toString(16)
-    + interpolate(bf, bt, perc).toString(16)
-    + interpolate(gf, gt, perc).toString(16)
+  return (
+    '#' +
+    interpolate(rf, rt, perc).toString(16) +
+    interpolate(bf, bt, perc).toString(16) +
+    interpolate(gf, gt, perc).toString(16)
+  )
 })
 
 const useStyles = makeStyles(theme => ({
@@ -57,41 +57,45 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-function determineInclusion(track: TrackObj) {
+function determineInclusion (track: TrackObj) {
   const ptrack = asPlaylistTrack(track)
   const sourceCB = ptrack?.sourceName
   const inclusionGenres = ptrack?.included_genres ?? []
-  if (isTrackCustom(track)) return "Dragged by user from " + sourceCB?.call([])
-  if (inclusionGenres.length === 0) return ""
-  return "Included for the genre" + (inclusionGenres.length === 1 ? ": ": "s: ") + strArrayToEnglish(inclusionGenres)
-  
+  if (isTrackCustom(track)) return 'Dragged by user from ' + sourceCB?.call([])
+  if (inclusionGenres.length === 0) return ''
+  return (
+    'Included for the genre' +
+    (inclusionGenres.length === 1 ? ': ' : 's: ') +
+    strArrayToEnglish(inclusionGenres)
+  )
 }
 
-export default function (props: {
-  track: TrackObj
-  anchor: Element | null
-}) {
+export default function (props: { track: TrackObj; anchor: Element | null }) {
   const classes = useStyles()
 
   let colourIndex = -1
   const artistEnglish = strArrayToEnglish(props.track.artists.map(a => a.name))
-  const genresEnglish = strArrayToEnglish(props.track.genres.filter(g => g !== "ALL"))
+  const genresEnglish = strArrayToEnglish(
+    props.track.genres.filter(g => g !== 'ALL')
+  )
   const lengthEnglish = numToNaturalTime(props.track.duration_ms)
   const inclusionEnglish = determineInclusion(props.track)
 
   const data = Object.entries(props.track.features ?? {})
     .filter(([k]) => INCLUDED_FEATURES.includes(k))
     .map(([k, v]) => {
-      const option = options.find(o => o.id === k);
-      const min = option?.min ?? 0;
-      const max = option?.max ?? 1;
-      const scale = (k === 'loudness' || k === 'tempo') ? 1 : 100;
-      return { name: option?.name ?? "undefined", value: Math.max((v - min) / (max - min) * scale, 0.05) }
+      const option = options.find(o => o.id === k)
+      const min = option?.min ?? 0
+      const max = option?.max ?? 1
+      const scale = k === 'loudness' || k === 'tempo' ? 1 : 100
+      return {
+        name: option?.name ?? 'undefined',
+        value: Math.max(((v - min) / (max - min)) * scale, 0.05)
+      }
     })
 
   return (
     <Popover
-      id='mouse-over-popover'
       className={classes.popover}
       classes={{
         paper: classes.paper
@@ -132,8 +136,7 @@ export default function (props: {
                   Released: {props.track.album?.release_date.toDateString()}
                 </Typography>
                 <Typography variant='body2' gutterBottom color='textSecondary'>
-                  Track {props.track.track_number} of{' '}
-                  {props.track.album?.total_tracks}
+                  {`Track ${props.track.track_number} of ${props.track.album?.total_tracks}`}
                 </Typography>
               </Grid>
             </Grid>
@@ -145,7 +148,7 @@ export default function (props: {
           </Grid>
           <Grid item xs>
             <Typography gutterBottom variant='body1'>
-              {genresEnglish.length && ('Genres: ' + genresEnglish)}
+              {genresEnglish.length && 'Genres: ' + genresEnglish}
             </Typography>
           </Grid>
           <Grid container>

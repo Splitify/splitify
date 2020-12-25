@@ -9,7 +9,7 @@ const styles = {
     height: '100vh',
 
     display: 'flex',
-    flexDirection: "column" as const, // Bug in typescript?
+    flexDirection: 'column' as const, // Bug in typescript?
 
     textAlign: 'center' as const,
     justifyContent: 'center',
@@ -23,8 +23,8 @@ const styles = {
 
 export default function () {
   return (
-    <div style={styles.container} >
-      <div className="animateFlicker">
+    <div style={styles.container}>
+      <div className='animateFlicker'>
         <img src={Textmark} style={styles.logo} alt='Splitify' />
       </div>
       <h1>So about that...</h1>
