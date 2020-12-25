@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import Auth from '../../auth'
 import PlaylistWrapper from '../../components/PlaylistWrapper/'
-import Subplaylist from '../../components/Subplaylist'
+import Subplaylist from '../../components/Playlists/Subplaylist'
 import { allGenresFromPlaylist, asPlaylistTrack, touchTrack, createTrackGroup} from "../../helpers/helpers";
 import { PlaylistTrack, CheckedList, Playlist as PlaylistObj, Track as TrackObj } from "../../types";
 import { Grid, Button, makeStyles, GridList, GridListTile } from '@material-ui/core';

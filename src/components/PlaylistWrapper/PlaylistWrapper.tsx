@@ -3,7 +3,7 @@ import PlaylistSelector from './PlaylistSelector'
 
 import { Dialog } from '@material-ui/core'
 import { Playlist, Track as TrackObj } from '../../types'
-import MasterPlaylist from '../MasterPlaylist'
+import MasterPlaylist from '../Playlists/MasterPlaylist'
 
 export default function (props: {
   text?: string

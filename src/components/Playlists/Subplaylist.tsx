@@ -16,22 +16,22 @@ import {
   Typography,
 } from '@material-ui/core';
 
-import EditPlaylistNameDialog from './EditPlaylistNameDialog'
+import EditPlaylistNameDialog from './Components/EditPlaylistNameDialog'
 
-import { asPlaylistTrack, isTrackCustom, createOrUpdatePlaylist, getUserProfile, createOccurrenceMap } from '../helpers/helpers'
+import { asPlaylistTrack, isTrackCustom, createOrUpdatePlaylist, getUserProfile, createOccurrenceMap } from '../../helpers/helpers'
 
 import {
   Playlist as PlaylistObj,
   Track as TrackObj,
   TrackFilter,
   CheckedList
-} from '../types'
+} from '../../types'
 
-import GenreSelector from './GenreSelector'
-import SortSelector from './SortSelector'
-import MultiFilter from './MultiFilter'
-import { FeatureSelector } from './FeatureSelector'
-import TrackList from './TrackList'
+import GenreSelector from './Components/GenreSelector'
+import SortSelector from './Components/SortSelector'
+import MultiFilter from './Components/MultiFilter'
+import { FeatureSelector } from './Components/FeatureSelector'
+import TrackList from './Components/TrackList'
 
 const useStyles = makeStyles(theme => ({
   table: {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Track as TrackObj } from '../types'
+import { Track as TrackObj } from '../../types'
 import TrackPopup from './TrackPopup'
-import { isTrackCustom } from '../helpers/helpers'
+import { isTrackCustom } from '../../helpers/helpers'
 import { ListItemText, Typography } from '@material-ui/core'
 
 let globalAudioPlayers: HTMLAudioElement[] = []

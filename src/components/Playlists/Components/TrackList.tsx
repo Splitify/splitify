@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Droppable } from 'react-beautiful-dnd'
-import { Track as TrackObj, CheckedList } from '../types'
-import TrackEntry from './TrackEntry'
-import Track from './Track'
+import { Track as TrackObj, CheckedList } from '../../../types'
+import TrackEntry from '../../Tracks/TrackEntry'
+import Track from '../../Tracks/Track'
 import { ListItem } from "@material-ui/core"
-import {_PlaylistTrackGroup} from '../helpers/helpers'
+import {_PlaylistTrackGroup} from '../../../helpers/helpers'
 
 import { VariableSizeList as VirtualList } from 'react-window'
 import Button from '@material-ui/core/Button/Button'

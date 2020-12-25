@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Draggable } from 'react-beautiful-dnd'
 import Skeleton from '@material-ui/lab/Skeleton'
 
-import { Track as TrackObj, CheckedList } from '../types'
+import { Track as TrackObj, CheckedList } from '../../types'
 import Track from './Track'
 
 import DragHandleIcon from '@material-ui/icons/DragHandle'
 import { ListItem, ListItemSecondaryAction, ListItemIcon, Checkbox } from '@material-ui/core'
-import { asPlaylistTrack } from '../helpers/helpers'
+import { asPlaylistTrack } from '../../helpers/helpers'
 
 export default function (props: {
   id: string

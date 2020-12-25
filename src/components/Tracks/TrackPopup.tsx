@@ -5,9 +5,9 @@ import { BarChart, Bar, Cell, XAxis, YAxis } from 'recharts'
 import { Grid, Popover, Typography, makeStyles } from '@material-ui/core'
 import ExplicitIcon from '@material-ui/icons/Explicit'
 
-import { Track as TrackObj } from '../types'
-import options from './FeatureSelector/Defaults'
-import { asPlaylistTrack, isTrackCustom } from '../helpers/helpers'
+import { Track as TrackObj } from '../../types'
+import options from '../Playlists/Components/FeatureSelector/Defaults'
+import { asPlaylistTrack, isTrackCustom } from '../../helpers/helpers'
 
 
 const INCLUDED_FEATURES = options.map(o => o.id as string)
@@ -91,7 +91,6 @@ export default function (props: {
 
   return (
     <Popover
-      id='mouse-over-popover'
       className={classes.popover}
       classes={{
         paper: classes.paper
@@ -132,8 +131,7 @@ export default function (props: {
                   Released: {props.track.album?.release_date.toDateString()}
                 </Typography>
                 <Typography variant='body2' gutterBottom color='textSecondary'>
-                  Track {props.track.track_number} of{' '}
-                  {props.track.album?.total_tracks}
+                  {`Track ${props.track.track_number} of ${props.track.album?.total_tracks}`}
                 </Typography>
               </Grid>
             </Grid>

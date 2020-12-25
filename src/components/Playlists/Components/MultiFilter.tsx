@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { TextField, FormGroup, FormControl, FormControlLabel, Radio, RadioGroup } from '@material-ui/core'
-import { Artist, Track as TrackObj, TrackFilter } from '../types'
+import { Artist, Track as TrackObj, TrackFilter } from '../../../types'
 
 export default function MultiFilter(props: {
   callback: (f: TrackFilter) => void;

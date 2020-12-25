@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Playlist as PlaylistObj, Track as TrackObj, TrackFilter } from '../types'
+import { Playlist as PlaylistObj, Track as TrackObj, TrackFilter } from '../../types'
 
 import { makeStyles, List, ListItem, Paper, Popover, IconButton, Box, Divider, Button } from '@material-ui/core'
 import { Info as InfoIcon, Replay as ReplayIcon } from '@material-ui/icons';
-import MultiFilter from './MultiFilter'
-import TrackList from './TrackList'
-import { createOccurrenceMap } from '../helpers/helpers';
+import MultiFilter from './Components/MultiFilter'
+import TrackList from './Components/TrackList'
+import { createOccurrenceMap } from '../../helpers/helpers';
 
 const useStyles = makeStyles(theme => ({
   popover: {

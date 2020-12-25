@@ -3,7 +3,7 @@ import { Draggable } from 'react-beautiful-dnd'
 import Skeleton from '@material-ui/lab/Skeleton'
 
 import { Track as TrackObj, CheckedList } from '../types'
-import Track from './Track'
+import Track from './Tracks/Track'
 
 import DragHandleIcon from '@material-ui/icons/DragHandle'
 import { ListItem, ListItemSecondaryAction, ListItemIcon, Checkbox, Grid } from '@material-ui/core'
